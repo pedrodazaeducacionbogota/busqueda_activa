@@ -1,0 +1,2952 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Formulario de Búsqueda Activa
+
+
+
+
+
+
+
+	
+
+
+
+
+	
+	
+Contenido
+
+1.	Equipo del Proyecto	4
+2.	Control de Versiones	4
+3.	Propósito del documento <Nota: Esta sección no se debe modificar>	5
+4.	Definiciones, Siglas y Abreviaturas	5
+5.	Justificación de la necesidad	6
+6.	Información de la solicitud	7
+7.	Diagrama flujo de actividades del proceso	7
+8.	Lista de actores del sistema	8
+9.	Requerimientos	9
+9.1.	Requerimientos funcionales	9
+9.2.	Lista de requerimientos	10
+9.3.	Especificación de Requerimientos Funcionales mediante Historias de usuario	12
+HU_001 Acceso autenticado al sistema	12
+HU_002 Acceso centralizado a funcionalidades mediante barra de navegación	16
+HU_003 Consulta, creación y actualización de registros	20
+HU_004 Registro de información sociodemográfica del estudiante	25
+HU_005 Registro de solicitud de cupo educativo	32
+HU_006 Registro de la información de contacto del responsable o acudiente	38
+HU_007 Registro de factores de descolarización	45
+9.4.	Requerimientos No Funcionales	49
+RNF-001	49
+RNF-002	50
+RNF-003	50
+RNF-004	50
+RNF-005	51
+10.	Matriz de trazabilidad de Requerimientos vs Historias de Usuarios	51
+11.	Especificación de requerimientos para vistas	52
+12.	Especificación de requerimientos Servicios Web/REST	60
+13.	Observaciones adicionales	65
+14.	Control de aprobaciones del documento	65
+
+
+
+
+
+
+	•	Equipo del Proyecto
+
+Rol
+Persona asignada
+Líder de Sistemas de Información
+<Nombre del Líder de sistemas de Información>
+Líder de desarrollo
+<Nombre del Líder de desarrollo>
+Líder de unidad de Servicio
+<Nombre del Líder de unidad de servicio>
+Líder Técnico
+<Nombre del líder técnico cuando aplique>
+Arquitecto de software
+<Nombre del arquitecto de software cuando aplique>
+Desarrollador(es) asignado(s)	
+<Nombre del ingeniero de desarrollado asignado>
+Analista de requerimientos
+<Nombre del analista de requerimientos de software o quien realizó la actividad de especificación>
+Usuario Líder Funcional
+  <Nombre del Usuario Líder Funcional>
+
+
+	•	Control de Versiones
+
+Fecha
+Versión
+Descripción
+Responsable de la versión
+01/04/2026
+1,1
+Esta versión del Documento de Análisis y Especificación de Requerimientos – Historias de Usuario, elaborada para formalizar las funcionalidades necesarias del Formulario de Búsqueda Activa. El documento recopila los requerimientos funcionales y no funcionales identificados a partir del levantamiento de información con el equipo funcional de la Secretaría de Educación del Distrito (SED), incluyendo la descripción detallada de historias de usuario que estructuran el flujo operativo del sistema propuesto.
+
+Elmer Aranguren
+
+
+
+
+
+
+
+
+	•	Propósito del documento <Nota: Esta sección no se debe modificar>
+
+El presente documento tiene como propósito definir de manera detallada las especificaciones correspondientes a los requerimientos funcionales y no funcionales necesarios para el desarrollo de un sistema de información orientado a optimizar la gestión de los procesos administrativos, académicos, entre otros, que se adelantan en la Secretaría de Educación del Distrito (SED). 
+
+	•	Definiciones, Siglas y Abreviaturas
+
+Con el propósito de garantizar claridad, consistencia y un entendimiento común entre todos los actores involucrados en el desarrollo del sistema, este capítulo reúne las siglas, abreviaturas y definiciones relevantes utilizadas a lo largo del documento de historias de usuario. La inclusión de este apartado busca evitar ambigüedades, facilitar la comunicación entre equipos técnicos y de negocio y asegurar que cada termino empelado sea interpretado de manera uniforme, fortaleciendo así la trazabilidad y la precisión en la gestión de requerimientos.
+
+
+Termino / Sigla
+Definición
+
+0
+
+Sin Identificación. Representa la ausencia de un documento válido o reconocido por el sistema. Se utiliza como valor por defecto cuando el usuario no representa soporte de identidad.
+
+CC
+
+Cédula de ciudadanía. Documento oficial expedido por la Registraduría Nacional que identifica a los ciudadanos colombianos mayores de edad. Es el principal mecanismo de identificación en trámites legales, financieros y administrativos.
+
+CCB
+
+Certificado cabildo. Documento emitido por autoridades indígenas que acredita la pertenencia de una persona a un cabildo o comunidad indígena reconocida. Garantiza derechos colectivos y diferenciales en el marco legal colombiano.
+
+CE
+
+Cédula de extranjería. Documento expedido por Migración Colombia que identifica a extranjeros residentes en el país. Permite realizar trámites legales, laborales y financieros dentro del territorio nacional.
+
+ND
+
+Documento expedido en el extranjero. Hace referencia a cualquier documento de identidad emitido por autoridad extranjera (pasaporte, cedula nacional, etc.,) que sirve como soporte de identificación en Colombia.
+
+NES
+
+Número establecido por la secretaria. Código asignado por una entidad administrativa local (secretaría) para identificar a personas en procesos específicos, generalmente de carácter educativo, social o de salud.
+
+NIP
+
+Número de identificación personal. Código numérico asignado a un individuo para tramites internos en instituciones educativas, financieras o administrativas. Se utiliza como identificador único en sistemas cerrados.
+
+NUIP
+
+Número único de identificación personal. Sustituye progresivamente al registro civil y a otros números de identificación. Es un código permanente que acompaña a la persona desde su nacimiento hasta su fallecimiento.
+
+PEP
+
+Permiso especial de permanencia. Documento otorgado por Migración Colombia a ciudadanos extranjeros en situación especial (ejemplo: venezolanos), que les permite residir y trabajar legalmente en el país por un tiempo determinado.
+
+PPT
+
+Permiso de protección temporal. Documento transitorio que otorga a extranjeros en condición de vulnerabilidad el derecho a permanecer en Colombia, acceder a servicios básicos y realizar actividades laborales.
+
+RC
+
+Registro civil de nacimiento. Documento oficial que acredita el nacimiento de una persona en Colombia. Es el primer soporte de identidad y se utiliza para tramites posteriores como la expedición de la tarjeta de identidad o cédula.
+SC
+Salvoconducto. Documento expedido por Migración Colombia que autoriza temporalmente la permanencia de un extranjero en el país mientras se define su situación migratoria. Tiene vigencia limitada.
+TI
+Tarjeta de identidad. Documento expedido por la Registraduría nacional para identificar a menores de edad entre 7 y 17 años. Es requisito para tramites escolares, médicos y administrativos.
+TMF
+Tarjeta de movilidad fronteriza. Documento que permite a ciudadanos de países vecinos (ejemplo: Venezuela) realizar transito frecuente en zonas de frontera, facilitando actividades comerciales y familiares.
+VI
+Visa. Documento expedido por el Ministerio de Relaciones Exteriores que autoriza a un extranjero a ingresar y permanecer en Colombia por un tiempo determinado, según el tipo de visa (turismo, trabajo, estudio, etc.).
+
+
+	•	Justificación de la necesidad
+
+Actualmente, la Secretaría de Educación del Distrito (SED) enfrenta múltiples retos en la gestión de sus procesos administrativos y académicos debido al uso de herramientas dispersas, procedimientos manuales y la falta de integración entre las diferentes áreas. Estas condiciones generan demoras en la atención, duplicidad de información, baja trazabilidad de las actividades y dificultades para el seguimiento eficiente de trámites y servicios internos.
+Además, se ha identificado una creciente necesidad de contar con un sistema de información centralizado que permita automatizar y estandarizar los flujos de trabajo, mejorar la calidad de los datos y facilitar la toma de decisiones con base en información confiable y oportuna.
+En este contexto, el desarrollo de nuevas funcionalidades responde a la necesidad de modernizar y optimizar la operación institucional, garantizando mayor eficiencia, transparencia y control en los distintos procesos de la SED. Esta iniciativa surge de la articulación con las áreas funcionales, quienes han manifestado sus requerimientos en función de las limitaciones actuales y los objetivos estratégicos de mejora continua en la gestión educativa.
+
+	•	Información de la solicitud
+
+Área Usuaria
+<Indique el nombre del área/dependencia usuaria>
+Usuario Funcional solicitante
+<Nombre del líder funcional del proyecto>
+Fecha de la Solicitud
+<DD-MM-YYYY>
+No. de caso
+<Especifique el número del caso con el cual se entrega la actividad para su implementación según categoría de servicio en la herramienta de Gestión de Servicios TIC de la SED>
+Responsables levantamiento de información
+<Listar cada una de las personas del área usuaria que apoyaron durante el levantamiento de requerimientos>
+Categoría del aplicativo
+Misional      ____ 
+De apoyo    ____ 
+Estratégico ____
+Evaluación y mejora _____
+
+<Marcar con una X la categoría que aplica. Por favor solo marcar una opción>
+
+
+
+	•	Diagrama flujo de actividades del proceso
+
+El siguiente diagrama de flujo describe una representación estructurada del proceso de registro de información educativa y sociodemográfica de estudiantes dentro de un sistema institucional. Su propósito es garantizar la trazabilidad y la integridad de los datos, desde la autenticación inicial del usuario hasta la generación de un reporte consolidado en PDF. Cada sección refleja un conjunto de decisiones y registros clave como identificación, solicitud de cupo, información del responsable y factores de descolarización, que permiten no solo validar la identidad del estudiante, sino también contextualizar su situación personal y familiar. Este enfoque sistemático asegura que la información recopilada sea completa, coherente y útil para la gestión educativa y la toma de decisiones en políticas de inclusión.
+
+
+
+	•	Lista de actores del sistema	
+
+
+Nombre del actor/rol de usuario
+Descripción
+Usuario autenticado
+Persona que accede a la plataforma utilizando credenciales válidas. Realiza operaciones dentro del sistema únicamente después de haber sido identificado y autorizado.
+Administrador del sistema
+Responsable de gestionar credenciales, roles y permisos. Supervisa la seguridad del acceso y garantiza que solo personal autorizado utilice las funcionalidades.
+Responsable del estudiante (familiar/acudiente/cuidador)
+Actor que proporciona información de contacto y autorización legal para el proceso de inscripción. Es el canal oficial de comunicación entre la institución y el estudiante.
+Estudiante
+Miembro de la población objetivo que participa en el proceso de inscripción, caracterización sociodemográfica y registro de información personal. Puede ser sujeto de solicitudes de cupo educativo.
+Analista de factores de desescolarización
+Actor encargado de registrar y analizar los motivos de abandono escolar, con el fin de diseñar estrategias de reintegración y prevención.
+Funcionario de caracterización sociodemográfica
+Encargado de registrar y validar datos personales de la población objetivo para fines de análisis, segmentación y diseño de políticas educativas
+Solicitante de cupo educativo
+Persona interesada en acceder a programas de formación. Registra su solicitud ene le sistema para que sea canalizada y gestionada.
+Gestor de cupos educativos
+Funcionario que recibe, administra y prioriza las solicitudes de cupo. Se encarga de canalizar la información y garantizar la asignación transparente.
+Hermano/a del estudiante
+Actor indirecto cuya información es registrada para facilitar procesos de agrupación familiar, solicitudes de permanencia conjunta y priorización de cupos.
+
+
+	•	Requerimientos
+
+En este ítem se presentan y describen los requerimientos funcionales y no funcionales necesarios para el desarrollo del Formulario de Búsqueda Activa.
+
+	•	Requerimiento funcional: Describe una necesidad de negocio en términos de capacidades y/o servicios funcionales que ofrece un sistema
+
+	•	Requerimiento no funcional: Indica las restricciones y/o atributos de calidad de software que debe tener el sistema para que este pueda operar correctamente.
+
+
+	•	Requerimientos funcionales
+
+De conformidad con las sesiones de trabajo realizadas con el equipo funcional, se definió que el Formulario de Inscripciones tendría el siguiente alcance funcional.
+
+
+
+	•	Necesidad de  negocio 1: Garantizar que el acceso a la plataforma esté restringido únicamente a usuarios previamente autenticados mediante el uso de credenciales validas. Esto permite proteger la información sensible y garantizar que las funcionalidades del sistema sean utilizadas únicamente por personal autorizado.
+
+	•	Necesidad de negocio 2: Se requiere que el sistema permita visualizar y navegar dentro de la aplicación.
+
+	•	Necesidad de Negocio 3: Se necesita un sistema funcional que permita el registro, consulta, filtrado y seguimiento de las actividades. Esta funcionalidad debe garantizar la trazabilidad, integridad y facilidad de uso en la gestión de búsqueda activa, optimizando el control operativo y facilitando la toma de decisiones basada en información estructurada.
+
+	•	Necesidad de negocio 4: Registrar datos personales de la población objetivo para caracterización.
+
+	•	Necesidad de negocio 5: Se requiere un mecanismo formal, confiable y centralizado que permita capturar, gestionar y canalizar las solicitudes de cupo educativo provenientes de la población interesada en acceder a programas de formación.
+
+	•	Necesidad de negocio 6: Identificar y registrar de forma clara a la persona responsable del estudiante (familiar, acudiente o cuidador), permitiendo establecer canales de contacto y garantizar la autorización legal para el proceso de inscripción.
+
+	•	Necesidad de negocio 7: Conocer los motivos que han llevado a niños, niñas, adolescentes y/o  jóvenes a abandonar el sistema escolar, con el fin de diseñar estrategias de reintegración y prevención del abandono.
+
+
+En ese sentido, el siguiente apartado, describe los requerimientos funcionales identificados para cada una de las necesidades de negocio anteriormente listadas.
+
+
+
+	•	Lista de requerimientos
+
+A continuación, se presentan el listado de requerimientos funcionales y no funcionales del Formulario de Búsqueda Activa, en términos de historias de usuario:
+
+
+       Tabla 1 Listado de historias de usuario
+Necesidad de negocio
+Código
+Historia de usuario
+Nombre de la historia de usuario
+Garantizar que el acceso a la plataforma esté restringido únicamente a usuarios previamente autenticados mediante el uso de credenciales válidas. Esto permite proteger la información sensible y garantizar que las funcionalidades del sistema sean utilizadas únicamente por personal autorizado.
+HU-001
+Acceso autenticado al sistema
+Se requiere que el sistema permita visualizar y navegar dentro de la aplicación.
+HU-002
+Acceso centralizado a funcionalidades mediante barra de navegación.
+Se necesita un sistema funcional que permita el registro, consulta, filtrado y seguimiento de las actividades. Esta funcionalidad debe garantizar la trazabilidad, integridad y facilidad de uso en la gestión de búsqueda activa, optimizando el control operativo y facilitando la toma de decisiones basada en información estructurada.
+HU-003
+Consulta, creación y actualización de registros.
+Registrar datos personales de la población objetivo interesada en acceder a programas de formación para su respectiva caracterización.
+HU-004
+Registro de información sociodemográfica del estudiante
+Se requiere un mecanismo formal, confiable y centralizado que permita capturar, gestionar y canalizar las solicitudes de cupo educativo provenientes de la población interesada en acceder a programas de formación.
+HU-005
+Registro de solicitud de cupo educativo.
+Identificar y registrar de forma clara a la persona responsable del estudiante (familiar, acudiente o cuidador), permitiendo establecer canales de contacto y garantizar la autorización legal para el proceso de inscripción.
+HU-006
+Registro de la información de contacto del responsable del estudiante
+Conocer los motivos que han llevado a niños, niñas, adolescentes y/o  jóvenes a abandonar el sistema escolar, con el fin de diseñar estrategias de reintegración y prevención del abandono.
+HU-007
+Registro de factores de descolarización
+
+	•	Especificación de Requerimientos Funcionales mediante Historias de usuario
+
+Los requerimientos funcionales expresan la naturaleza del funcionamiento del sistema (cómo interacciona el sistema con su entorno y cuáles van a ser su estado y funcionamiento), es decir, que corresponden a las descripciones explícitas del comportamiento que debe tener una solución de software y que información debe manejar. Es de aclarar, que existen varios instrumentos de especificación de requisitos funcionales, que independiente de la metodología de desarrollo a emplear, se elaboran desde dos perspectivas: perspectiva del cliente (misional) y perspectiva técnica (desarrollador de software, profesional de base de datos, analista de pruebas, entre otros).  
+
+A continuación, se presentan las historias de usuario definidas para el Formulario de Búsqueda Activa
+ de la SED. Recuerde especificar los reportes requeridos por los usuarios para consultar su información:
+
+
+HU_001 Acceso autenticado al sistema
+Necesidad de negocio
+Garantizar que el acceso a la plataforma esté restringido únicamente a usuarios previamente autenticados mediante el uso de credenciales válidas. Esto permite proteger la información sensible y garantizar que las funcionalidades del sistema sean utilizadas únicamente por personal autorizado.
+Código HU
+HU-001
+
+Nombre HU
+Acceso autenticado al sistema
+Prioridad: Alta __X__                      Media____                  Baja____
+Actor/rol de usuario: Usuario del sistema
+Descripción:  El propósito de esta historia de usuario es permitir controlar el acceso a las funcionalidades protegidas del sistema mediante el ingreso de credenciales personales. A través de este mecanismo, se garantiza que solo los usuarios autorizados puedan interactuar con los módulos disponibles, fortaleciendo la seguridad del sistema y asegurando la trazabilidad de las acciones realizadas dentro de la plataforma.
+
+Como usuario autorizado,
+Quiero acceder al sistema únicamente mediante credenciales válidas,
+Para proteger la información sensible y garantizar que las funcionalidades sean utilizadas solo por personal autorizado.
+
+Precondiciones: 
+
+	•	El usuario debe tener una cuenta registrada en el sistema.
+
+	•	El sistema debe estar en funcionamiento y accesible desde un navegador web.
+
+	•	El módulo de autenticación debe estar integrado con la base de datos de usuarios.
+
+Flujo operativo (Pasos):
+
+Este formulario corresponde a la pantalla de autenticación del sistema para el acceso de usuarios registrados. A continuación, se detallan los pasos que debe seguir el usuario para completar el ingreso al sistema
+
+
+Paso 1. Acceder al formulario
+
+	•	El usuario ingresa a la aplicación web a través de un navegador. (URL= espacio para la URL)
+
+	•	Se carga la interfaz con:
+
+	•	Imagen institucional de fondo.
+
+	•	Formulario de autenticación en el centro con los campos Usuario, Contraseña y el botón iniciar sesión.
+
+
+Paso 2. Digitar credenciales
+
+	•	El usuario debe:
+
+	•	Ingresar su nombre de usuario en el campo de texto identificado como “Usuario”.
+
+	•	Ingresar su clave personal en el campo “Contraseña”, el cual enmascara el texto para proteger la visibilidad.
+
+	•	Ambos campos son obligatorios.
+
+
+Paso 3. Enviar las credenciales
+
+	•	Al hacer clic en el botón “Iniciar sesión”, el sistema realiza lo siguiente:
+
+	•	Validación local (Frontend):
+
+	•	Verifica que ambos campos no estén vacíos.
+
+	•	Muestra mensajes tipo “ingresa un usuario válido (mínimo 5 caracteres).” O “la contraseña debe tener entre 8 y 30 caracteres” cuando alguno de los campos se encuentra vacío.
+
+
+	•	Llamado al backend (API REST):
+
+	•	Se realiza una solicitud POST al servicio de autenticación.
+
+	•	Si las credenciales son válidas, el backend responde con un token Bearer
+
+Paso 4. Manejo de errores
+
+	•	Si ocurre un error durante el proceso de autenticación, el sistema responde con mensaje claro al usuario:
+
+	•	Credenciales inválidas: “Error al iniciar sesión. Inténtelo más tarde”
+
+
+Paso 5. Acceso al sistema
+
+	•	Si la autenticación es exitosa:
+
+	•	El sistema redirige automáticamente al usuario a la pantalla principal inicial del software.
+
+	•	Desde allí podrá continuar con sus tareas dentro del sistema.
+
+Notas:
+
+Flujos alternos con sus excepciones (Pasos):
+
+
+FA-001: Contraseña o usuario incorrecto, el sistema muestra un mensaje de error indicando que las credenciales no son válidas. El usuario debe intentar nuevamente.
+
+FA-002: Falta de conexión con el backend (API), se muestra un mensaje informando que no fue posible conectar con el servidor. El ingreso no es posible hasta que se restablezca la conexión.
+
+FA-003: Token expirado o inválido (Bearer), el sistema bloquea el acceso e informa que la sesión ha expirado o no es válida. Se solicita reautenticación.
+
+FA-004: Campos vacíos, si el usuario intenta ingresar sin completar los campos requeridos, se muestra un mensaje de validación solicitando el ingreso de ambos datos.
+
+EX-001: No aplica
+
+Post-condiciones: 
+
+	•	El sistema válida las credenciales ingresadas.
+
+	•	Se genera y almacena en sesión un token de autenticación tipo Bearer.
+
+	•	El usuario es redirigido al formulario según su perfil y permisos.
+
+	•	Se habilita el acceso a los servicios API protegidos.
+
+Criterios de aceptación: 
+
+	•	El sistema debe permitir el ingreso únicamente cuando las credenciales sean correctas.
+
+	•	En caso de error en usuario o contraseña, debe mostrarse un mensaje claro de advertencia.
+
+	•	Si no hay conexión con el servidor o el backend, debe aparecer un mensaje de falla de comunicación.
+
+	•	El formulario debe validar que ningún campo no quede vacío antes de hacer la solicitud.
+
+	•	Al iniciar sesión exitosamente, el usuario debe ser redirigido al entorno del sistema donde se realiza la gestión del formulario.
+
+	•	El token generado debe almacenarse correctamente y utilizarse para las llamadas subsecuentes a servicios REST.
+
+	•	La sesión debe finalizar correctamente cuando se cierre sesión o se expire el token.
+
+Datos de Entrada: Corresponde a los campos que debe registrar o seleccionar el usuario cuando interactúa con la aplicación
+
+Campo
+Tipo
+Longitud
+¿Obligatorio?
+Observaciones
+Usuario
+Cadena
+Min: 5 caracteres
+SI
+Debe estar registrado previamente
+Contraseña
+Cadena (oculto)
+Min: 8 Máx: 30 caracteres 
+SI
+Campo enmascarado. Se recomienda política segura de contraseñas
+
+
+Datos de Salida: Corresponde a los campos que deben visualizarse cuando el sistema proceso la solicitud y entrega un resultado.
+
+
+Campo
+Tipo
+Longitud
+¿Obligatorio?
+Observaciones
+Token de autenticación
+Cadena (Bearer Token)
+-
+-
+Cadena alfanumérica que se incluye en la cabecera de autorización para acceder a los servicios del backend
+Redirección
+Ruta / Interfaz
+-
+-
+Interfaz o vista inicial del sistema a la que se dirige al usuario una vez autenticado
+Mensajes del sistema
+Texto
+-
+-
+Mensajes de error o confirmación (por ejemplo: “Error al iniciar sesión. Inténtelo más tarde”)
+ 
+
+Observaciones y/o supuestos:
+
+	•	El sistema asume que el usuario ya ha sido creado previamente en la base de datos del sistema y cuenta con credenciales válidas (usuario y contraseña).
+
+	•	La autenticación se realiza mediante servicios REST protegidos por un mensaje de seguridad tipo Bearer Token, el cual es obligatorio para consumir cualquier servicio posterior.
+
+	•	En caso de pérdida de conectividad con el backend o error de red, el sistema debe mostrar un mensaje claro e impedir el avance en el flujo.
+
+	•	No se permite el ingreso con campos vacíos; el sistema valida que el usuario y la contraseña hayan sido diligenciados antes de enviar la solicitud.
+
+	•	El campo de contraseña debe estar enmascarado por razones de seguridad.
+
+	•	No se realiza recuperación de contraseña desde esta pantalla; cualquier proceso de restablecimiento debe gestionarse por medios externos o desde otra funcionalidad.
+
+	•	El sistema debe redirigir automáticamente al formulario tras una autenticación exitosa.
+
+
+
+HU_002 Acceso centralizado a funcionalidades mediante barra de navegación
+Necesidad de negocio
+Se requiere que el sistema permita visualizar y navegar dentro de la aplicación.
+Código HU
+HU-002
+
+Nombre HU
+Acceso centralizado a funcionalidades mediante barra de navegación.
+Prioridad: Alta __X__                      Media____                  Baja____
+Actor/rol de usuario: Usuario del sistema
+Descripción:  El propósito de esta historia de usuario es permitir el acceso a una barra de navegación con funcionalidades especificas haciendo clic sobre su nombre de usuario ubicado en la barrade navegación superior. Esta funcionalidad permite identificar y acceder rápidamente a las distintas secciones disponibles dentro del sistema, facilitando la navegación, el uso eficiente de las funcionalidades y el análisis de los flujos de trabajo desde una perspectiva organizativa para la mejora continua de los procesos operativos.
+
+Como usuario autorizado,
+Quiero acceder a una barra de navegación superior que centralice las funcionalidades disponibles y se despliegue al hacer clic sobre mi nombre de usuario,
+Para visualizar y navegar de manera eficiente entre las distintas secciones del sistema, proteger la información sensible y garantizar que las funcionalidades sean utilizadas únicamente por personal autorizado.
+
+Precondiciones: 
+
+	•	El usuario debe haber iniciado sesión correctamente en el sistema.
+
+	•	El sistema debe haber cargado completamente el entorno de la aplicación
+
+	•	El usuario debe visualizar la barra de navegación con el nombre de usuario visible.
+
+	•	La barra de navegación debe estar configurada con las funcionalidades correspondientes al perfil de usuario
+
+Flujo operativo (Pasos):
+
+
+Paso 1. Visualización de la barra de navegación 
+
+	•	Una vez el usuario ha ingresado correctamente al sistema, se muestra en la parte superior una franja naranja que corresponde a la barra de navegación.
+
+Paso 2. Identificación de elementos
+
+	•	Dentro de la barra de navegación se identifican los siguientes elementos:
+
+	•	Sección de inicio en la parte izquierda
+
+	•	Un botón con el nombre de usuario (ej. “prueba”) y un icono.
+
+	•	Opción para Salir de la sesión.
+
+
+Paso 3. Acceso al menú de usuario
+
+	•	El usuario al hacer clic sobre el botón con su nombre (por ejemplo, “prueba”). Esto abrirá un menú lateral
+
+
+Paso 4. Despliegue del menú lateral
+
+	•	Al hacer clic en el botón de usuario, se despliega un menú lateral titulado “Menú”, que incluye las opciones:
+
+	•	Home
+
+	•	Formulario Búsqueda activa
+
+
+Paso 5. Selección de una funcionalidad
+
+	•	El usuario selecciona la funcionalidad deseada dando clic sobre alguna de las opciones del menú desplegable.
+
+	•	Al seleccionar Home, redirige al usuario a la sección  de listado de registros búsqueda activa.
+
+	•	Al seleccionar Formulario Búsqueda Activa, redirige al usuario al formulario en la Etapa I
+
+
+Paso 6. Cierre del menú
+
+	•	Para cerra el menú lateral, el usuario puede hacer clic en la “X” ubicada en la parte superior derecha del panel.
+
+Notas:
+
+Flujos alternos con sus excepciones (Pasos):
+
+FA-01: Cierre del menú sin seleccionar opción: El usuario hace clic en el botón de cierre (ícono de "X") sin seleccionar ninguna opción del menú. El sistema cierra el menú lateral sin realizar ninguna redirección ni cambio de vista. 
+FA-02: Cambio de opción dentro del menú sin cerrarlo: El usuario abre el menú lateral y hace clic en una opción, pero luego decide seleccionar otra sin cerrar el menú.  El sistema actualiza la vista correspondiente sin necesidad de volver a abrir el menú.
+
+EX-01: El menú no se despliega al hacer clic en el nombre de usuario: Puede deberse a una falla de renderización o a un error de conexión con los servicios. El sistema debe mostrar un mensaje de error o advertencia como: "No se pudo cargar el menú. Intenta nuevamente." 
+EX2: El usuario no tiene permisos para ver una o más opciones del menú: Las opciones sin permiso deben estar deshabilitadas u ocultas. Al hacer clic, se debe mostrar un mensaje: "No tiene permisos para acceder a esta funcionalidad." 
+EX3: Fallo en el backend al intentar acceder a una opción seleccionada: Si al seleccionar una opción, el sistema no logra conectarse al servicio correspondiente (por ejemplo, un API con fallo), debe aparecer un mensaje emergente: "No se pudo cargar la funcionalidad seleccionada. Por favor, intente más tarde."
+
+Post-condiciones: 
+
+	•	El usuario ha accedido exitosamente a una funcionalidad específica del sistema seleccionada desde el menú.
+
+	•	El sistema ha redirigido o cargado la sección correspondiente
+
+Criterios de aceptación: 
+
+	•	Al hacer clic en el nombre de usuario, se debe desplegar un menú lateral con opciones claras.
+
+	•	Las opciones del menú deben estar habilitadas y ser navegables según los permisos del usuario.
+
+	•	Al seleccionar una opción, se debe redirigir correctamente al módulo correspondiente
+
+	•	El menú debe cerrarse correctamente al hacer clic en la “X”.
+
+
+Datos de Entrada: No se ingresan datos (No es un formulario)
+
+Datos de Salida: No se ingresan datos (No es un formulario)
+
+Observaciones y/o supuestos:
+
+	•	Se asume que el usuario cuenta con roles o permisos que le permiten visualizar al menos una opción del menú desplegable.
+
+	•	Se supone que el menú se renderiza dinámicamente en función del perfil del usuario.
+
+	•	Se utiliza autenticación con token Bearer para garantizar la seguridad de las rutas accedidas desde el menú.
+
+	•	En caso de error de conexión con los servicios API, el sistema mostrará un mensaje automático al usuario.
+
+
+
+
+
+
+
+
+
+HU_003 Consulta, creación y actualización de registros
+Necesidad de negocio
+Se necesita un sistema funcional que permita el registro, consulta, filtrado y seguimiento de las actividades. Esta funcionalidad debe garantizar la trazabilidad, integridad y facilidad de uso en la gestión de búsqueda activa, optimizando el control operativo y facilitando la toma de decisiones basada en información estructurada.
+Código HU
+HU-003
+
+Nombre HU
+Consulta, creación y actualización de registros.
+Prioridad: Alta __X__                      Media____                  Baja____
+Actor/rol de usuario: Usuario del sistema
+Descripción:  El propósito de esta historia de usuario es permitir acceder al formulario de búsqueda activa para consultar, crear o continuar registros. A través de filtros por estado y etapa, y del botón “Nuevo registro”, puede gestionar eficientemente el avance de cada caso. Esta funcionalidad organiza la información por etapas, garantiza la trazabilidad del proceso y mejora la operatividad institucional mediante un seguimiento claro y estructurado de las intervenciones realizadas.
+
+Como usuario autorizado,
+Quiero acceder a un formulario de Búsqueda activa con filtros por estado y etapa, además de contar con la opción de crear un nuevo registro,
+Para consultar, gestionar y dar continuidad a los casos de manera eficiente, asegurar la trazabilidad de cada proceso y mejorar la operatividad institucional mediante un seguimiento claro y estructurado.
+
+Precondiciones: 
+
+	•	El usuario debe estar autenticado en el sistema.
+
+	•	La función de “Listado de registros Búsqueda activa” debe estar habilitado.
+
+	•	El usuario debe tener permisos para ver, crear y editar registros.
+
+Flujo operativo (Pasos):
+
+Paso 1. Ingresar al módulo de registros
+
+	•	Accede a la sección “Listado de registros búsqueda activa”.
+
+	•	Se presenta una interfaz con:
+
+	•	Barra de búsqueda por clave.
+
+	•	Filtro de estado (-- Todos los estados--).
+
+	•	Filtro de etapa (-- Todas las etapas --)
+
+	•	Botón de color distintivo: “Nuevo registro” ubicado en la parte superior derecha.
+
+
+Paso 2. Crear un nuevo registro
+
+	•	Haz clic en el botón “Nuevo registro”.
+
+	•	El sistema redirige al formulario de inicio (etapa I) para diligenciar un nuevo registro.
+
+	•	Se inicia el flujo desde la Etapa 1, donde se ingresa la información del estudiante
+
+
+Paso 3. Visualizar los registros existentes
+
+	•	Se muestran tarjetas individuales con los registros creados.
+
+	•	Cada tarjeta incluye:
+
+	•	Número de registro.
+
+	•	Fecha.
+
+	•	Última sección registrada.
+
+	•	Población atendida.
+
+	•	Localidad y barrio.
+
+	•	Estado actual (ej. “Pendiente” en azul oscuro o “Finalizado” en color naranja).
+
+
+Paso 4. Filtrar por estado del registro
+
+	•	Haz clic en el menú desplegable de “Todos los estados”
+
+	•	Selecciona una opción:
+
+	•	Finalizados.
+
+	•	Pendientes
+
+	•	La lista se actualiza para mostrar solo los registros del estado seleccionado.
+
+
+Paso 5. Filtrar por etapa del proceso
+
+	•	Haz clic en el menú desplegable de “Todos las etapas”
+
+	•	Selecciona una etapa del 1 al 4 según lo que necesites revisar.
+
+	•	El sistema muestra únicamente los registros en esa etapa.
+
+Paso 6. Continuar o editar un registro
+	•	Dentro de cada tarjeta de registro: 
+	•	Botón naranja "Continuar con el registro de la etapa 1, 2, 3 o 4" para avanzar en el proceso. 
+	•	Menú desplegable "Editar información de una etapa" para modificar una etapa anterior específica (ej. Etapa 1). 
+	•	Botón "Resumen" para visualizar una vista general del registro completo. 
+Paso 7. Consultar información de contacto o soporte
+	•	En la parte inferior de la pantalla se encuentra el pie de página institucional. 
+	•	Incluye: 
+	•	Teléfonos de contacto. 
+	•	Correos electrónicos para notificaciones, tutelas y conciliaciones. 
+	•	Dirección física. 
+	•	Enlaces útiles como: 
+	•	Formulario único de trámites. 
+	•	Políticas de privacidad y datos personales. 
+Logos institucionales: Secretaría de Educación, Alcaldía de Bogotá, GOV.CO y botón "Matrículas".
+
+
+Notas:
+
+
+Flujos alternos con sus excepciones (Pasos):
+
+FA-01: Si el usuario aplica filtros de estado o etapa, la lista se actualiza automáticamente mostrando solo los registros coincidentes. 
+FA-02: Si el usuario desea editar una etapa anterior, selecciona la etapa en el desplegable y accede directamente a esa vista editable.
+
+EX-01: Si el usuario no tiene permisos de edición o creación:
+
+	•	El botón de "Nuevo registro" y edición estará deshabilitado o no visible. 
+	•	Se muestra un mensaje indicando que no cuenta con los permisos necesarios. 
+EX-02: Si ocurre un error de carga del listado o falla del servidor:
+	•	Se muestra un mensaje de error tipo: "No se pueden cargar los registros en este momento". 
+	•	Se recomienda intentar más tarde o contactar soporte técnico. 
+EX-03: Si no hay registros para los filtros seleccionados: No se visualiza ningún registro.
+
+Post-condiciones: 
+
+	•	Los registros quedan almacenados correctamente en el sistema.
+
+	•	El usuario puede seguir consultando, editando o filtrando según necesidad.
+
+	•	Se garantiza trazabilidad por fecha, actividad, población, localidad y etapa.
+
+Criterios de aceptación: 
+
+	•	El sistema debe mostrar correctamente el listado de registros al ingresar al módulo.
+
+	•	El botón “Nuevo registro” debe redirigir al formulario de etapa 1.
+
+	•	El usuario debe poder aplicar filtros por estado y etapa y visualizar resultados.
+
+	•	El usuario debe poder continuar los registros en etapas siguientes sin perder datos anteriores.
+
+	•	El usuario debe poder editar etapas anteriores solo si se tiene los permisos necesarios.
+
+	•	Debe mostrarse un resumen claro del registro con toda la información consolidada.
+
+	•	El sistema debe manejar adecuadamente los errores de carga y permisos.
+
+Datos de Entrada: Corresponde a los campos que debe registrar o seleccionar el usuario cuando interactúa con la aplicación
+
+Campo
+Tipo
+Longitud
+¿Obligatorio?
+Observaciones
+Búsqueda
+Cadena
+100
+NO
+Permite filtrar registros por texto libre
+Filtro de estado
+Cadena 
+- 
+NO
+Opciones: Todos los estados, Finalizados, No finalizados
+Filtro de etapa
+Cadena
+- 
+NO
+Opciones: Todos las etapas, Etapa 1 a Etapa 4 
+
+
+Datos de Salida: Corresponde a los campos que deben visualizarse cuando el sistema proceso la solicitud y entrega un resultado.
+
+
+Campo
+Tipo
+Longitud
+¿Obligatorio?
+Observaciones
+Fecha del registro
+Fecha
+-
+SI
+Fecha en la que se creó el registro
+Última sección registrada
+Cadena
+100
+SI
+Indica el punto actual en el flujo del registro
+Actividad realizada
+Cadena
+150
+SI
+Describe la actividad ejecutada
+Estado del registro
+Cadena
+20
+SI
+Ejemplo: “Pendiente”, “Finalizado”
+ 
+
+Observaciones y/o supuestos:
+
+	•	Se asume que el sistema valida automáticamente la secuencia de etapas y no permite saltos sin completar la anterior.
+
+	•	Los estados “Finalizado” y “Pendiente” se determinan con base en si todas las etapas han sido completadas.
+
+	•	El sistema puede ser usado por múltiples perfiles, pero con permisos diferenciados.
+
+
+
+HU_004 Registro de información sociodemográfica del estudiante
+Necesidad de negocio
+Registrar datos personales de la población objetivo interesada en acceder a programas de formación para su respectiva caracterización.
+Código HU
+HU-004
+
+Nombre HU
+Registro de información sociodemográfica del estudiante
+Prioridad: Alta __X__                      Media____                  Baja____
+Actor/rol de usuario: Usuario del sistema
+Descripción:  El propósito de esta historia de usuario es permitir la recolección estructurada de datos personales y sociodemográficos de la persona que aspira  a acceder o reintegrarse al sistema educativo, incluyendo su identificación, información de nacimiento, identidad de género, condiciones de discapacidad y pertenencia a poblaciones diferenciales. Este registro permite construir un perfil completo del potencial estudiante, facilitando que las entidades responsables brinden una atención pertinente, incluyente y ajustada a las características individuales. Además garantiza que cada solicitud esté respaldada por información precisa y útil para la toma de decisiones educativas.
+
+Como usuario encargado de registrar aspirantes,
+Quiero recolectar los datos personales y sociodemográficos del aspirante,
+Para construir un perfil completo que permita a las entidades responsables ofrecer una atención pertinente, incluyente y ajustada, garantizando decisiones educativas basadas en información precisa.
+
+Precondiciones: 
+
+Para que el usuario pueda ingresar a esta sección del formulario , debe haber diligenciado previamente los siguientes pasos:
+
+	•	Haber iniciado sesión ene l sistema.
+
+	•	Haber completado en su totalidad la información de las secciones anteriores (registro información del responsable o acudiente, registro de factores de descolarización)
+
+	•	Posteriormente, el sistema habilitara la siguiente sección para ser diligenciada.
+
+Flujo operativo (Pasos):
+
+	•	Información sociodemográfica del estudiante (Etapa 1)
+
+Paso 1. Seleccionar si: Estudiante mayor de edad y se representa a nombre propio?
+
+	•	Responder SI / NO
+
+	•	Si la respuesta es “SI” se habilitan los siguientes campos:
+
+	•	Correo electrónico
+
+	•	Número de celular
+
+	•	Si la respuesta es “No”,  se continua con el flujo iniciando con el país de origen.
+
+Paso 2. Seleccionar el país de nacimiento del estudiante (Campo obligatorio)
+
+	•	Desplegar el menú  y escoger el país de nacimiento, según corresponda.
+
+
+Paso 3. Seleccionar el tipo de documento (Campo obligatorio)
+	•	Desplegar el menú y escoger el tipo de documento de identidad de la persona que atiende (por ejemplo: Cédula de Ciudadanía, Cédula De Extranjería, etc.)
+	•	CC: cédula de ciudadanía
+
+	•	TI: Tarjeta de identidad
+
+	•	CE: Cédula de extranjería
+
+	•	PPT: Permiso de protección temporal
+
+	•	RC: Registro civil de nacimiento
+
+	•	VI: Visa
+
+	•	0:  Sin identificación
+
+
+Paso 4. Ingresar el número de documento (Campo obligatorio)
+
+	•	Escribir el número completo del documento sin puntos ni caracteres especiales.  (Ejemplo: 1115676256)
+
+
+Paso 5 . Validar información para evitar duplicidad en el registro de la información.
+
+	•	Una vez ingresado el numero de documento del estudiante, el sistema debe mostrar el botón “Validar información”, en el cual se hace clic para obtener el resultado de la consulta.
+
+	•	El sistema consulta en la base de datos registrada y hace la validación con el número de documento  ingresado, para evitar duplicidad en la información.
+	•	Si en la consulta no encuentra duplicidad del numero ingresado, el flujo del formulario continua.
+
+	•	Si en la consulta encuentra duplicidad en el número ingresado, el sistema inmediatamente despliega una ventana emergente informando que ya hay un registro asociado a ese número de documento, también muestra la fecha y hora en que se realizo el registro y la persona quien lo realizó. A su vez muestra el botón “Aceptar” , el cuál descarta los datos ingresados y redirige al usuario a iniciar un nuevo registro.
+
+Paso 6. Ingresar el primer nombre (Campo obligatorio)
+	•	Escribir el primer nombre en mayúscula (permite tildes).  (Ejemplo: JOSE)
+Paso 7. Ingresar el segundo nombre (Opcional)
+	•	Escribir el segundo nombre si la persona lo tiene. Si no aplica, dejar el campo en blanco. Escribir el nombre en mayúscula (permite tildes).
+Paso 8. Ingresar el primer apellido (Campo obligatorio)
+	•	Escribir el primer apellido en mayúscula (permite tildes).  (Ejemplo: VILLAMIZAR)
+Paso 9. Ingresar el segundo apellido (Opcional)
+	•	Escribir el segundo apellido en mayúscula (permite tildes), si lo tiene. Si no, puede dejarse vacío.
+Paso 10. Ingresar o seleccionar la fecha de nacimiento usando el calendario, en formato DD/MM/AAAA
+            (Campo obligatorio)
+
+
+Paso 11. El sistema debe calcular y visualizar en pantalla la edad del estudiante a 31 de marzo de año en vigencia
+
+
+Paso 12. Seleccionar el sexo del estudiante desde el menú desplegable (Ej: Hombre, Mujer o Intersexual).
+               (Campo obligatorio)
+
+
+Paso 13. Seleccionar la etnia del estudiante desde el menú desplegable (Ej: Indígena, Negro, otro, etc.).
+               (Campo obligatorio)
+
+	•	Ninguna Pertenencia
+
+	•	Indígena
+
+	•	Rrom (gitano)
+
+	•	Raizal del Archipiélago de San Andrés, Providencia y Santa Catalina
+
+	•	Palenquero de San Basilio
+
+	•	Negro o Afrocolombiano
+
+
+Paso 14. Seleccionar el tipo de discapacidad, talento o trastorno de la persona (Ej: Visual, Auditiva, Múltiple, Intelectual, física, etc.). habilita automáticamente el campo adicional para cargar el soporte en formato PDF (Campo obligatorio)
+
+	•	En caso de seleccionar la opción "No ", el flujo continua con la siguiente pregunta.
+
+	•	Si se selecciona "Sí", se habilitan los siguientes campos adicionales:
+	•	Tipo de discapacidad, talento o trastorno
+
+	•	Cuenta con certificado o diagnóstico
+
+	•	Este campo es editable aun así se haya finalizado el proceso
+
+Paso 15. Seleccionar si se reconoce como parte de alguna población desde el menú desplegable (Campo obligatorio)
+
+	•	Ninguna población 
+
+	•	Exhabitante de calle
+
+	•	Habitante de calle
+
+	•	Migrante
+
+	•	Víctima del conflicto armado
+
+	•	Otro ¿Cuál?
+
+
+	•	Al seleccionar “Otro” se abre un nuevo campo para ingresar cual otra población. (Campo obligatorio)
+
+
+Paso 16. Ingresar el correo electrónico. Este campo solo se habilita cuando la respuesta es “SI” a la pregunta ¿Estudiante mayor de edad y se representa a nombre propio?  (Campo obligatorio).
+
+	•	Escribir una dirección válida de correo electrónico.
+(Ejemplo: lala@gmail.com)
+
+
+Paso 17. Ingresar el número de celular. Este campo solo se habilita cuando la respuesta es “SI” a la pregunta ¿Estudiante mayor de edad y se representa a nombre propio? (Campo obligatorio).
+
+	•	Escribir el número principal de celular. Debe tener 10 dígitos.
+(Ejemplo: 3057869870)
+
+	•	Este campo es editable aun así se haya finalizado el proceso
+
+
+Paso 18. Seleccionar la localidad (Campo obligatorio)
+	•	Elegir del listado la localidad correspondiente.  (Ejemplo: Antonio Nariño)
+
+Paso 19. Seleccionar el barrio de residencia (Campo obligatorio)
+	•	Escoger el barrio en el menú desplegable.  (Ejemplo: Caracas)
+Importante: Si el barrio no se encuentra en la lista, se debe seleccionar la opción "OTRO".
+Al hacerlo, se desplegará automáticamente un nuevo campo:
+	•	¿Cuál barrio? En este nuevo recuadro de texto, el usuario debe escribir manualmente el nombre del barrio.  (Ejemplo: Barrio Nuevo Horizonte)
+
+Paso 20. Seleccionar si la estudiante es gestante. Desplegar el menú y escoger SI/NO.  (Campo obligatorio)
+
+
+Paso 21. Dirección de la vivienda (Campo obligatorio): Completar la dirección básica
+	•	Seleccionar el tipo de vía (Ejemplo: Calle, Carrera, Avenida, etc.) 
+	•	Escribir el número de la vía. (Ejemplo: 30) 
+	•	Ingresar letra y sufijo si aplica. (Ejemplo: A Sur) 
+	•	Ingresar número secundario (Ejemplo: 10) y número final (Ejemplo: 2) 
+	•	El sistema construirá automáticamente la dirección:  Ejemplo: Calle 30 # 10 - 2
+	•	Ingresar complemento de dirección
+	•	Este campo es editable aun así se haya finalizado el proceso
+Añadir detalles como apartamento, torre, interior, etc.  (Ejemplo: Torre 1 Apto 301)
+Paso 22 Registrar y continuar
+	•	El sistema debe mostrar el botón “Registrar y continuar “ para guardar la información diligenciada  y avanzar a la siguiente etapa del formulario
+
+Notas:
+
+Flujos alternos con sus excepciones (Pasos):
+
+FA-01: Si el barrio de residencia no se encuentra en el menú desplegable, se habilita automáticamente el campo 13.1 para digitar manualmente el nombre del barrio.
+
+FA-02: Si el usuario selecciona la etnia “Otro”, se habilita un campo adicional para especificar “¿Cuál etnia?”.
+
+FA-03: Si se selecciona cualquier discapacidad, se habilita un campo adicional (11.1) para cargar un archivo PDF como soporte.
+
+EX-01: Si el usuario no acepta el tratamiento de datos personales, no podrá continuar con el formulario.
+
+EX-02: Número de documento con menos de 5 o más de 10 dígitos, o con caracteres no numéricos, se genera mensaje de error e impide continuar.
+
+Post-condiciones: 
+
+	•	La información demográfica queda registrada correctamente en el sistema. 
+	•	Se habilita la siguiente sección del formulario (Información del familiar). 
+	•	Si se cargaron soportes (como en discapacidad), estos quedan adjuntos al registro.
+
+Criterios de aceptación: 
+
+	•	El usuario debe aceptar el tratamiento de datos personales para continuar. 
+	•	Todos los campos obligatorios deben estar diligenciados correctamente. 
+	•	El sistema debe construir automáticamente la dirección completa con los campos suministrados. 
+	•	Si se selecciona "Otro" en etnia o barrio, deben habilitarse correctamente los campos adicionales. 
+	•	Si se indica una discapacidad distinta a "No aplica", debe activarse la opción para cargar el soporte. 
+
+Datos de Entrada: Corresponde a los campos que debe registrar o seleccionar el usuario cuando interactúa con la aplicación
+
+Campo
+Tipo
+Longitud
+¿Obligatorio?
+Observaciones
+Estudiante mayor de edad y se representa a nombre propio?
+
+Cadena
+5
+SI
+Responder “SI/NO”
+Tipo de documento
+Cadena
+25
+SI
+Lista desplegable
+Número de documento
+Cadena
+17
+SI
+Validación por tipo documental
+Primer nombre
+Cadena
+20
+SI
+
+Segundo nombre
+Cadena
+20
+NO
+
+Primer apellido
+Cadena
+20
+SI
+
+Segundo apellido
+Cadena
+20
+NO
+
+Fecha de nacimiento
+Cadena
+10
+SI
+Calendario (DD/MM/AAAA)
+Sexo del estudiante
+Booleano
+10
+SI
+Lista de despliegue
+Etnia
+Cadena
+100
+SI
+Si es “Otro”, se activa campo adicional. 
+¿Cuál etnia? (si aplica)
+Cadena
+100
+SI
+Solo si se seleccionó “Otro”.
+Tipo de discapacidad o trastorno
+Cadena
+100
+SI
+Si no aplica, no se activa el campo de soporte
+Soporte discapacidad (si aplica)
+Archivo PDF
+
+SI
+Si no aplica, no se activa el campo de soporte
+Se reconoce como parte de alguna población
+Cadena
+50
+SI
+Lista desplegable
+Correo electrónico
+
+
+SI
+Si no aplica, no se activa el campo de correo electrónico
+Número de celular
+
+
+SI
+Si no aplica, no se activa el campo de número de celular
+Localidad
+Cadena
+50
+SI
+Lista desplegable
+Dirección
+Cadena
+254
+SI
+
+Complemento dirección
+Cadena
+50
+NO
+
+Barrio residencia
+Cadena
+50
+SI
+Lista desplegable
+
+
+Datos de Salida: Se emplean los mismos datos de entrada previamente registrados por el usuario en este formulario dado que esta información se muestra en un archivo PDF.
+
+
+Observaciones y/o supuestos:
+
+	•	Validaciones automáticas. El sistema valida formato y obligatoriedad de los campos (por ejemplo, fecha, número de documento, campos condicionales). 
+	•	Campos condicionales. Algunos campos (como “¿Cuál etnia?”, “¿Cuál barrio?” y soporte en PDF) se muestran sólo si ciertas opciones son seleccionadas. 
+	•	Dirección generada automáticamente. La dirección se construye a partir de varios campos y debe ser revisada visualmente por el usuario. 
+	•	Formato de nombres y apellidos. Deben ingresarse en mayúsculas y sin tildes, según las instrucciones del formulario.
+
+
+
+HU_005 Registro de solicitud de cupo educativo
+Necesidad de negocio
+Se requiere un mecanismo formal, confiable y centralizado que permita capturar, gestionar y canalizar las solicitudes de cupo educativo provenientes de la población interesada en acceder a programas de formación.
+Código HU
+HU-005
+
+Nombre HU
+Registro de solicitud de cupo educativo
+Prioridad: Alta __X__                      Media____                  Baja____
+Actor/rol de usuario: Usuario del sistema
+Descripción:  El propósito de esta historia de usuario tiene como finalidad establecer un mecanismo formal, confiable y centralizado que permita a los ciudadanos interesados en programas de formación, registrar sus solicitudes de cupo educativo en un sistema único de gestión.
+
+Como ciudadano interesado en acceder a programas de formación,
+Quiero registrar mi solicitud de cupo educativo en un sistema centralizado,
+Para garantizar que mi petición sea gestionada de manera confiable, transparente y trazable por la entidad educativa.
+
+Precondiciones: 
+
+	•	El usuario debe tener una cuenta registrada en el sistema.
+
+	•	El sistema debe estar en funcionamiento y accesible desde un navegador web.
+
+	•	El módulo de autenticación debe estar integrado con la base de datos de usuarios.
+
+Flujo operativo (Pasos):
+
+	•	Solicitud de cupo educativo (Etapa 2)
+
+Paso 1. Seleccionar cual fue su último año aprobado desde el menú desplegable  (Campo obligatorio)
+
+	•	Sin estudio 
+
+	•	Pre Jardin
+
+	•	Jardin
+
+	•	Transición
+
+	•	Primero
+
+	•	Segundo
+
+	•	Tercero
+
+	•	Cuarto
+
+	•	Quinto
+
+	•	Sexto
+
+	•	Séptimo
+
+	•	Octavo
+
+	•	Noveno
+
+	•	Decimo
+
+
+Paso 2. Seleccionar la localidad de la institución donde solicita el cupo, desde el menú desplegable   
+                (Campo obligatorio)
+	•	Elegir del listado la localidad correspondiente.  (Ejemplo: Antonio Nariño)
+
+Paso 3. Seleccionar el nombre de las instituciones distritales a las cuales desea postularse desde una lista.         (Campo obligatorio).
+
+	•	El sistema permite seleccionar múltiples opciones.( puede seleccionar hasta 10 instituciones en orden de preferencia) 
+	•	Cada colegio seleccionado (por orden de preferencia) se muestra en formato de etiquetas removibles. 
+	•	El sistema valida que al menos un colegio haya sido seleccionado antes de continuar.
+
+
+Paso 4. Seleccionar grado asignado, desde el menú desplegable (Campo obligatorio)
+	•	El sistema debe validar y direccionar  al grado inmediatamente siguiente al año aprobado.
+Paso 5. Seleccionar si el estudiante tiene hermanos en el sistema, desde el menú desplegable (opciones: SI / NO). (Campo obligatorio).
+	•	Si se selecciona “No”, el sistema no muestra campos adicionales. 
+	•	Si se selecciona “Sí”, se despliegan nuevos campos obligatorios para ingresar los datos del hermano.
+
+
+Paso 6. Seleccionar el tipo de documento del hermano/a (Campo obligatorio).
+	•	Desplegar el menú y escoger el tipo de documento de identidad de la persona que atiende (por ejemplo: Cédula de Ciudadanía, Cédula De Extranjería, etc.)
+Paso 7. Ingresar el número de documento del hermano/a (Campo obligatorio).
+
+	•	Escribir el número completo del documento sin puntos ni caracteres especiales.  (Ejemplo: 1115676256)
+
+
+Paso 8. Ingresar el primer nombre del hermano/a (Campo obligatorio).
+
+	•	Escribir el primer nombre en mayúscula (permite tildes). (Ejemplo: JOSÉ)
+
+
+Paso 9. Ingresar el segundo nombre del hermano/a (Opcional).
+	•	Escribir el segundo nombre si la persona lo tiene. Si no aplica, dejar el campo en blanco. Escribir el nombre en mayúscula (permite tildes).
+Paso 10. Ingresar el primer apellido del hermano/a (Campo obligatorio).
+	•	Escribir el primer apellido en mayúscula (permite tildes).  (Ejemplo: VILLAMIZAR)
+Paso 11. Ingresar el segundo apellido del hermano/a (Opcional).
+	•	Escribir el segundo apellido en mayúscula (permite tildes), si lo tiene. Si no, puede dejarse vacío.
+Paso 12. Seleccionar si desea que el estudiante esté en la misma institución que su hermano/a. Desplegar menú y escoger SI/NO (Campo obligatorio).
+
+
+Paso 13. Seleccionar nombre de la institución donde está el hermano /a, desde el menú desplegable (Campo obligatorio)
+
+Paso 14 Registrar y continuar
+	•	El sistema debe mostrar el botón “Registrar y continuar “ para guardar la información diligenciada  y avanzar a la siguiente etapa del formulario.
+
+	•	Si el estudiante es mayor de edad y/o se representa a nombre propio, el sistema una vez registrada y guardada la etapa 2 lo redirige a la finalización del formulario 
+
+	•	El sistema debe mostrar el botón “Registrar y finalizar “ para guardar la información diligenciada  y finalizar el proceso. 
+
+	•	Al hacer clic en el botón “Registrar y finalizar ” aparece una ventana emergente indicando que la solicitud fue registrada correctamente, mostrando el número de solicitud y un mensaje de descarga automática de un archivo en  PDF.
+
+Notas:
+
+Flujos alternos con sus excepciones (Pasos):
+
+
+FA-001: datos incompletos en el formulario, el sistema muestra el mensaje “Debe completar todos los campos obligatorios.”
+
+FA-002: Formato inválido en los datos ingresados, el sistema muestra el mensaje “Formato inválido en el campo [nombre del campo]. Corrija la información para continuar.”
+
+FA-003: Usuario no autenticado o sesión expirada, el sistema muestra el mensaje “debe iniciar sesión para registrar una solicitud de cupo.”
+
+FA-004: Fallo en la conexión o disponibilidad del sistema, el sistema muestra el mensaje “ Servicio temporalmente no disponible. Intente nuevamente más tarde.”
+
+EX-001: No aplica
+
+Post-condiciones: 
+
+	•	El sistema válida las credenciales ingresadas.
+
+	•	Se genera y almacena en sesión un token de autenticación tipo Bearer.
+
+	•	El usuario es redirigido al formulario según su perfil y permisos.
+
+	•	Los campos obligatorios y opcionales quedan validados y guardados sin inconsistencias.
+
+	•	Se registra en bitácora la fecha , hora y usuario que realizo la acción.
+
+	•	La solicitud sirve como insumo para asignación de cupos y  generación de reportes estadísticos.
+
+Criterios de aceptación: 
+
+	•	El sistema debe impedir avanzar si no se diligencian los campos obligatorios
+
+	•	El sistema debe mostrar un mensaje claro indicando el campo faltante.
+
+	•	El sistema debe permitir seleccionar hasta máximo 10 instituciones en orden de preferencia.
+
+	•	El sistema debe validar que al menos un colegio haya sido seleccionado antes de continuar.
+
+	•	El sistema debe direccionar al grado inmediatamente siguiente al último año aprobado.
+
+	•	Si el usuario selecciona un curso inconsistente, el sistema debe corregirlo automáticamente y mostrar mensaje de ajuste.
+
+	•	El sistema debe mostrar mensajes claros y específicos en caso de datos incompletos, formatos inválidos, sesión expirada o indisponibilidad del servicio.
+
+	•	El sistema debe registrar en bitácora la fecha, hora y usuario que realizo la acción
+
+
+
+Datos de Entrada: Corresponde a los campos que debe registrar o seleccionar el usuario cuando interactúa con la aplicación
+
+Campo
+Tipo
+Longitud
+¿Obligatorio?
+Observaciones
+Último año aprobado
+Lista
+N/A
+SI
+Debe seleccionarse un valor del catálogo (Ej: jardín, Quinto, Décimo) 
+Localidad de la institución
+Lista
+N/A
+SI
+Selección de localidad disponible en el sistema
+Instituciones educativas
+Lista
+N/A
+SI
+Se permite seleccionar hasta 10 instituciones en orden de preferencia
+Grado asignado
+Lista
+N/A
+SI
+El sistema direcciona automáticamente al grado siguiente al último año aprobado
+Tiene hermanos en el sistema
+Lista
+N/A
+SI
+Si se selecciona “SI”, se habilitan campos adicionales obligatorios
+Tipo del documento hermano
+Lista
+N/A
+SI
+Ejemplo: Cédula de ciudadanía, cédula de extranjería
+Número del documento hermano
+Numérico
+15
+SI
+Solo dígitos, sin puntos ni caracteres especiales
+Primer nombre hermano
+Texto
+50
+SI
+En mayúsculas, permite tildes
+Segundo nombre hermano
+Texto
+50
+NO
+Opcional, en mayúsculas, permite tildes
+Primer apellido hermano
+Texto
+50
+SI
+En mayúsculas, permite tildes
+Segundo apellido hermano
+Texto
+50
+NO
+Opcional, en mayúsculas, permite tildes
+Estar en la misma institución
+Lista
+N/A
+SI
+Define si el estudiante debe estar en la misma institución que su hermano
+Institución del hermano
+Lista
+N/A
+SI
+Selección desde catálogo de instituciones registradas
+
+
+Datos de Salida: Se emplean los mismos datos de entrada previamente registrados por el usuario en este formulario dado que esta información se muestra en un archivo PDF.
+
+Observaciones y/o supuestos:
+
+	•	Se asume que el sistema cuenta con un catálogo actualizado de localidades, instituciones educativas y cursos disponibles.
+
+	•	Se asume que el usuario tiene acceso en el sistema y puede autenticarse correctamente
+
+	•	El sistema debe garantizar seguridad ene le manejo de datos personales mediante cifrado y validaciones de sesión.
+
+	•	Se asume que las validaciones de formato (documentos, nombres, apellidos, correos electrónicos) están implementadas en el sistema.
+
+	•	El sistema debe contar con mecanismos de respaldo y recuperación ante fallos.
+
+	•	Los mensajes de error y validación deben ser claros, comprensibles y orientados a la acción correctiva.
+
+	•	El sistema debe registrar en bitácora todas las acciones relevantes (registro, validaciones, errores).
+
+
+HU_006 Registro de la información de contacto del responsable o acudiente
+Necesidad de negocio
+Identificar y registrar de forma clara a la persona responsable del estudiante (familiar, acudiente o cuidador), permitiendo establecer canales de contacto y garantizar la autorización legal para el proceso de inscripción.
+Código HU
+HU-006
+
+Nombre HU
+Registro de la información de contacto del responsable o acudiente
+Prioridad: Alta __X__                      Media____                  Baja____
+Actor/rol de usuario: Usuario del sistema
+Descripción:  El propósito de esta historia de usuario es asegurar la correcta identificación y registro del responsable legal del estudiante, permitiendo establecer canales de comunicación confiables y garantizar la autorización formal durante el proceso de inscripción.
+
+Como usuario autorizado,
+Quiero registrar los dato de contacto y relación del responsable con el estudiante con el estudiante,
+Para garantizar la autorización legal y establecer canales de comunicación durante el proceso de inscripción.
+
+
+Precondiciones: 
+
+	•	El usuario debe tener una cuenta registrada en el sistema.
+
+	•	El sistema debe estar en funcionamiento y accesible desde un navegador web.
+
+	•	El módulo de autenticación debe estar integrado con la base de datos de usuarios.
+
+	•	El responsable o acudiente cuenta con un correo electrónico u un numero de celular activo.
+
+	•	El usuario tiene autorización para ingresar los datos del responsable o acudiente
+
+
+Flujo operativo (Pasos):
+
+             III. Información del responsable o acudiente (Etapa 3)
+
+Paso 1. Ingresar el tipo de documento del responsable o acudiente (Campo obligatorio).
+
+	•	El usuario selecciona en el menú desplegable el tipo de documento del responsable o acudiente según corresponda:
+
+	•	CC: cédula de ciudadanía
+
+	•	TI: Tarjeta de identidad
+
+	•	CE: Cédula de extranjería
+
+	•	PPT: Permiso de protección temporal
+
+	•	RC: Registro civil de nacimiento
+
+	•	VI: Visa
+
+	•	0:  Sin identificación
+
+Paso 2. Ingresar el número de documento (Campo obligatorio)
+
+	•	Escribir el número completo del documento sin puntos ni caracteres especiales.  (Ejemplo: 1115676256)
+
+
+Paso 3. Ingresar el primer nombre del responsable o acudiente (Campo obligatorio).
+
+	•	Escribir el primer nombre en mayúscula (permite tildes). 
+(ejemplo: JOSE)
+
+
+Paso 4. Ingresar el segundo nombre del responsable o acudiente (Opcional).
+
+	•	Escribir el segundo nombre si la persona lo tiene. Si no aplica, dejar el campo en blanco. Escribir el nombre en mayúscula (permite tildes)
+
+
+Paso 5. Ingresar el primer apellido del responsable o acudiente (Campo obligatorio).
+
+	•	Escribir el primer nombre en mayúscula (permite tildes). 
+(ejemplo: VILLAMIZAR)
+
+
+Paso 6. Ingresar el segundo apellido del responsable o acudiente (Opcional).
+
+	•	Escribir el segundo apellido si la persona lo tiene. Si no aplica, dejar el campo en blanco. Escribir el apellido en mayúscula (permite tildes)
+
+
+Paso 7. Ingresar el correo electrónico del responsable o acudiente (Campo obligatorio).
+
+	•	Escribir una dirección válida de correo electrónico.
+(Ejemplo: lala@gmail.com)
+
+Paso 8. Ingresar el número de celular del responsable o acudiente (Campo obligatorio).
+
+	•	Escribir el número principal de celular. Debe tener 10 dígitos.
+(Ejemplo: 3057869870)
+
+	•	Este campo es editable aun así se haya finalizado el proceso
+
+
+Paso 9. Parentesco del responsable o acudiente (Campo obligatorio).
+
+	•	El usuario selecciona en el menú desplegable el tipo de documento del responsable o acudiente según corresponda:
+
+	•	Madre
+
+	•	Padre
+
+	•	Abuela
+
+	•	Abuelo
+
+	•	Tío / Tía
+
+	•	Otro  ¿Cuál?
+
+	•	Al seleccionar “Otro” se abre un nuevo campo donde se elige el parentesco según corresponda
+
+	•	A nombre propio
+
+	•	Suegro - Suegra
+
+	•	Cónyuge - pareja
+
+	•	Hermano - Hermana
+
+	•	Conocido – Conocida – Amigo – Amiga
+
+	•	Primo – Prima
+
+	•	Padrino - Madrina
+
+
+Paso 10. Ingresar el nivel de escolaridad del responsable o acudiente (Campo obligatorio).
+
+	•	El usuario selecciona en el menú desplegable el nivel de escolaridad según corresponda:
+
+	•	No ha estudiado
+
+	•	Prescolar
+
+	•	Primaria
+
+	•	Secundaria
+
+	•	Técnico
+
+	•	Tecnólogo
+
+	•	Profesional
+
+	•	Especialista
+
+	•	Máster
+
+	•	Doctorado
+
+
+Paso 11. Ingresar la ocupación del responsable o acudiente (Campo obligatorio).
+
+	•	El usuario selecciona en el menú desplegable la ocupación según corresponda:
+
+	•	Empleado
+
+	•	Independiente
+
+	•	Pensionado
+
+	•	Trabajador informal
+
+	•	Desempleado
+
+
+Paso 12. Seleccionar la localidad (Campo obligatorio).
+
+	•	Elegir del listado la localidad correspondiente.
+(Ejemplo: Antonio Nariño)
+
+Paso 13. Seleccionar el barrio de residencia (Campo obligatorio).
+
+	•	Elegir el barrio en el menú desplegable.
+(Ejemplo: caracas)
+Importante: Si el barrio no se encuentra en la lista, se debe seleccionar la opción "OTRO".
+Al hacerlo, se desplegará automáticamente un nuevo campo:
+	•	¿Cuál barrio? En este nuevo recuadro de texto, el usuario debe escribir manualmente el nombre del barrio.  (Ejemplo: Barrio Nuevo Horizonte)
+
+Paso 14. Dirección de la vivienda (Campo obligatorio): Completar la dirección básica
+	•	Seleccionar el tipo de vía (Ejemplo: Calle, Carrera, Avenida, etc.) 
+	•	Escribir el número de la vía. (Ejemplo: 30) 
+	•	Ingresar letra y sufijo si aplica. (Ejemplo: A Sur) 
+	•	Ingresar número secundario (Ejemplo: 10) y número final (Ejemplo: 2) 
+	•	El sistema construirá automáticamente la dirección:  Ejemplo: Calle 30 # 10 – 2
+
+	•	Ingresar complemento de dirección
+	•	Este campo es editable aun así se haya finalizado el proceso
+Añadir detalles como apartamento, torre, interior, etc.  (Ejemplo: Torre 1 Apto 301)
+Paso 15 Registrar y continuar
+El sistema debe mostrar el botón “Registrar y continuar “ para guardar la información diligenciada  y avanzar a la siguiente etapa del formulario
+Notas:
+
+Flujos alternos con sus excepciones (Pasos):
+
+
+FA-001: Si el usuario selecciona “Otro” en parentesco, se habilita un campo adicional para especificar.
+
+FA-002: Si el barrio no está en la lista, se habilita un campo adicional para escribir manualmente.
+
+FA-003: Si el correo electrónico no cumple formato válido, el sistema muestra mensaje de error y no permite continuar.
+
+FA-004: Si el número de celular no tiene 10 dígitos, el sistema muestra error y solicita corrección.
+
+FA-005: Si el usuario no completa campos obligatorios, el sistema bloquea el avance  y muestra mensaje de validación.
+
+EX-001: No aplica
+
+Post-condiciones: 
+
+	•	El sistema almacena correctamente los datos del responsable o acudiente en la base de datos.
+
+	•	Se genera un registro único asociado al estudiante.
+
+	•	Los datos quedan disponibles para procesos de comunicación y validación legal.
+
+
+Criterios de aceptación: 
+
+
+	•	Todos los campos obligatorios deben estar diligenciados y validados.
+
+	•	El sistema debe construir automáticamente la dirección con los componentes ingresados.
+
+	•	El sistema debe permitir registrar parentescos adicionales mediante campo abierto.
+
+	•	El sistema debe validar formato de correo y longitud de celular.
+
+	•	El registro debe quedar asociado al estudiante en el sistema.
+
+
+Datos de Entrada: Corresponde a los campos que debe registrar o seleccionar el usuario cuando interactúa con la aplicación
+
+Campo
+Tipo
+Longitud
+¿Obligatorio?
+Observaciones
+Tipo de documento
+Cadena
+25
+SI
+Lista desplegable
+Número de documento
+Cadena
+15
+SI
+Sin puntos ni caracteres especiales
+Primer nombre
+Cadena
+20
+SI
+En mayúscula, permite tildes
+Segundo nombre
+Cadena
+20
+NO
+En mayúscula, permite tildes
+Primer apellido
+Cadena
+20
+SI
+En mayúscula, permite tildes
+Segundo apellido
+Cadena
+20
+NO
+En mayúscula, permite tildes
+Correo electrónico
+Cadena
+100
+SI
+Validar formato estándar email
+Número de celular
+Numérico
+10
+SI
+Debe contener exactamente 10 dígitos
+Parentesco
+Cadena
+30
+SI
+Selección de lista 
+Nivel de escolaridad
+Cadena
+100
+SI
+Selección de lista (empleado, Independiente, etc.)
+Ocupación
+Cadena
+100
+SI
+Si no aplica, no se activa el campo de soporte
+Localidad
+Cadena
+50
+SI
+Selección Lista desplegable
+Barrio
+Cadena
+50
+SI
+Selección Lista desplegable
+Dirección
+Cadena
+254
+SI
+Ejemplo: Calle, Carrera, Avenida
+Complemento dirección
+Cadena
+50
+NO
+Ejemplo: Torre 1 Apto 301
+
+
+Datos de Salida: Se emplean los mismos datos de entrada previamente registrados por el usuario en este formulario dado que esta información se muestra en un archivo PDF.
+
+
+Observaciones y/o supuestos:
+
+	•	Se asume que el responsable o acudiente siempre cuenta con al menos un medio de contacto válido (correo o celular).
+
+	•	Se asume que la lista de localidades y barrios está previamente cargada en el sistema.
+
+	•	Se asume que el sistema tiene capacidad para validar formatos de correo y celular en tiempo real.
+
+	•	Se asume que el registro de responsables puede repetirse para un mismo estudiante si existen varios acudientes.
+
+	•	Se asume que la información registrada será utilizada únicamente para fines de inscripción y comunicación institucional.
+
+
+
+
+HU_007 Registro de factores de descolarización
+Necesidad de negocio
+Conocer los motivos que han llevado a niños niñas, adolescentes y/o  jóvenes a abandonar el sistema escolar, con el fin de diseñar estrategias de reintegración y prevención del abandono
+Código HU
+HU-007
+
+Nombre HU
+Registro de factores de descolarización
+Prioridad: Alta __X__                      Media____                  Baja____
+Actor/rol de usuario: Usuario del sistema
+Descripción:  El propósito de esta historia de usuario es identificar y comprender las causas que han llevado a niños, niñas, adolescentes y/o jóvenes a abandonar el sistema escolar, con el fin de diseñar estrategias efectivas de reintegración y prevención del abandono escolar.
+
+Como usuario responsable del proceso de caracterización,
+Quiero registrar los motivos que han llevado a niños, niñas, adolescentes y/o jóvenes a abandonar el sistema escolar,
+Para diseñar estrategias de reintegración y prevención del abandono escolar.
+
+
+Precondiciones: 
+
+	•	El estudiante debe estar previamente identificado en el sistema.
+
+	•	El sistema debe contar con un catálogo de factores de descolarización previamente parametrizado (ejemplo: económicos, familiares, sociales, académicos, de salud).
+
+	•	El usuario debe tener  permisos de acceso al formulario de búsqueda activa.
+
+Flujo operativo (Pasos):
+
+	•	Registro factores de descolarización (Etapa 4)
+
+Paso 1. ¿En su núcleo familiar existen niños, niñas, adolescentes y/o jóvenes que no se encuentren estudiando?
+                 (Campo obligatorio)
+
+	•	Responder SI / NO
+
+	•	Al seleccionar “SI” se abre un nuevo campo donde se realiza la pregunta:
+
+	•	¿Cuántos niños, niñas, adolescentes y/o jóvenes conoce que no están estudiando? (Campo obligatorio)
+
+            Escribir el número correspondiente. Debe ser entero. (Ejemplo: 2 )
+
+
+Paso 2. Al escribir el número de niños, niñas, adolescentes y/o jóvenes que no están estudiando, se abren dos nuevos campos desplegables de selección:
+
+	•	Rango de edad de la personas que no están estudiando? (Campo obligatorio) 
+
+	•	0 – 5 años
+	•	6 – 10 años
+	•	11 – 15 años
+	•	Mayor a 18 años
+
+	•	Cuáles son las razones por las que no están estudiando? (Campo obligatorio) 
+
+	•	En proceso de trámite para acceder
+	•	Familia no ha gestionado cupo
+	•	Lejanía de la IE a la vivienda
+	•	No se ha asignado el cupo por SED
+	•	Temores de la familia
+	•	Otros ¿Cuáles?
+
+	•	Al seleccionar “Otros” se abre un nuevo campo desplegable de selección
+
+	•	¿Cuál otra razón? (Campo obligatorio)
+
+	•	Ausencia de oferta educativa
+	•	Traslado a otra ciudad o municipio
+	•	Traslado a otro país
+	•	Aplazamiento de estudios
+	•	Situaciones familiares o personales
+	•	Vulnerabilidad económica
+	•	Desplazamiento forzado
+	•	Búsqueda de reunificación de hermanos
+	•	No cumple requisito de edad
+	•	No cuneta con documentos de regulación migratoria
+
+Importante: De acuerdo con el número ingresado de niños, niñas, adolescentes y/o jóvenes que no están estudiando, reportados en el paso 1. El sistema debe  generar para cada niño las preguntas del paso 2 para la respectiva caracterización de cada niño, niña, adolescente y/o joven reportado.
+Paso 3 Registrar y finalizar
+	•	El sistema debe mostrar el botón “Registrar y finalizar “ para guardar la información diligenciada en y finalizar el proceso, seguido de la generación del resumen del proceso en un archivo PDF 
+	•	Al hacer clic en el botón “Registrar y finalizar ” aparece una ventana emergente indicando que la solicitud fue registrada correctamente, mostrando el número de solicitud y un mensaje de descarga automática de un archivo en  PDF.
+Notas:
+
+Flujos alternos con sus excepciones (Pasos):
+
+
+FA-001: El usuario selecciona “NO” en el paso 1, el sistema lo redirige a la siguiente sección.
+
+FA-002: El usuario ingresa un valor no válido (Ejemplo: texto, número negativo, decimal) en el campo de cantidad, el sistema muestra mensaje de error y solicita corrección.
+
+FA-003: El usuario no selecciona rango de edad, el sistema bloquea el avance y muestra mensaje de validación.
+
+FA-004: El usuario selecciona “Otros” pero no especifica la razón adicional, el sistema no permite guardar registro hasta completar el campo obligatorio.
+
+FA-005: Fallo de conexión o perdida de sesión, el sistema guarda parcialmente la información y notifica la usuario para reintentar.
+
+EX-001: No aplica
+
+Post-condiciones: 
+
+	•	La información de caracterización queda registrada en la base de datos asociada al estudiante.
+
+	•	El sistema genera un reporte consolidado con los motivos de descolarización, vinculado al perfil del estudiante.
+
+	•	Los datos quedan disponibles para análisis estadístico y diseño de estrategias de reintegración.
+
+
+Criterios de aceptación: 
+
+	•	El sistema debe permitir registrar la información de todos los niños reportados en el paso 1.
+
+	•	Los campos obligatorios deben validarse antes de permitir guardar el registro.
+
+	•	El sistema debe mostrar mensajes claros de validación en caso de errores.
+
+	•	La información registrada debe quedar disponible para consulta y análisis posterior.
+
+	•	El sistema debe garantizar la trazabilidad de cada registro (usuario, fecha, hora).
+
+Datos de Entrada: Corresponde a los campos que debe registrar o seleccionar el usuario cuando interactúa con la aplicación
+
+Campo
+Tipo
+Longitud
+¿Obligatorio?
+Observaciones
+En su núcleo familiar existen niños, niñas, adolescentes y/o jóvenes que no se encuentren estudiando
+Cadena
+10
+SI
+Selección de respuesta
+“ SI / NO”
+Número de niños ,niñas, adolescentes y/o jóvenes que no están estudiando
+Numérico
+2 
+SI
+Debe ser mayor o igual a 1. No se permiten valores negativos ni decimales
+Rango de edad
+Texto
+20 
+SI
+Selección de lista desplegable (0-5, 6-10,11-15, mayor a 18)
+Razón principal de descolarización
+Texto
+50
+SI
+Selección de lista desplegable con opciones predefinidas
+Razón adicional (cuando selecciona “Otros”)
+Texto
+100
+SI
+Campo obligatorio solo si se selecciona “Otros” em la razón principal
+
+
+Datos de Salida: Se emplean los mismos datos de entrada previamente registrados por el usuario en este formulario dado que esta información se muestra en un archivo PDF.
+
+Observaciones y/o supuestos:
+
+	•	Se asume que el catálogo de razones esta previamente parametrizado y validado por la entidad educativa.
+
+	•	Se asume que el usuario tiene capacitación para diligenciar el formulario de búsqueda activa.
+
+	•	Se asume que el sistema cuenta con mecanismos de seguridad y confidencialidad para proteger la información sensible.
+
+	•	Se considera que los datos registrados serán utilizados únicamente con fines de análisis y diseño de estrategias educativas.
+
+
+
+
+	•	Requerimientos No Funcionales
+
+Capturan las condiciones que no están directamente relacionadas con la funcionalidad de la solución de software, por el contrario, describen condiciones del comportamiento y/o medio ambiente en las cuales la solución deberá permanecer eficaz o cualidades que el sistema debe tener. Pueden incluir atributos de calidad del software, como, aquellos relacionados con rendimiento, portabilidad, seguridad, disponibilidad entre otros atributos externos, como, por ejemplo, políticas organizacionales, restricciones presupuestarias, regulaciones de seguridad, políticas de privacidad, etc. 
+
+Para toda nueva solución Informática, se deben identificar y especificar los requerimientos no funcionales. En ese orden de ideas, a continuación, se describen los requerimientos no funcionales identificados para el Formulario de Búsqueda Activa de la SED. Por cada requerimiento agregue una tabla como la siguiente para su especificación:
+
+
+RNF-001
+Identificación del requerimiento
+RNF-001
+Nombre del Requerimiento
+Seguridad en autenticación
+Descripción
+El sistema debe implementar mecanismos de autenticación seguros, utilizando protocolos de cifrado estándar y almacenamiento encriptado de credenciales. Se debe garantizar que las contraseñas nunca se trasmitan en texto plano y que los intentos de acceso no autorizado sean registrados y bloqueados tras cinco intentos fallidos consecutivos.
+
+Prioridad
+Alta __X__                      Media____                  Baja____
+
+Persona que especificó
+Analista funcional
+Fecha de elaboración
+18-03-2026
+
+
+RNF-002
+Identificación del requerimiento
+RNF-002
+Nombre del Requerimiento
+Disponibilidad del sistema
+Descripción
+La plataforma debe estar disponible al menos el 99.5% del tiempo mensual, excluyendo mantenimientos programados. Se requiere un plan de contingencia con servidores redundantes y balanceo de carga para garantizar continuidad del servicio en casos de fallas
+
+Prioridad
+Alta __X__                      Media____                  Baja____
+
+Persona que especificó
+Analista funcional
+Fecha de elaboración
+18-03-2026
+
+RNF-003
+Identificación del requerimiento
+RNF-003
+Nombre del Requerimiento
+Rendimiento de consultas
+Descripción
+El sistema debe responder a las solicitudes de registro y consulta de información en un tiempo máximo de 3 segundos bajo condiciones de carga normal (hasta 500 usuarios concurrentes). En escenarios de alta demanda (picos de hasta 2000 usuarios), el tiempo de respuesta no debe superar los 5 segundos.
+
+Prioridad
+Alta __X__                      Media____                  Baja____
+
+Persona que especificó
+Analista funcional
+Fecha de elaboración
+18-03-2026
+
+
+RNF-004
+Identificación del requerimiento
+RNF-004
+Nombre del Requerimiento
+Usabilidad y accesibilidad
+Descripción
+La interfaz debe cumplir con las pautas WCAG 2.1 nivel AA, asegurando accesibilidad para personas con discapacidad visual, auditiva o motriz. Se debe garantizar navegación intuitiva, formularios con validaciones claras y mensajes de error comprensibles.
+
+Prioridad
+Alta ____                      Media__X__                  Baja____
+
+Persona que especificó
+Analista funcional
+Fecha de elaboración
+18-03-2026
+
+
+RNF-005
+Identificación del requerimiento
+RNF-005
+Nombre del Requerimiento
+Integridad y trazabilidad de datos
+Descripción
+Toda la información registrada (responsables, factores de descolarización, datos sociodemográficos, solicitudes de cupo) debe contar con mecanismos de auditoría que permitan rastrear modificaciones, incluyendo usuario que realizo el cambio, fecha y hora. Los registros no podrán ser eliminados, únicamente inactivados
+
+Prioridad
+Alta __X__                      Media____                  Baja____
+
+Persona que especificó
+Analista funcional
+Fecha de elaboración
+18-03-2026
+
+
+	•	Matriz de trazabilidad de Requerimientos vs Historias de Usuarios
+
+La matriz de trazabilidad constituye una herramienta fundamental dentro del proceso de gestión de requerimientos, ya que permite establecer y documentar la relación directa entre las historias de usuario y los requerimientos funcionales y no funcionales asociados. Su propósito es garantizar la cobertura completa de las necesidades del negocio, asegurar la alineación con los objetivos estratégicos y facilitar el seguimiento durante todo el ciclo de vida del sistema. Asimismo, la matriz ofrece visibilidad sobre el impacto de cada requerimiento, contribuye a la validación de la solución y fortalece la comunicación entre los diferentes involucrados en el proyecto.
+
+
+Necesidad de negocio
+HU-001
+HU-002
+HU -003
+HU -004
+HU -005
+HU -006
+HU -007
+Garantizar que el acceso a la plataforma esté restringido únicamente a usuarios previamente autenticados mediante el uso de credenciales válidas. Esto permite proteger la información sensible y garantizar que las funcionalidades del sistema sean utilizadas únicamente por personal autorizado.
+X
+
+
+
+
+
+
+Se requiere que el sistema permita visualizar y navegar dentro de la aplicación.
+
+X
+
+
+
+
+
+Se necesita un sistema funcional que permita el registro, consulta, filtrado y seguimiento de las actividades. Esta funcionalidad debe garantizar la trazabilidad, integridad y facilidad de uso en la gestión de búsqueda activa, optimizando el control operativo y facilitando la toma de decisiones basada en información estructurada.
+
+
+X
+
+
+
+
+Registrar datos personales de la población objetivo interesada en acceder a programas de formación para su respectiva caracterización.
+
+
+
+X
+
+
+
+Se requiere un mecanismo formal, confiable y centralizado que permita capturar, gestionar y canalizar las solicitudes de cupo educativo provenientes de la población interesada en acceder a programas de formación.
+
+
+
+
+X
+
+
+Identificar y registrar de forma clara a la persona responsable del estudiante (familiar, acudiente o cuidador), permitiendo establecer canales de contacto y garantizar la autorización legal para el proceso de inscripción.
+
+
+
+
+
+X
+
+Conocer los motivos que han llevado a niños, niñas, adolescentes y/o  jóvenes a abandonar el sistema escolar, con el fin de diseñar estrategias de reintegración y prevención del abandono.
+
+
+
+
+
+
+X
+RNF-001
+X
+X
+X
+X
+X
+X
+X
+RNF-002
+X
+X
+X
+X
+X
+X
+X
+RNF-003
+X
+X
+X
+X
+X
+X
+X
+RNF-004
+X
+X
+X
+X
+X
+X
+X
+RNF-005
+X
+X
+X
+X
+X
+X
+X
+
+HU: Historia de Usuario
+RNF: Requerimiento No Funcional
+
+	•	Especificación de requerimientos para vistas
+
+
+Nombre de la vista
+VW_ACCESO_AUTENTICADO
+Descripción del requerimiento
+Vista que permite consultar y auditar los accesos autenticados al sistema, mostrando información de usuarios, fecha y hora de ingreso, intentos fallidos y estado de la sesión
+Usuario final (cliente)
+ 
+Sistema de información: Plataforma de gestión Educativa
+ 
+Entidad beneficiada: Secretaria de Educación /Área de Seguridad TI
+ 
+Objetivo de la vista
+Facilitar la verificación y trazabilidad de accesos al sistema para garantizar seguridad y control de usuarios.
+Tipo de vista
+ 
+	•	Normal [ X ]  
+	•	Materializada [  ]
+	•	Otra [  ], cuál: ________
+ 
+Frecuencia de refresco de los datos
+	•	Completo [ X ]
+	•	Rápida (parcial) [  ]
+ 
+Forma de refresco
+	•	Manual [  ]
+	•	Automática [  ]
+	•	Automático programado: [ X ]
+ 
+	•	Fecha de refresco: No aplica 
+	•	Diaria [ X ]
+	•	Semanal [  ]
+	•	Quincenal [  ]
+	•	Otra [  ], cuál____________
+
+Regla de negocio
+Mostrar únicamente accesos del último año, filtrados por usuario y estado de autenticación.
+Query Vista
+<Indique la consulta utilizada> <campo a ser diligenciado en la fase de desarrollo>  
+Columnas de la vista
+Nombre campo
+Tipo de dato
+Descripción
+Nombre campo BD
+<campo a ser diligenciado en la fase de desarrollo>
+Fuente de información (Esquema - tabla) <campo a ser diligenciado en la fase de desarrollo>
+Id_usuario
+INT
+Identificador único del usuario
+Id_usuario
+ 
+nombre
+VARCHAR
+Nombre completo del usuario
+nombre
+
+rol
+VARCHAR
+Rol asignado
+rol
+
+ultimo_login
+DATATIME
+Última fecha de autenticación
+ultimo_login
+
+
+
+Nombre de la vista
+VW_BARRA_NAVEGACION
+Descripción del requerimiento
+Vista que debe centralizar las funcionalidades disponibles en la aplicación mediante una barra de navegación dinámica.
+Usuario final (cliente)
+ 
+Sistema de información: Plataforma de gestión Educativa
+ 
+Entidad beneficiada: Usuarios Internos
+ 
+Objetivo de la vista
+Facilitar la navegación centralizada y el acceso rápido a módulos del sistema
+Tipo de vista
+ 
+	•	Normal [ X ]  
+	•	Materializada [  ]
+	•	Otra [  ], cuál: ________
+ 
+Frecuencia de refresco de los datos
+	•	Completo [ X ]
+	•	Rápida (parcial) [  ]
+ 
+Forma de refresco
+	•	Manual [  ]
+	•	Automática [ X ]
+	•	Automático programado: [  ]
+ 
+	•	Fecha de refresco: No aplica 
+	•	Diaria [ X ]
+	•	Semanal [  ]
+	•	Quincenal [  ]
+	•	Otra [  ], cuál____________
+
+Regla de negocio
+La barra mostrará únicamente las funcionalidades habilitadas según el rol del usuario.
+Query Vista
+<Indique la consulta utilizada> <campo a ser diligenciado en la fase de desarrollo>  
+Columnas de la vista
+Nombre campo
+Tipo de dato
+Descripción
+Nombre campo BD
+<campo a ser diligenciado en la fase de desarrollo>
+Fuente de información (Esquema - tabla) <campo a ser diligenciado en la fase de desarrollo>
+ Id modulo
+INT
+Identificador del modulo
+ Id_modulo
+ 
+nombre
+VARCHAR
+Nombre del módulo
+modulo
+
+url
+VARCHAR
+Ruta de acceso
+url
+
+
+Nombre de la vista
+VW_REGISTROS_ACTIVIDADES
+Descripción del requerimiento
+La vista debe permitir la consulta, creación y actualización de registros de actividades, garantizando trazabilidad e integridad.
+Usuario final (cliente)
+ 
+Sistema de información: Plataforma de gestión Educativa
+ 
+Entidad beneficiada: Secretaria de Educación /Área de Seguridad TI
+ 
+Objetivo de la vista
+Facilitar la verificación y trazabilidad de accesos al sistema para garantizar seguridad y control de usuarios.
+Tipo de vista
+ 
+	•	Normal [  ]  
+	•	Materializada [ X ]
+	•	Otra [  ], cuál: ________
+ 
+Frecuencia de refresco de los datos
+	•	Completo [ X ]
+	•	Rápida (parcial) [  ]
+ 
+Forma de refresco
+	•	Manual [  ]
+	•	Automática [  ]
+	•	Automático programado: [ X ]
+ 
+	•	Fecha de refresco: No aplica 
+	•	Diaria [ X ]
+	•	Semanal [  ]
+	•	Quincenal [  ]
+	•	Otra [  ], cuál____________
+
+Regla de negocio
+Los registros deben incluir fecha de creación, responsable y estado actual.
+Query Vista
+<Indique la consulta utilizada> <campo a ser diligenciado en la fase de desarrollo>  
+Columnas de la vista
+Nombre campo
+Tipo de dato
+Descripción
+Nombre campo BD
+<campo a ser diligenciado en la fase de desarrollo>
+Fuente de información (Esquema - tabla) <campo a ser diligenciado en la fase de desarrollo>
+ Id actividad
+INT
+Identificador único
+ Id_acticidad
+ 
+descripcion
+VARCHAR
+Detalle de la actividad
+descripcion
+
+responsable
+VARCHAR
+Usuario responsable
+responsable
+
+estado
+VARCHAR
+Estado actual
+estado
+
+fecha
+DATE
+Fecha de creación
+fecha
+
+
+
+Nombre de la vista
+VW_INFO_SOCIODEMOGRAFICA
+Descripción del requerimiento
+La vista debe permitir registrar y mostrar datos personales de estudiantes para caracterización sociodemográfica.
+Usuario final (cliente)
+ 
+Sistema de información: Plataforma de gestión Educativa
+ 
+Entidad beneficiada: Secretaria de Educación 
+ 
+Objetivo de la vista
+Caracterizar la población estudiantil para análisis y planificación
+Tipo de vista
+ 
+	•	Normal [ X ]  
+	•	Materializada [  ]
+	•	Otra [  ], cuál: ________
+ 
+Frecuencia de refresco de los datos
+	•	Completo [ X ]
+	•	Rápida (parcial) [  ]
+ 
+Forma de refresco
+	•	Manual [  ]
+	•	Automática [ X ]
+	•	Automático programado: [  ]
+ 
+	•	Fecha de refresco: No aplica 
+	•	Diaria [ X ]
+	•	Semanal [  ]
+	•	Quincenal [  ]
+	•	Otra [  ], cuál____________
+
+Regla de negocio
+Los datos deben estar normalizados y validados según estándares de identificación nacional
+Query Vista
+<Indique la consulta utilizada> <campo a ser diligenciado en la fase de desarrollo>  
+Columnas de la vista
+Nombre campo
+Tipo de dato
+Descripción
+Nombre campo BD
+<campo a ser diligenciado en la fase de desarrollo>
+Fuente de información (Esquema - tabla) <campo a ser diligenciado en la fase de desarrollo>
+ Id_estudiante
+INT
+Identificador único
+ Id_estudiante
+ 
+nombre
+VARCHAR
+Nombre completo
+nombre
+
+edad
+INT
+Edad del estudiante
+edad
+
+genero
+VARCHAR
+Género
+genero
+
+direccion
+VARCHAR
+Dirección
+direccion
+
+
+
+Nombre de la vista
+VW_SOLICITUD_CUPO_EDUCATIVO
+Descripción del requerimiento
+La vista debe capturar, gestionar y centralizar las solicitudes de cupo educativo provenientes de la población interesada en programas de formación.
+Usuario final (cliente)
+ 
+Sistema de información: Plataforma de gestión Educativa
+ 
+Entidad beneficiada: Secretaria de Educación 
+ 
+Objetivo de la vista
+Garantizar un mecanismo confiable y centralizado para la gestión de solicitudes de cupo, facilitando la trazabilidad y priorización de inscripciones.
+Tipo de vista
+ 
+	•	Normal [  ]  
+	•	Materializada [ X ]
+	•	Otra [  ], cuál: ________
+ 
+Frecuencia de refresco de los datos
+	•	Completo [ X ]
+	•	Rápida (parcial) [  ]
+ 
+Forma de refresco
+	•	Manual [  ]
+	•	Automática [  ]
+	•	Automático programado: [ X ]
+ 
+	•	Fecha de refresco: No aplica 
+	•	Diaria [ X ]
+	•	Semanal [  ]
+	•	Quincenal [  ]
+	•	Otra [  ], cuál____________
+
+Regla de negocio
+	•	Solo se mostrarán solicitudes con estado “Pendiente” o “En proceso”.
+	•	Las solicitudes deben incluir fecha de registro y programa solicitado.
+Query Vista
+<Indique la consulta utilizada> <campo a ser diligenciado en la fase de desarrollo>  
+Columnas de la vista
+Nombre campo
+Tipo de dato
+Descripción
+Nombre campo BD
+<campo a ser diligenciado en la fase de desarrollo>
+Fuente de información (Esquema - tabla) <campo a ser diligenciado en la fase de desarrollo>
+Id_solicitud
+INT
+Identificador único de la solicitud
+Id_solicitud
+ 
+Id_estudiante
+INT
+Identificador del estudiante
+Id_estudiante
+
+programa
+VARCHAR
+Programa solicitado
+programa
+
+estado
+VARCHAR
+Estado de la solicitud
+estado
+
+fecha_registro
+DATE
+Fecha de registro
+fecha_registro
+
+
+
+Nombre de la vista
+VW_RESPONSABLE_ESTUDIENTE
+Descripción del requerimiento
+La vista debe identificar y registrar la información de contacto del responsable del estudiante (familiar, acudiente o cuidador)
+Usuario final (cliente)
+ 
+Sistema de información: Plataforma de gestión Educativa
+ 
+Entidad beneficiada: Secretaria de Educación 
+ 
+Objetivo de la vista
+Establecer canales de contacto y garantizar la autorización legal para el proceso de inscripción.
+Tipo de vista
+ 
+	•	Normal [ X ]  
+	•	Materializada [  ]
+	•	Otra [  ], cuál: ________
+ 
+Frecuencia de refresco de los datos
+	•	Completo [ X ]
+	•	Rápida (parcial) [  ]
+ 
+Forma de refresco
+	•	Manual [  ]
+	•	Automática [ X ]
+	•	Automático programado: [  ]
+ 
+	•	Fecha de refresco: No aplica 
+	•	Diaria [ X ]
+	•	Semanal [  ]
+	•	Quincenal [  ]
+	•	Otra [  ], cuál____________
+Regla de negocio
+	•	Cada estudiante debe tener al menos un responsable registrado.
+	•	Los datos de contacto deben estar validados (telefono y correo electrónico)
+Query Vista
+<Indique la consulta utilizada> <campo a ser diligenciado en la fase de desarrollo>  
+Columnas de la vista
+Nombre campo
+Tipo de dato
+Descripción
+Nombre campo BD
+<campo a ser diligenciado en la fase de desarrollo>
+Fuente de información (Esquema - tabla) <campo a ser diligenciado en la fase de desarrollo>
+Id_responsable
+INT
+Identificador único del responsable
+Id_responsable
+ 
+Id_estudiante
+VARCHAR
+Identificador único del estudiante
+Id_estudiante
+
+nombre
+VARCHAR
+Nombre completo del responsable
+nombre
+
+parentesco
+VARCHAR
+Relación con el estudiante
+parentesco
+
+telefono
+VARCHAR
+Número de contacto
+telefono
+
+correo
+VARCHAR
+Correo electrónico
+correo
+
+
+
+Nombre de la vista
+VW_FACTORES_DESCOLARIZACIÓN
+Descripción del requerimiento
+La vista debe registrar los motivos que han llevado a niños, niñas, adolescentes y jóvenes a abandonar el sistema escolar.
+Usuario final (cliente)
+ 
+Sistema de información: Plataforma de gestión Educativa
+ 
+Entidad beneficiada: Secretaria de Educación 
+ 
+Objetivo de la vista
+Identificar causas de deserción escolar para diseñar estrategias de reintegración y prevención.
+Tipo de vista
+ 
+	•	Normal [  ]  
+	•	Materializada [ X ]
+	•	Otra [  ], cuál: ________
+ 
+Frecuencia de refresco de los datos
+	•	Completo [ X ]
+	•	Rápida (parcial) [  ]
+ 
+Forma de refresco
+	•	Manual [  ]
+	•	Automática [  ]
+	•	Automático programado: [ X ]
+ 
+	•	Fecha de refresco: No aplica 
+	•	Diaria [  ]
+	•	Semanal [ X ]
+	•	Quincenal [  ]
+	•	Otra [  ], cuál____________
+
+Regla de negocio
+	•	Los factores deben estar categorizados (económicos, familiares, académicos, sociales).
+	•	Se debe incluir la fecha de registro y responsable del levantamiento de la información.
+Query Vista
+<Indique la consulta utilizada> <campo a ser diligenciado en la fase de desarrollo>  
+Columnas de la vista
+Nombre campo
+Tipo de dato
+Descripción
+Nombre campo BD
+<campo a ser diligenciado en la fase de desarrollo>
+Fuente de información (Esquema - tabla) <campo a ser diligenciado en la fase de desarrollo>
+Id_factor
+INT
+Identificador único del factor
+Id_factor
+ 
+Id_estudiante
+INT
+Identificador único del estudiante
+Id_estudiante
+
+categoria
+VARCHAR
+Categoria del factor
+categoria
+
+descripción
+VARCHAR
+Detalle del motivo
+descripción
+
+fecha_registro
+DATE
+Fecha de registro
+fecha_registro
+
+responsable
+VARCHAR
+Persona que registro la información
+responsable
+
+
+	•	Especificación de requerimientos Servicios Web/REST
+
+Descripción del requerimiento
+Validar credenciales de acceso y garantizar que solo usuarios autorizados ingresen al sistema
+Nombre del servicio
+SRV_AUTENTICACION_USUARIOS
+
+Objetivo del servicio
+Proteger la información sensible y restringir el acceso a personal autorizado
+
+Descripción de cómo funcionará el servicio
+El servicio recibirá credenciales (usuario y contraseña), las validará contra la base de datos de seguridad y retornará un token de sesión válido en caso de autenticación exitosa.
+
+Tecnología de implementación
+	•	REST_X__
+	•	SOAP___
+Tipo de operación
+	•	GET ____
+	•	POST __X__
+	•	DELETE____
+	•	UPDATE____
+	•	OTRO____ Cuál_________ 
+
+
+Parámetros
+Datos de entrada
+Nombre del campo
+Tipo campo
+(ejemplos: Boolean, String)
+Descripción
+Obligatorio
+(SI/NO)
+usuario
+String
+Nombre del usuario
+SI
+contraseña
+String
+Clave encriptada
+SI
+Datos de la respuesta (salida)
+Nombre del campo
+Tipo campo
+(ejemplos: Boolean, String)
+Descripción
+Obligatorio
+(SI/NO)
+token
+String
+Token de sesión
+SI
+rol
+String
+Rol del usuario
+SI
+ultimo_login
+DateTime
+Última fecha de acceso
+NO
+Sistema que entrega la información
+Módulo de seguridad
+Sistema que consume la información
+Plataforma de Gestión Educativa
+¿Requiere autenticación?
+¿Indicar si requiere o no de autenticación durante la invocación del servicio?
+
+SI   __X__
+NO ____
+
+En caso afirmativo explique cómo es la autenticación: Autenticación mediante validación de credenciales y emisión de token JWT.
+
+Tiempo de respuesta esperado (segundos)
+≤ 2 segundos.
+
+
+Descripción del requerimiento
+Capturar y gestionar solicitudes de cupo educativo de la población interesada.
+Nombre del servicio
+SRV_SOLICITUD_CUPO
+
+Objetivo del servicio
+Centralizar y garantizar trazabilidad en la inscripción de estudiantes.
+
+Descripción de cómo funcionará el servicio
+El servicio permitirá registrar nuevas solicitudes, consultar solicitudes existentes y actualizar su estado.
+
+Tecnología de implementación
+	•	REST_X__
+	•	SOAP___
+Tipo de operación
+	•	GET __X__
+	•	POST __X__
+	•	DELETE____
+	•	UPDATE__X__
+	•	OTRO____ Cuál_________ 
+
+
+Parámetros
+Datos de entrada
+Nombre del campo
+Tipo campo
+(ejemplos: Boolean, String)
+Descripción
+Obligatorio
+(SI/NO)
+Id_estudiante
+Int
+Identificador del estudiante
+SI
+programa
+String
+Programa solicitado
+SI
+estado
+String
+Estado de la solicitud
+SI
+fecha_registro
+Date
+Fecha de registro
+SI
+Datos de la respuesta (salida)
+Nombre del campo
+Tipo campo
+(ejemplos: Boolean, String)
+Descripción
+Obligatorio
+(SI/NO)
+Id_solicitud
+Int
+Identificador único
+SI
+mensaje
+String
+Confirmación de operación
+SI
+Sistema que entrega la información
+Módulo de admisión
+Sistema que consume la información
+Plataforma de Gestión Educativa
+¿Requiere autenticación?
+¿Indicar si requiere o no de autenticación durante la invocación del servicio?
+
+SI   __X__
+NO ____
+
+En caso afirmativo explique cómo es la autenticación: Autenticación mediante validación de credenciales y emisión de token JWT.
+
+Tiempo de respuesta esperado (segundos)
+≤ 3 segundos.
+
+
+Descripción del requerimiento
+Registrar y consultar información de contacto de responsables legales de estudiantes
+Nombre del servicio
+SRV_RESPONSABLE_ESTUDIANTE
+
+Objetivo del servicio
+Garantizar canales de contacto y autorización legal en procesos de inscripción.
+
+Descripción de cómo funcionará el servicio
+El servicio permitirá registrar responsables asociados a un estudiante, consultar responsables existentes y actualizar datos de contacto.
+
+Tecnología de implementación
+	•	REST_X__
+	•	SOAP___
+Tipo de operación
+	•	GET __X__
+	•	POST __X__
+	•	DELETE____
+	•	UPDATE__X__
+	•	OTRO____ Cuál_________ 
+
+
+Parámetros
+Datos de entrada
+Nombre del campo
+Tipo campo
+(ejemplos: Boolean, String)
+Descripción
+Obligatorio
+(SI/NO)
+Id_estudiante
+Int
+Identificador del estudiante
+SI
+nombre
+String
+Nombre completo del responsable
+SI
+parentesco
+String
+Relación con el estudiante
+SI
+telefono 
+String
+Teléfono de contacto
+SI
+correo
+String
+Correo electrónico
+SI
+Datos de la respuesta (salida)
+Nombre del campo
+Tipo campo
+(ejemplos: Boolean, String)
+Descripción
+Obligatorio
+(SI/NO)
+Id_responsable
+Int
+Identificador único
+SI
+mensaje
+String
+Confirmación de operación
+SI
+Sistema que entrega la información
+Módulo de inscripción
+Sistema que consume la información
+Plataforma de Gestión Educativa
+¿Requiere autenticación?
+¿Indicar si requiere o no de autenticación durante la invocación del servicio?
+
+SI   __X__
+NO ____
+
+En caso afirmativo explique cómo es la autenticación: Autenticación mediante validación de credenciales y emisión de token JWT.
+
+Tiempo de respuesta esperado (segundos)
+≤ 3 segundos.
+
+
+Descripción del requerimiento
+Registrar y consultar motivos de abandono escolar
+Nombre del servicio
+SRV_FACTORES_DESCOLARIZACIÓN
+
+Objetivo del servicio
+Identificar causas de deserción escolar para diseñar estrategias de reintegración.
+
+Descripción de cómo funcionará el servicio
+El servicio permitirá registrar factores de descolarización asociados a estudiantes, consultar registros históricos y categorizarlos.
+
+Tecnología de implementación
+	•	REST_X__
+	•	SOAP___
+Tipo de operación
+	•	GET __X__
+	•	POST __X__
+	•	DELETE____
+	•	UPDATE____
+	•	OTRO____ Cuál_________ 
+
+Parámetros
+Datos de entrada
+Nombre del campo
+Tipo campo
+(ejemplos: Boolean, String)
+Descripción
+Obligatorio
+(SI/NO)
+Id_estudiante
+Int
+Identificador del estudiante
+SI
+categoria
+String
+Categoria del factor( económico, familiar, social, académico)
+SI
+descripcion
+String
+Detalle del motivo
+SI
+fecha_registro
+Date
+Fecha del registro
+SI
+responsable
+String
+Persona que registro la información
+SI
+Datos de la respuesta (salida)
+Nombre del campo
+Tipo campo
+(ejemplos: Boolean, String)
+Descripción
+Obligatorio
+(SI/NO)
+Id_factor
+Int
+Identificador único
+SI
+mensaje
+String
+Confirmación de operación
+SI
+Sistema que entrega la información
+Módulo de bienestar estudiantil
+Sistema que consume la información
+Plataforma de Gestión Educativa
+¿Requiere autenticación?
+¿Indicar si requiere o no de autenticación durante la invocación del servicio?
+
+SI   __X__
+NO ____
+
+En caso afirmativo explique cómo es la autenticación: Autenticación mediante validación de credenciales y emisión de token JWT.
+
+Tiempo de respuesta esperado (segundos)
+≤ 4 segundos.
+
+	•	Observaciones adicionales 
+<Aquí se puede relacionar otra información adicional para aclarar algún aspecto relevante referente al proyecto.  Este numeral no es obligatorio su diligenciamiento>.
+
+	•	Control de aprobaciones del documento
+
+Rol
+Nombre
+Fecha
+
+Firma/Evidencia
+
+Directivo/ jefe de área usuaria 
+<Nombre del directivo o jefe del área usuaria que aprueba el documento>
+
+DD/MM/AAAA
+<Firma o link al documento donde esté explicita la aprobación del documento>
+Usuario Líder Funcional
+
+<Nombre de usuario funcional Líder funcional o persona que aprueba el documento>
+DD/MM/AAAA
+<Firma o link al documento donde esté explicita la aprobación del documento>
+Líder de servicio/ Líder Técnico
+<Nombre del Líder de servicio o del Líder Técnico del proyecto por parte de la SED que aprueba el documento>
+DD/MM/AAAA
+<Firma o link al documento donde esté explicita la aprobación del documento.>
+
+
+
