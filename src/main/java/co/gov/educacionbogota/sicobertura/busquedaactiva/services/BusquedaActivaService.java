@@ -6,18 +6,12 @@ import java.util.List;
 
 public interface BusquedaActivaService {
     
-    /**
-     * Consulta registros opcionalmente por estado y etapa
-     */
+    @org.springframework.lang.NonNull
     List<RegistroBusquedaActiva> consultarRegistros(String estado, Integer etapa);
     
-    /**
-     * Obtiene un registro puntual
-     */
-    RegistroBusquedaActiva obtenerRegistro(Long id);
+    @org.springframework.lang.Nullable
+    RegistroBusquedaActiva obtenerRegistro(@org.springframework.lang.NonNull Long id);
 
-    /**
-     * Guarda y avanza la etapa de un registro
-     */
-    RegistroBusquedaActiva guardarRegistro(RegistroBusquedaActiva registro);
+    @org.springframework.lang.NonNull
+    RegistroBusquedaActiva guardarRegistro(@org.springframework.lang.NonNull RegistroBusquedaActiva registro);
 }

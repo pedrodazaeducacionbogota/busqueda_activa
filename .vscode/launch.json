@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug BusquedaActivaApplication",
+            "request": "launch",
+            "mainClass": "co.gov.educacionbogota.sicobertura.busquedaactiva.BusquedaActivaApplication",
+            "projectName": "busqueda-activa",
+            "env": {
+                "SPRING_PROFILES_ACTIVE": "dev"
+            }
+        },
+        {
+            "type": "java",
+            "name": "Debug Current Test",
+            "request": "launch",
+            "mainClass": "${file}",
+            "projectName": "busqueda-activa"
+        }
+    ]
+}

@@ -1,18 +1,9 @@
 package co.gov.educacionbogota.sicobertura.busquedaactiva.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 
 @Entity
 @Table(name = "ba_solicitud_cupo")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class SolicitudCupoBusquedaActiva {
 
     @Id
@@ -57,4 +48,35 @@ public class SolicitudCupoBusquedaActiva {
 
     @Column(name = "institucion_hermano", length = 150)
     private String institucionHermano;
+
+    public SolicitudCupoBusquedaActiva() {}
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getUltimoAnoAprobado() { return ultimoAnoAprobado; }
+    public void setUltimoAnoAprobado(String ultimoAnoAprobado) { this.ultimoAnoAprobado = ultimoAnoAprobado; }
+    public String getLocalidadInstitucion() { return localidadInstitucion; }
+    public void setLocalidadInstitucion(String localidadInstitucion) { this.localidadInstitucion = localidadInstitucion; }
+    public String getInstitucionesEducativas() { return institucionesEducativas; }
+    public void setInstitucionesEducativas(String institucionesEducativas) { this.institucionesEducativas = institucionesEducativas; }
+    public String getGradoAsignado() { return gradoAsignado; }
+    public void setGradoAsignado(String gradoAsignado) { this.gradoAsignado = gradoAsignado; }
+    public Boolean getTieneHermanos() { return tieneHermanos; }
+    public void setTieneHermanos(Boolean tieneHermanos) { this.tieneHermanos = tieneHermanos; }
+    public String getTipoDocumentoHermano() { return tipoDocumentoHermano; }
+    public void setTipoDocumentoHermano(String tipoDocumentoHermano) { this.tipoDocumentoHermano = tipoDocumentoHermano; }
+    public String getNumeroDocumentoHermano() { return numeroDocumentoHermano; }
+    public void setNumeroDocumentoHermano(String numeroDocumentoHermano) { this.numeroDocumentoHermano = numeroDocumentoHermano; }
+    public String getPrimerNombreHermano() { return primerNombreHermano; }
+    public void setPrimerNombreHermano(String primerNombreHermano) { this.primerNombreHermano = primerNombreHermano; }
+    public String getSegundoNombreHermano() { return segundoNombreHermano; }
+    public void setSegundoNombreHermano(String segundoNombreHermano) { this.segundoNombreHermano = segundoNombreHermano; }
+    public String getPrimerApellidoHermano() { return primerApellidoHermano; }
+    public void setPrimerApellidoHermano(String primerApellidoHermano) { this.primerApellidoHermano = primerApellidoHermano; }
+    public String getSegundoApellidoHermano() { return segundoApellidoHermano; }
+    public void setSegundoApellidoHermano(String segundoApellidoHermano) { this.segundoApellidoHermano = segundoApellidoHermano; }
+    public Boolean getMismaInstitucion() { return mismaInstitucion; }
+    public void setMismaInstitucion(Boolean mismaInstitucion) { this.mismaInstitucion = mismaInstitucion; }
+    public String getInstitucionHermano() { return institucionHermano; }
+    public void setInstitucionHermano(String institucionHermano) { this.institucionHermano = institucionHermano; }
 }

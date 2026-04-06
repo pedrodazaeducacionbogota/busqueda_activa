@@ -10,12 +10,14 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@SuppressWarnings("null")
 public class BusquedaActivaServiceImpl implements BusquedaActivaService {
 
     @Autowired
     private RegistroBusquedaActivaRepository repository;
 
     @Override
+    @org.springframework.lang.NonNull
     public List<RegistroBusquedaActiva> consultarRegistros(String estado, Integer etapa) {
         if (estado != null && !estado.isEmpty() && etapa != null) {
             return repository.findByEstadoAndUltimaEtapaRegistrada(estado, etapa);
@@ -28,12 +30,14 @@ public class BusquedaActivaServiceImpl implements BusquedaActivaService {
     }
 
     @Override
-    public RegistroBusquedaActiva obtenerRegistro(Long id) {
+    @org.springframework.lang.Nullable
+    public RegistroBusquedaActiva obtenerRegistro(@org.springframework.lang.NonNull Long id) {
         return repository.findById(id).orElse(null);
     }
 
     @Override
-    public RegistroBusquedaActiva guardarRegistro(RegistroBusquedaActiva registro) {
+    @org.springframework.lang.NonNull
+    public RegistroBusquedaActiva guardarRegistro(@org.springframework.lang.NonNull RegistroBusquedaActiva registro) {
         if (registro.getId() == null) {
             registro.setFechaRegistro(new Date());
             registro.setNumeroRegistro(generarNumeroRegistro());
@@ -55,8 +59,18 @@ public class BusquedaActivaServiceImpl implements BusquedaActivaService {
         if (registro.getResponsable() != null) {
             registro.setUltimaEtapaRegistrada(3);
         }
+        if (registro.getTieneNinosSinEstudio() != null) {
+            // Incluso si es false, se considera completada la etapa de factores (Etapa 4)
+            registro.setUltimaEtapaRegistrada(4);
+            
+            // Asegurar que cada factor tenga la referencia al registro
+            if (registro.getFactoresDesescolarizacion() != null) {
+                registro.getFactoresDesescolarizacion().forEach(f -> f.setRegistro(registro));
+            }
+        }
+        
         // Determinar finalizacion
-        if (registro.getUltimaEtapaRegistrada() != null && registro.getUltimaEtapaRegistrada() >= 3) {
+        if (registro.getUltimaEtapaRegistrada() != null && registro.getUltimaEtapaRegistrada() >= 4) {
             registro.setEstado("Finalizado");
         } else {
             registro.setEstado("Pendiente");

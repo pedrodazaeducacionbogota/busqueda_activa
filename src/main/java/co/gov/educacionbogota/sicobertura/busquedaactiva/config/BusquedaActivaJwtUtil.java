@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Component
-public class JwtUtil {
+public class BusquedaActivaJwtUtil {
 
     @Value("${jwt.secret}")
     private String secret;

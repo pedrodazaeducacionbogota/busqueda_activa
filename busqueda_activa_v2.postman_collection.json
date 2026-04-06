@@ -1,0 +1,270 @@
+{
+	"info": {
+		"_postman_id": "8c5e2d1a-4b3c-4e5f-9a1b-0d2e3f4a5b6c",
+		"name": "Búsqueda Activa - Flujo Granular v2",
+		"description": "Colección para probar el flujo de Búsqueda Activa paso a paso (Etapas 1-4 + PDF)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"pm.environment.set(\"token\", jsonData.token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2. Etapa 1: Registro Estudiante",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"pm.environment.set(\"registro_id\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"estudiante\": {\n        \"tipoDocumento\": \"CC\",\n        \"numeroDocumento\": \"1234567890\",\n        \"primerNombre\": \"PEDRO\",\n        \"primerApellido\": \"DAZA\",\n        \"sexo\": \"MASCULINO\",\n        \"fechaNacimiento\": \"1990-01-01\",\n        \"direccion\": \"CALLE 123 # 45 - 67\",\n        \"paisNacimiento\": \"COLOMBIA\",\n        \"localidad\": \"SUBA\",\n        \"barrio\": \"CENTRO\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/busqueda-activa/registros",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"busqueda-activa",
+						"registros"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3. Etapa 2: Solicitud Cupo (Con Hermanos)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"solicitudCupo\": {\n        \"ultimoAnoAprobado\": \"QUINTO\",\n        \"gradoAsignado\": \"SEXTO\",\n        \"localidadInstitucion\": \"SUBA\",\n        \"institucionesSugeridas\": \"COLEGIO DISTRITAL\",\n        \"tieneHermanos\": true,\n        \"tipoDocumentoHermano\": \"TI\",\n        \"numeroDocumentoHermano\": \"987654321\",\n        \"primerNombreHermano\": \"JUAN\",\n        \"primerApellidoHermano\": \"DAZA\",\n        \"institucionHermano\": \"COLEGIO DISTRITAL\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/busqueda-activa/registros/{{registro_id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"busqueda-activa",
+						"registros",
+						"{{registro_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4. Etapa 3: Responsable",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"responsable\": {\n        \"tipoDocumento\": \"CC\",\n        \"numeroDocumento\": \"55555555\",\n        \"primerNombre\": \"MARIA\",\n        \"primerApellido\": \"LOPEZ\",\n        \"parentesco\": \"MADRE\",\n        \"correo\": \"maria@example.com\",\n        \"celular\": \"3001234567\",\n        \"localidad\": \"SUBA\",\n        \"barrio\": \"CENTRO\",\n        \"direccion\": \"CALLE 123 # 45 - 67\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/busqueda-activa/registros/{{registro_id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"busqueda-activa",
+						"registros",
+						"{{registro_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5. Etapa 4: Factores Desescolarización",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"tieneNinosSinEstudio\": true,\n    \"cantidadNinosSinEstudio\": 2,\n    \"factoresDesescolarizacion\": [\n        {\n            \"rangoEdad\": \"6-10 AÑOS\",\n            \"razonPrincipal\": \"FAMILIA_NO_GESTIONO_CUPO\"\n        },\n        {\n            \"rangoEdad\": \"11-15 AÑOS\",\n            \"razonPrincipal\": \"OTROS\",\n            \"razonAdicional\": \"VULNERABILIDAD_ECONOMICA\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/busqueda-activa/registros/{{registro_id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"busqueda-activa",
+						"registros",
+						"{{registro_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "6. Descargar Reporte PDF",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/busqueda-activa/registros/{{registro_id}}/reporte",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"busqueda-activa",
+						"registros",
+						"{{registro_id}}",
+						"reporte"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "registro_id",
+			"value": ""
+		}
+	]
+}

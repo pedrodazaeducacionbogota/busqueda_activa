@@ -1,7 +1,7 @@
 package co.gov.educacionbogota.sicobertura.busquedaactiva.controllers;
 
-import co.gov.educacionbogota.sicobertura.busquedaactiva.config.JwtUtil;
-import lombok.Data;
+import co.gov.educacionbogota.sicobertura.busquedaactiva.config.BusquedaActivaJwtUtil;
+import co.gov.educacionbogota.sicobertura.entities.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,27 +15,42 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private BusquedaActivaJwtUtil jwtUtil;
+
+    @Autowired
+    private co.gov.educacionbogota.sicobertura.busquedaactiva.repositories.UsuarioRepository repository;
+
+    @Autowired
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        // Validación básica simulada ya que no hay tabla de usuarios en este snippet
-        // Se asume que el usuario está previamente verificado en el core de commons
-        if (loginRequest.getUsername() != null && loginRequest.getPassword() != null) {
-            String token = jwtUtil.generateToken(loginRequest.getUsername());
+        java.util.Optional<Usuario> userOpt = repository.findByNombreUsuario(loginRequest.getUsername());
+        
+        if (userOpt.isPresent() && passwordEncoder.matches(loginRequest.getPassword(), userOpt.get().getClave())) {
+            String token = jwtUtil.generateToken(userOpt.get().getNombreUsuario());
             return ResponseEntity.ok(new JwtResponse(token));
         }
+        
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales invalidas");
     }
 }
 
-@Data
 class LoginRequest {
     private String username;
     private String password;
+
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 }
 
-@Data
 class JwtResponse {
-    private final String token;
+    private String token;
+
+    public JwtResponse() {}
+    public JwtResponse(String token) { this.token = token; }
+    public String getToken() { return token; }
+    public void setToken(String token) { this.token = token; }
 }

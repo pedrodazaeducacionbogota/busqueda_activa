@@ -19,11 +19,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtRequestFilter jwtRequestFilter;
 
     @Override
+    public void configure(org.springframework.security.config.annotation.web.builders.WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/h2-console/**");
+    }
+
+    @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/api/auth/**", "/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/security", "/swagger-ui.html", "/webjars/**").permitAll()
                 .anyRequest().authenticated()
+                .and()
+                .headers().frameOptions().sameOrigin()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
