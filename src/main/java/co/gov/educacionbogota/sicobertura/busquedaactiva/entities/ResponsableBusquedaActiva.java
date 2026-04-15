@@ -10,19 +10,19 @@ public class ResponsableBusquedaActiva {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "tipo_documento", length = 5, nullable = false)
+    @Column(name = "tipo_documento", length = 5)
     private String tipoDocumento;
 
-    @Column(name = "numero_documento", length = 20, nullable = false)
+    @Column(name = "numero_documento", length = 20)
     private String numeroDocumento;
 
-    @Column(name = "primer_nombre", length = 50, nullable = false)
+    @Column(name = "primer_nombre", length = 50)
     private String primerNombre;
 
     @Column(name = "segundo_nombre", length = 50)
     private String segundoNombre;
 
-    @Column(name = "primer_apellido", length = 50, nullable = false)
+    @Column(name = "primer_apellido", length = 50)
     private String primerApellido;
 
     @Column(name = "segundo_apellido", length = 50)
@@ -31,25 +31,25 @@ public class ResponsableBusquedaActiva {
     @Column(name = "correo", length = 150)
     private String correo;
 
-    @Column(name = "celular", length = 15, nullable = false)
+    @Column(name = "celular", length = 15)
     private String celular;
 
-    @Column(name = "parentesco", length = 50, nullable = false)
+    @Column(name = "parentesco", length = 50)
     private String parentesco;
 
-    @Column(name = "nivel_escolaridad", length = 50, nullable = false)
+    @Column(name = "nivel_escolaridad", length = 50)
     private String nivelEscolaridad;
 
-    @Column(name = "ocupacion", length = 50, nullable = false)
+    @Column(name = "ocupacion", length = 50)
     private String ocupacion;
 
-    @Column(name = "localidad", length = 50, nullable = false)
+    @Column(name = "localidad", length = 50)
     private String localidad;
 
-    @Column(name = "barrio", length = 50, nullable = false)
+    @Column(name = "barrio", length = 50)
     private String barrio;
 
-    @Column(name = "direccion", length = 200, nullable = false)
+    @Column(name = "direccion", length = 200)
     private String direccion;
 
     public ResponsableBusquedaActiva() {}

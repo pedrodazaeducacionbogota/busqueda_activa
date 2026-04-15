@@ -1,7 +1,10 @@
 package co.gov.educacionbogota.sicobertura.busquedaactiva.controllers;
 
+import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.QuestionRequest;
+import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.QuestionResponse;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.entities.RegistroBusquedaActiva;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.services.BusquedaActivaService;
+import co.gov.educacionbogota.sicobertura.busquedaactiva.services.QuestionFlowService;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.services.ReporteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -24,6 +27,9 @@ public class BusquedaActivaController {
 
     @Autowired
     private ReporteService reporteService;
+
+    @Autowired
+    private QuestionFlowService questionFlowService;
 
     @GetMapping("/registros")
     public ResponseEntity<List<RegistroBusquedaActiva>> consultarRegistros(
@@ -63,6 +69,24 @@ public class BusquedaActivaController {
     public ResponseEntity<RegistroBusquedaActiva> crearRegistro(@RequestBody RegistroBusquedaActiva registro) {
         RegistroBusquedaActiva creado = service.guardarRegistro(registro);
         return new ResponseEntity<>(creado, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/registros/{id}/question/{questionId}")
+    public ResponseEntity<QuestionResponse> responderPregunta(
+            @PathVariable Long id, 
+            @PathVariable Integer questionId,
+            @RequestBody QuestionRequest request) {
+        return ResponseEntity.ok(questionFlowService.processAnswer(id, questionId, request.getResponse()));
+    }
+
+    @GetMapping("/registros/{id}/flow")
+    public ResponseEntity<QuestionResponse> obtenerEstadoInicial(@PathVariable Long id) {
+        return ResponseEntity.ok(questionFlowService.getInitialState(id));
+    }
+
+    @GetMapping("/questions")
+    public ResponseEntity<List<QuestionResponse.QuestionDTO>> obtenerTodasLasPreguntas() {
+        return ResponseEntity.ok(questionFlowService.getAllQuestions());
     }
 
     @PutMapping("/registros/{id}")

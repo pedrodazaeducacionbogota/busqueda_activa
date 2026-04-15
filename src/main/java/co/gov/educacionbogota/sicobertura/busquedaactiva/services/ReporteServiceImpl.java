@@ -35,6 +35,11 @@ public class ReporteServiceImpl implements ReporteService {
             Paragraph title = new Paragraph("Reporte de Búsqueda Activa", headFont);
             title.setAlignment(Element.ALIGN_CENTER);
             document.add(title);
+            
+            String tipoReporte = "Finalizado".equalsIgnoreCase(registro.getEstado()) ? "FINAL" : "PRELIMINAR";
+            Paragraph subtitle = new Paragraph("DOCUMENTO " + tipoReporte, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, Color.RED));
+            subtitle.setAlignment(Element.ALIGN_CENTER);
+            document.add(subtitle);
             document.add(Chunk.NEWLINE);
 
             // Informacion General del Registro
@@ -53,11 +58,15 @@ public class ReporteServiceImpl implements ReporteService {
                 addSectionTitle(document, "Información Sociodemográfica del Estudiante", sectionFont);
                 PdfPTable tableEst = new PdfPTable(2);
                 tableEst.setWidthPercentage(100);
-                addRow(tableEst, "Nombre Completo:", e.getPrimerNombre() + " " + (e.getSegundoNombre() != null ? e.getSegundoNombre() : "") + " " + e.getPrimerApellido() + " " + (e.getSegundoApellido() != null ? e.getSegundoApellido() : ""), labelFont, valueFont);
-                addRow(tableEst, "Documento:", e.getTipoDocumento() + " " + e.getNumeroDocumento(), labelFont, valueFont);
+                addRow(tableEst, "Nombre Completo:", 
+                    (e.getPrimerNombre() != null ? e.getPrimerNombre() : "") + " " + 
+                    (e.getSegundoNombre() != null ? e.getSegundoNombre() : "") + " " + 
+                    (e.getPrimerApellido() != null ? e.getPrimerApellido() : "") + " " + 
+                    (e.getSegundoApellido() != null ? e.getSegundoApellido() : ""), labelFont, valueFont);
+                addRow(tableEst, "Documento:", (e.getTipoDocumento() != null ? e.getTipoDocumento() : "N/A") + " " + (e.getNumeroDocumento() != null ? e.getNumeroDocumento() : ""), labelFont, valueFont);
                 addRow(tableEst, "Fecha Nacimiento:", e.getFechaNacimiento() != null ? new SimpleDateFormat("dd/MM/yyyy").format(e.getFechaNacimiento()) : "N/A", labelFont, valueFont);
-                addRow(tableEst, "Dirección:", e.getDireccion(), labelFont, valueFont);
-                addRow(tableEst, "País Nacimiento:", e.getPaisNacimiento(), labelFont, valueFont);
+                addRow(tableEst, "Dirección:", e.getDireccion() != null ? e.getDireccion() : "N/A", labelFont, valueFont);
+                addRow(tableEst, "País Nacimiento:", e.getPaisNacimiento() != null ? e.getPaisNacimiento() : "N/A", labelFont, valueFont);
                 document.add(tableEst);
                 document.add(Chunk.NEWLINE);
             }
@@ -68,12 +77,12 @@ public class ReporteServiceImpl implements ReporteService {
                 addSectionTitle(document, "Solicitud de Cupo Educativo", sectionFont);
                 PdfPTable tableCupo = new PdfPTable(2);
                 tableCupo.setWidthPercentage(100);
-                addRow(tableCupo, "Último Año Aprobado:", s.getUltimoAnoAprobado(), labelFont, valueFont);
-                addRow(tableCupo, "Grado Asignado:", s.getGradoAsignado(), labelFont, valueFont);
+                addRow(tableCupo, "Último Año Aprobado:", s.getUltimoAnoAprobado() != null ? s.getUltimoAnoAprobado() : "N/A", labelFont, valueFont);
+                addRow(tableCupo, "Grado Asignado:", s.getGradoAsignado() != null ? s.getGradoAsignado() : "N/A", labelFont, valueFont);
                 addRow(tableCupo, "¿Tiene Hermanos?:", s.getTieneHermanos() != null && s.getTieneHermanos() ? "SÍ" : "NO", labelFont, valueFont);
                 if (s.getTieneHermanos() != null && s.getTieneHermanos()) {
-                    addRow(tableCupo, "Nombre Hermano:", s.getPrimerNombreHermano() + " " + s.getPrimerApellidoHermano(), labelFont, valueFont);
-                    addRow(tableCupo, "Institución Hermano:", s.getInstitucionHermano(), labelFont, valueFont);
+                    addRow(tableCupo, "Nombre Hermano:", (s.getPrimerNombreHermano() != null ? s.getPrimerNombreHermano() : "") + " " + (s.getPrimerApellidoHermano() != null ? s.getPrimerApellidoHermano() : ""), labelFont, valueFont);
+                    addRow(tableCupo, "Institución Hermano:", s.getInstitucionHermano() != null ? s.getInstitucionHermano() : "N/A", labelFont, valueFont);
                 }
                 document.add(tableCupo);
                 document.add(Chunk.NEWLINE);

@@ -22,7 +22,7 @@ public class SolicitudCupoBusquedaActiva {
     @Column(name = "grado_asignado", length = 30)
     private String gradoAsignado;
 
-    @Column(name = "tiene_hermanos", nullable = false)
+    @Column(name = "tiene_hermanos")
     private Boolean tieneHermanos;
 
     @Column(name = "tipo_documento_hermano", length = 5)

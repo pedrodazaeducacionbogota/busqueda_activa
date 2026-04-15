@@ -23,6 +23,9 @@ public class RegistroBusquedaActiva {
     @Column(name = "ultima_etapa_registrada")
     private Integer ultimaEtapaRegistrada;
 
+    @Column(name = "pregunta_actual_id")
+    private Integer preguntaActualId;
+
     @Column(name = "poblacion_atendida")
     private String poblacionAtendida;
 
@@ -66,6 +69,8 @@ public class RegistroBusquedaActiva {
     public void setFechaRegistro(Date fechaRegistro) { this.fechaRegistro = fechaRegistro; }
     public Integer getUltimaEtapaRegistrada() { return ultimaEtapaRegistrada; }
     public void setUltimaEtapaRegistrada(Integer ultimaEtapaRegistrada) { this.ultimaEtapaRegistrada = ultimaEtapaRegistrada; }
+    public Integer getPreguntaActualId() { return preguntaActualId; }
+    public void setPreguntaActualId(Integer preguntaActualId) { this.preguntaActualId = preguntaActualId; }
     public String getPoblacionAtendida() { return poblacionAtendida; }
     public void setPoblacionAtendida(String poblacionAtendida) { this.poblacionAtendida = poblacionAtendida; }
     public String getLocalidad() { return localidad; }
