@@ -1,6 +1,8 @@
 package co.gov.educacionbogota.sicobertura.busquedaactiva.services;
 
 import co.gov.educacionbogota.sicobertura.busquedaactiva.entities.*;
+import co.gov.educacionbogota.sicobertura.entities.PersonaEntity;
+import co.gov.educacionbogota.sicobertura.entities.SolicitudEntity;
 import com.lowagie.text.*;
 import com.lowagie.text.Font;
 import com.lowagie.text.pdf.PdfPCell;
@@ -54,7 +56,7 @@ public class ReporteServiceImpl implements ReporteService {
 
             // Informacion del Estudiante
             if (registro.getEstudiante() != null) {
-                EstudianteBusquedaActiva e = registro.getEstudiante();
+                PersonaEntity e = registro.getEstudiante();
                 addSectionTitle(document, "Información Sociodemográfica del Estudiante", sectionFont);
                 PdfPTable tableEst = new PdfPTable(2);
                 tableEst.setWidthPercentage(100);
@@ -63,26 +65,28 @@ public class ReporteServiceImpl implements ReporteService {
                     (e.getSegundoNombre() != null ? e.getSegundoNombre() : "") + " " + 
                     (e.getPrimerApellido() != null ? e.getPrimerApellido() : "") + " " + 
                     (e.getSegundoApellido() != null ? e.getSegundoApellido() : ""), labelFont, valueFont);
-                addRow(tableEst, "Documento:", (e.getTipoDocumento() != null ? e.getTipoDocumento() : "N/A") + " " + (e.getNumeroDocumento() != null ? e.getNumeroDocumento() : ""), labelFont, valueFont);
+                addRow(tableEst, "Documento:", (e.getTipoDocumento() != null ? e.getTipoDocumento().getNombre() : "N/A") + " " + (e.getNumeroDocumento() != null ? e.getNumeroDocumento() : ""), labelFont, valueFont);
                 addRow(tableEst, "Fecha Nacimiento:", e.getFechaNacimiento() != null ? new SimpleDateFormat("dd/MM/yyyy").format(e.getFechaNacimiento()) : "N/A", labelFont, valueFont);
-                addRow(tableEst, "Dirección:", e.getDireccion() != null ? e.getDireccion() : "N/A", labelFont, valueFont);
-                addRow(tableEst, "País Nacimiento:", e.getPaisNacimiento() != null ? e.getPaisNacimiento() : "N/A", labelFont, valueFont);
+                addRow(tableEst, "Dirección:", e.getUbicacion() != null ? e.getUbicacion().getDireccion() : "N/A", labelFont, valueFont);
+                addRow(tableEst, "País Nacimiento:", e.getPaisNacimiento() != null ? e.getPaisNacimiento().getNombre() : "N/A", labelFont, valueFont);
                 document.add(tableEst);
                 document.add(Chunk.NEWLINE);
             }
 
             // Info de Cupo
             if (registro.getSolicitudCupo() != null) {
-                SolicitudCupoBusquedaActiva s = registro.getSolicitudCupo();
+                SolicitudEntity s = registro.getSolicitudCupo();
                 addSectionTitle(document, "Solicitud de Cupo Educativo", sectionFont);
                 PdfPTable tableCupo = new PdfPTable(2);
                 tableCupo.setWidthPercentage(100);
-                addRow(tableCupo, "Último Año Aprobado:", s.getUltimoAnoAprobado() != null ? s.getUltimoAnoAprobado() : "N/A", labelFont, valueFont);
-                addRow(tableCupo, "Grado Asignado:", s.getGradoAsignado() != null ? s.getGradoAsignado() : "N/A", labelFont, valueFont);
-                addRow(tableCupo, "¿Tiene Hermanos?:", s.getTieneHermanos() != null && s.getTieneHermanos() ? "SÍ" : "NO", labelFont, valueFont);
-                if (s.getTieneHermanos() != null && s.getTieneHermanos()) {
-                    addRow(tableCupo, "Nombre Hermano:", (s.getPrimerNombreHermano() != null ? s.getPrimerNombreHermano() : "") + " " + (s.getPrimerApellidoHermano() != null ? s.getPrimerApellidoHermano() : ""), labelFont, valueFont);
-                    addRow(tableCupo, "Institución Hermano:", s.getInstitucionHermano() != null ? s.getInstitucionHermano() : "N/A", labelFont, valueFont);
+                addRow(tableCupo, "Último Año Aprobado:", s.getUltimoAnioAprobado() != null ? s.getUltimoAnioAprobado().getNombre() : "N/A", labelFont, valueFont);
+                addRow(tableCupo, "Grado Asignado:", s.getGradoSolicitaCupo() != null ? s.getGradoSolicitaCupo().getNombre() : "N/A", labelFont, valueFont);
+                addRow(tableCupo, "¿Tiene Hermanos?:", s.isTieneHermano() ? "SÍ" : "NO", labelFont, valueFont);
+                if (s.isTieneHermano()) {
+                    PersonaEntity h = s.getHermano();
+                    if (h != null) {
+                        addRow(tableCupo, "Nombre Hermano:", (h.getPrimerNombre() != null ? h.getPrimerNombre() : "") + " " + (h.getPrimerApellido() != null ? h.getPrimerApellido() : ""), labelFont, valueFont);
+                    }
                 }
                 document.add(tableCupo);
                 document.add(Chunk.NEWLINE);
@@ -90,14 +94,14 @@ public class ReporteServiceImpl implements ReporteService {
 
             // Info del Responsable
             if (registro.getResponsable() != null) {
-                ResponsableBusquedaActiva r = registro.getResponsable();
+                PersonaEntity r = registro.getResponsable();
                 addSectionTitle(document, "Información del Responsable / Acudiente", sectionFont);
                 PdfPTable tableResp = new PdfPTable(2);
                 tableResp.setWidthPercentage(100);
                 addRow(tableResp, "Nombre:", r.getPrimerNombre() + " " + r.getPrimerApellido(), labelFont, valueFont);
-                addRow(tableResp, "Parentesco:", r.getParentesco(), labelFont, valueFont);
-                addRow(tableResp, "Celular:", r.getCelular(), labelFont, valueFont);
-                addRow(tableResp, "Correo:", r.getCorreo(), labelFont, valueFont);
+                addRow(tableResp, "Parentesco:", r.getParentesco() != null ? r.getParentesco().getNombre() : "N/A", labelFont, valueFont);
+                addRow(tableResp, "Celular:", r.getCelulares(), labelFont, valueFont);
+                addRow(tableResp, "Correo:", r.getEmails(), labelFont, valueFont);
                 document.add(tableResp);
                 document.add(Chunk.NEWLINE);
             }

@@ -1,6 +1,8 @@
 package co.gov.educacionbogota.sicobertura.busquedaactiva.entities;
 
 import javax.persistence.*;
+import co.gov.educacionbogota.sicobertura.entities.PersonaEntity;
+import co.gov.educacionbogota.sicobertura.entities.SolicitudEntity;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
@@ -46,15 +48,15 @@ public class RegistroBusquedaActiva {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "estudiante_id", referencedColumnName = "id")
-    private EstudianteBusquedaActiva estudiante;
+    private PersonaEntity estudiante;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "solicitud_cupo_id", referencedColumnName = "id")
-    private SolicitudCupoBusquedaActiva solicitudCupo;
+    private SolicitudEntity solicitudCupo;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "responsable_id", referencedColumnName = "id")
-    private ResponsableBusquedaActiva responsable;
+    private PersonaEntity responsable;
 
     @OneToMany(mappedBy = "registro", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FactorDesescolarizacion> factoresDesescolarizacion = new ArrayList<>();
@@ -83,12 +85,12 @@ public class RegistroBusquedaActiva {
     public void setTieneNinosSinEstudio(Boolean tieneNinosSinEstudio) { this.tieneNinosSinEstudio = tieneNinosSinEstudio; }
     public Integer getCantidadNinosSinEstudio() { return cantidadNinosSinEstudio; }
     public void setCantidadNinosSinEstudio(Integer cantidadNinosSinEstudio) { this.cantidadNinosSinEstudio = cantidadNinosSinEstudio; }
-    public EstudianteBusquedaActiva getEstudiante() { return estudiante; }
-    public void setEstudiante(EstudianteBusquedaActiva estudiante) { this.estudiante = estudiante; }
-    public SolicitudCupoBusquedaActiva getSolicitudCupo() { return solicitudCupo; }
-    public void setSolicitudCupo(SolicitudCupoBusquedaActiva solicitudCupo) { this.solicitudCupo = solicitudCupo; }
-    public ResponsableBusquedaActiva getResponsable() { return responsable; }
-    public void setResponsable(ResponsableBusquedaActiva responsable) { this.responsable = responsable; }
+    public PersonaEntity getEstudiante() { return estudiante; }
+    public void setEstudiante(PersonaEntity estudiante) { this.estudiante = estudiante; }
+    public SolicitudEntity getSolicitudCupo() { return solicitudCupo; }
+    public void setSolicitudCupo(SolicitudEntity solicitudCupo) { this.solicitudCupo = solicitudCupo; }
+    public PersonaEntity getResponsable() { return responsable; }
+    public void setResponsable(PersonaEntity responsable) { this.responsable = responsable; }
     public List<FactorDesescolarizacion> getFactoresDesescolarizacion() { return factoresDesescolarizacion; }
     public void setFactoresDesescolarizacion(List<FactorDesescolarizacion> factoresDesescolarizacion) { this.factoresDesescolarizacion = factoresDesescolarizacion; }
 }
