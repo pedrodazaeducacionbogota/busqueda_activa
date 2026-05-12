@@ -1,0 +1,270 @@
+{
+	"info": {
+		"_postman_id": "a0a2d4fa-9bf8-4eca-a4b0-a524b36e376e",
+		"name": "SICobertura - Búsqueda Activa V5",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Registros",
+			"item": [
+				{
+					"name": "Crear Registro",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"estado\": \"PENDIENTE\",\n    \"etapa\": 1,\n    \"localidad\": \"SUBA\",\n    \"barrio\": \"NIZA\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/busqueda-activa/registros",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"busqueda-activa",
+								"registros"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Registro Completo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/busqueda-activa/registros/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"busqueda-activa",
+								"registros",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Flujo de Preguntas",
+			"item": [
+				{
+					"name": "Obtener Estado Inicial",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/busqueda-activa/registros/:id/flow",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"busqueda-activa",
+								"registros",
+								":id",
+								"flow"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Responder Pregunta",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"response\": \"CC\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/busqueda-activa/registros/:id/question/:questionId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"busqueda-activa",
+								"registros",
+								":id",
+								"question",
+								":questionId"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								},
+								{
+									"key": "questionId",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Responder Preguntas (Batch)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"estudiante_primerNombre\": \"PEDRO\",\n    \"estudiante_primerApellido\": \"DAZA\",\n    \"estudiante_tipoDocumento\": \"CC\",\n    \"estudiante_numeroDocumento\": \"123456\",\n    \"solicitud_ultimoAnioAprobado\": \"5º\",\n    \"responsable_nombres\": \"JUAN PEREZ\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/busqueda-activa/registros/:id/questions/batch",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"busqueda-activa",
+								"registros",
+								":id",
+								"questions",
+								"batch"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reportes",
+			"item": [
+				{
+					"name": "Descargar PDF",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/busqueda-activa/registros/:id/reporte",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"busqueda-activa",
+								"registros",
+								":id",
+								"reporte"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}

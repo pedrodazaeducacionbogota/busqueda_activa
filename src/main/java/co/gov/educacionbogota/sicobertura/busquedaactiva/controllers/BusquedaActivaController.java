@@ -84,6 +84,13 @@ public class BusquedaActivaController {
         return ResponseEntity.ok(questionFlowService.getInitialState(id));
     }
 
+    @PostMapping("/registros/{id}/questions/batch")
+    public ResponseEntity<QuestionResponse> responderPreguntasBatch(
+            @PathVariable Long id,
+            @RequestBody java.util.Map<String, String> answers) {
+        return ResponseEntity.ok(questionFlowService.processBatchAnswers(id, answers));
+    }
+
     @GetMapping("/questions")
     public ResponseEntity<List<QuestionResponse.QuestionDTO>> obtenerTodasLasPreguntas() {
         return ResponseEntity.ok(questionFlowService.getAllQuestions());

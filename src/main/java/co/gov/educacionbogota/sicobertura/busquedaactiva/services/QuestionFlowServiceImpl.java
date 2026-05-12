@@ -44,70 +44,73 @@ public class QuestionFlowServiceImpl implements QuestionFlowService {
 
     static {
         // --- ETAPA 1: ESTUDIANTE ---
-        addQuestion(1, "Primer Nombre del Estudiante", null);
-        addQuestion(2, "Segundo Nombre del Estudiante", null);
-        addQuestion(3, "Primer Apellido del Estudiante", null);
-        addQuestion(4, "Segundo Apellido del Estudiante", null);
-        addQuestion(5, "Tipo de Documento", Arrays.asList("RC", "TI", "CC", "CE", "NES", "PEP", "PPT", "VISA"));
-        addQuestion(6, "Número de Documento", null);
-        addQuestion(7, "Fecha de Nacimiento (yyyy-MM-dd)", null);
-        addQuestion(8, "Sexo", Arrays.asList("Femenino", "Masculino"));
-        addQuestion(9, "¿La estudiante es gestante?", Arrays.asList("Sí", "No"));
-        addQuestion(10, "Etnia", Arrays.asList("Indígena", "Afrodescendiente", "Raizal", "Roms", "Ninguna"));
-        addQuestion(11, "Tipo de Discapacidad", Arrays.asList("Física", "Auditiva", "Visual", "Sordoceguera",
+        addQuestion(1, "estudiante_primerNombre", "Primer Nombre del Estudiante", null);
+        addQuestion(2, "estudiante_segundoNombre", "Segundo Nombre del Estudiante", null);
+        addQuestion(3, "estudiante_primerApellido", "Primer Apellido del Estudiante", null);
+        addQuestion(4, "estudiante_segundoApellido", "Segundo Nombre del Estudiante", null);
+        addQuestion(5, "estudiante_tipoDocumento", "Tipo de Documento", Arrays.asList("RC", "TI", "CC", "CE", "NES", "PEP", "PPT", "VISA"));
+        addQuestion(6, "estudiante_numeroDocumento", "Número de Documento", null);
+        addQuestion(7, "estudiante_fechaNacimiento", "Fecha de Nacimiento (yyyy-MM-dd)", null);
+        addQuestion(8, "estudiante_sexo", "Sexo", Arrays.asList("Femenino", "Masculino"));
+        addQuestion(9, "estudiante_gestante", "¿La estudiante es gestante?", Arrays.asList("Sí", "No"));
+        addQuestion(10, "estudiante_etnia", "Etnia", Arrays.asList("Indígena", "Afrodescendiente", "Raizal", "Roms", "Ninguna"));
+        addQuestion(11, "estudiante_tipoDiscapacidad", "Tipo de Discapacidad", Arrays.asList("Física", "Auditiva", "Visual", "Sordoceguera",
                 "Intelectual", "Psicosocial", "Múltiple", "Ninguna"));
-        addQuestion(12, "¿Se reconoce como parte de alguna población (víctima, desplazado, etc)?",
+        addQuestion(12, "estudiante_poblacionDiferencial", "¿Se reconoce como parte de alguna población (víctima, desplazado, etc)?",
                 Arrays.asList("Sí", "No"));
-        addQuestion(13, "Localidad de Residencia",
+        addQuestion(13, "estudiante_localidadResidencia", "Localidad de Residencia",
                 Arrays.asList("Usaquén", "Chapinero", "Santa Fe", "San Cristóbal", "Usme", "Tunjuelito", "Bosa",
                         "Kennedy", "Fontibón", "Engativá", "Suba", "Barrios Unidos", "Teusaquillo", "Los Mártires",
                         "Antonio Nariño", "Puente Aranda", "La Candelaria", "Rafael Uribe Uribe", "Ciudad Bolívar",
                         "Sumapaz"));
-        addQuestion(14, "Barrio", null);
-        addQuestion(15, "Dirección de Vivienda", null);
+        addQuestion(14, "estudiante_barrio", "Barrio", null);
+        addQuestion(15, "estudiante_direccion", "Dirección de Vivienda", null);
 
         // --- ETAPA 2: CUPO ---
-        addQuestion(16, "Último Año Aprobado",
+        addQuestion(16, "solicitud_ultimoAnioAprobado", "Último Año Aprobado",
                 Arrays.asList("Preescolar", "1º", "2º", "3º", "4º", "5º", "6º", "7º", "8º", "9º", "10º", "11º"));
-        addQuestion(17, "Localidad de la Institución de interés", null);
-        addQuestion(18, "Nombre de las Instituciones", null);
-        addQuestion(19, "Grado Asignado", null);
-        addQuestion(20, "¿El Estudiante tiene hermanos en una institución oficial?", Arrays.asList("Sí", "No"));
+        addQuestion(17, "solicitud_localidadInteres", "Localidad de la Institución de interés", null);
+        addQuestion(18, "solicitud_institucionesInteres", "Nombre de las Instituciones", null);
+        addQuestion(19, "solicitud_gradoSolicita", "Grado Asignado", null);
+        addQuestion(20, "solicitud_tieneHermano", "¿El Estudiante tiene hermanos en una institución oficial?", Arrays.asList("Sí", "No"));
 
         // Ramificación Azul (Hermanos)
-        addQuestion(21, "Tipo de Documento del Hermano",
+        addQuestion(21, "hermano_tipoDocumento", "Tipo de Documento del Hermano",
                 Arrays.asList("RC", "TI", "CC", "CE", "NES", "PEP", "PPT", "VISA"));
-        addQuestion(22, "Número de Documento del Hermano", null);
-        addQuestion(23, "Nombres y Apellidos del Hermano", null);
-        addQuestion(24, "¿Requiere que el estudiante esté en la misma institución?", Arrays.asList("Sí", "No"));
-        addQuestion(25, "Nombre de la Institución del Hermano", null);
+        addQuestion(22, "hermano_numeroDocumento", "Número de Documento del Hermano", null);
+        addQuestion(23, "hermano_nombres", "Nombres y Apellidos del Hermano", null);
+        addQuestion(24, "solicitud_mismaInstitucion", "¿Requiere que el estudiante esté en la misma institución?", Arrays.asList("Sí", "No"));
+        addQuestion(25, "hermano_institucion", "Nombre de la Institución del Hermano", null);
 
         // --- ETAPA 3: RESPONSABLE ---
-        addQuestion(26, "Tipo de Documento del Responsable", Arrays.asList("CC", "CE", "PEP", "PPT", "VISA"));
-        addQuestion(27, "Número de Documento del Responsable", null);
-        addQuestion(28, "Nombres y Apellidos del Responsable", null);
-        addQuestion(29, "Correo Electrónico", null);
-        addQuestion(30, "Número de Contacto", null);
-        addQuestion(31, "Parentesco", Arrays.asList("Padre", "Madre", "Abuelo/a", "Tío/a", "Hermano/a", "Cuidador"));
-        addQuestion(32, "Nivel de Escolaridad", Arrays.asList("Primaria", "Bachillerato", "Técnico/Tecnólogo",
+        addQuestion(26, "responsable_tipoDocumento", "Tipo de Documento del Responsable", Arrays.asList("CC", "CE", "PEP", "PPT", "VISA"));
+        addQuestion(27, "responsable_numeroDocumento", "Número de Documento del Responsable", null);
+        addQuestion(28, "responsable_nombres", "Nombres y Apellidos del Responsable", null);
+        addQuestion(29, "responsable_email", "Correo Electrónico", null);
+        addQuestion(30, "responsable_celular", "Número de Contacto", null);
+        addQuestion(31, "responsable_parentesco", "Parentesco", Arrays.asList("Padre", "Madre", "Abuelo/a", "Tío/a", "Hermano/a", "Cuidador"));
+        addQuestion(32, "responsable_escolaridad", "Nivel de Escolaridad", Arrays.asList("Primaria", "Bachillerato", "Técnico/Tecnólogo",
                 "Universitario", "Postgrado", "Ninguno"));
-        addQuestion(33, "Ocupación", null);
-        addQuestion(34, "Localidad Responsable", null);
-        addQuestion(35, "Barrio Responsable", null);
-        addQuestion(36, "Dirección Responsable", null);
+        addQuestion(33, "responsable_ocupacion", "Ocupación", null);
+        addQuestion(34, "responsable_localidad", "Localidad Responsable", null);
+        addQuestion(35, "responsable_barrio", "Barrio Responsable", null);
+        addQuestion(36, "responsable_direccion", "Dirección Responsable", null);
 
         // --- ETAPA 4: FACTORES DESESCOLARIZACIÓN (PÚRPURA) ---
-        addQuestion(37,
+        addQuestion(37, "factores_tieneNinosSinEstudio",
                 "¿En su núcleo familiar existen niños, niñas, adolescentes y/o jóvenes que no se encuentren estudiando?",
                 Arrays.asList("Sí", "No"));
-        addQuestion(38, "¿Cuántos niños conoce que no están estudiando?", null);
-        addQuestion(39, "Rango de edad de las personas que no están estudiando",
+        addQuestion(38, "factores_cantidadNinosSinEstudio", "¿Cuántos niños conoce que no están estudiando?", null);
+        addQuestion(39, "factores_rangoEdad", "Rango de edad de las personas que no están estudiando",
                 Arrays.asList("3-5 años", "6-11 años", "12-15 años", "16-17 años", "18+ años"));
-        addQuestion(40, "¿Cuáles son las razones por las que no están estudiando?", null);
+        addQuestion(40, "factores_razonDesescolarizacion", "¿Cuáles son las razones por las que no están estudiando?", null);
     }
 
-    private static void addQuestion(int id, String text, List<String> options) {
-        QUESTIONS.put(id, new QuestionDef(id, text, options));
+    private static final Map<String, Integer> KEY_TO_ID = new HashMap<>();
+
+    private static void addQuestion(int id, String key, String text, List<String> options) {
+        QUESTIONS.put(id, new QuestionDef(id, key, text, options));
+        KEY_TO_ID.put(key, id);
     }
 
     @Override
@@ -122,6 +125,39 @@ public class QuestionFlowServiceImpl implements QuestionFlowService {
         registro.setPreguntaActualId(nextId);
         repository.save(registro);
 
+        checkMilestones(registro, nextId);
+
+        return buildResponse(registro, nextId);
+    }
+
+    @Override
+    @Transactional
+    public QuestionResponse processBatchAnswers(Long registroId, Map<String, String> answers) {
+        RegistroBusquedaActiva registro = repository.findById(registroId)
+                .orElseThrow(() -> new RuntimeException("Registro no encontrado"));
+
+        Integer lastQId = 1;
+        String lastAns = "";
+
+        for (Map.Entry<String, String> entry : answers.entrySet()) {
+            Integer qId = KEY_TO_ID.get(entry.getKey());
+            if (qId != null) {
+                saveAnswerToEntity(registro, qId, entry.getValue());
+                lastQId = qId;
+                lastAns = entry.getValue();
+            }
+        }
+
+        Integer nextId = determineNextQuestion(registro, lastQId, lastAns);
+        registro.setPreguntaActualId(nextId);
+        repository.save(registro);
+
+        checkMilestones(registro, nextId);
+
+        return buildResponse(registro, nextId);
+    }
+
+    private void checkMilestones(RegistroBusquedaActiva registro, Integer nextId) {
         // Generación de PDF según hitos
         if (nextId == 26) { // Terminó sección Cupo (Azul)
             reporteService.generarReportePdf(registro); // Preliminary
@@ -130,8 +166,6 @@ public class QuestionFlowServiceImpl implements QuestionFlowService {
             repository.save(registro);
             reporteService.generarReportePdf(registro); // Final
         }
-
-        return buildResponse(registro, nextId);
     }
 
     @Override
@@ -376,11 +410,13 @@ public class QuestionFlowServiceImpl implements QuestionFlowService {
 
     private static class QuestionDef {
         int id;
+        String key;
         String text;
         List<String> options;
 
-        QuestionDef(int id, String text, List<String> options) {
+        QuestionDef(int id, String key, String text, List<String> options) {
             this.id = id;
+            this.key = key;
             this.text = text;
             this.options = options;
         }
