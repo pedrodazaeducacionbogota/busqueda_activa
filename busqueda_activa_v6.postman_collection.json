@@ -1,0 +1,146 @@
+{
+	"info": {
+		"_postman_id": "b1b3d5fa-9bf8-4eca-a4b0-a524b36e376f",
+		"name": "SICobertura - Búsqueda Activa V6",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "0. Autenticación",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/auth/login"
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "1. Crear Registro Inicial",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"estado\": \"PENDIENTE\",\n    \"etapa\": 1,\n    \"localidad\": \"SUBA\",\n    \"barrio\": \"NIZA\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/busqueda-activa/registros"
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2. Envío Batch (Toda la Encuesta)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"estudiante_primerNombre\": \"PEDRO\",\n    \"estudiante_segundoNombre\": \"ALONSO\",\n    \"estudiante_primerApellido\": \"DAZA\",\n    \"estudiante_tipoDocumento\": \"CC\",\n    \"estudiante_numeroDocumento\": \"123456789\",\n    \"estudiante_fechaNacimiento\": \"2010-05-15\",\n    \"estudiante_sexo\": \"Masculino\",\n    \"estudiante_etnia\": \"Ninguna\",\n    \"estudiante_localidadResidencia\": \"SUBA\",\n    \"solicitud_ultimoAnioAprobado\": \"5º\",\n    \"solicitud_localidadInteres\": \"SUBA\",\n    \"solicitud_institucionesInteres\": \"COLEGIO PRUEBA\",\n    \"solicitud_tieneHermano\": \"No\",\n    \"responsable_tipoDocumento\": \"CC\",\n    \"responsable_numeroDocumento\": \"987654321\",\n    \"responsable_nombres\": \"JUAN PEREZ\",\n    \"responsable_celular\": \"3001234567\",\n    \"responsable_parentesco\": \"Padre\",\n    \"factores_tieneNinosSinEstudio\": \"No\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/busqueda-activa/registros/:id/questions/batch",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"busqueda-activa",
+						"registros",
+						":id",
+						"questions",
+						"batch"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3. Verificar Persistencia en Commons",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/busqueda-activa/registros/:id",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"busqueda-activa",
+						"registros",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4. Generar Reporte Final",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/busqueda-activa/registros/:id/reporte",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"busqueda-activa",
+						"registros",
+						":id",
+						"reporte"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}
