@@ -41,6 +41,7 @@ public class QuestionFlowServiceImpl implements QuestionFlowService {
     private REFLocalidadRepository localidadRepo;
 
     private static final Map<Integer, QuestionDef> QUESTIONS = new LinkedHashMap<>();
+    private static final Map<String, Integer> KEY_TO_ID = new HashMap<>();
 
     static {
         // --- ETAPA 1: ESTUDIANTE ---
@@ -105,8 +106,6 @@ public class QuestionFlowServiceImpl implements QuestionFlowService {
                 Arrays.asList("3-5 años", "6-11 años", "12-15 años", "16-17 años", "18+ años"));
         addQuestion(40, "factores_razonDesescolarizacion", "¿Cuáles son las razones por las que no están estudiando?", null);
     }
-
-    private static final Map<String, Integer> KEY_TO_ID = new HashMap<>();
 
     private static void addQuestion(int id, String key, String text, List<String> options) {
         QUESTIONS.put(id, new QuestionDef(id, key, text, options));

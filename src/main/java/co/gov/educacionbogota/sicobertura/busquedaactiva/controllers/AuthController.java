@@ -2,6 +2,7 @@ package co.gov.educacionbogota.sicobertura.busquedaactiva.controllers;
 
 import co.gov.educacionbogota.sicobertura.busquedaactiva.config.BusquedaActivaJwtUtil;
 import co.gov.educacionbogota.sicobertura.entities.Usuario;
+import co.gov.educacionbogota.sicobertura.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class AuthController {
     private BusquedaActivaJwtUtil jwtUtil;
 
     @Autowired
-    private co.gov.educacionbogota.sicobertura.busquedaactiva.repositories.UsuarioRepository repository;
+    private UsuarioRepository repository;
 
     @Autowired
     private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
