@@ -254,8 +254,15 @@ public class QuestionFlowServiceImpl implements QuestionFlowService {
     private void saveAnswerToEntity(RegistroBusquedaActiva registro, Integer qId, String ans) {
         if (registro.getEstudiante() == null)
             registro.setEstudiante(new PersonaEntity());
-        if (registro.getSolicitudCupo() == null)
-            registro.setSolicitudCupo(new SolicitudEntity());
+        if (registro.getSolicitudCupo() == null) {
+            SolicitudEntity s = new SolicitudEntity();
+            // Pre-poblar campos para evitar autoFlush recursivo en SolicitudEntityListener.prePersist
+            s.setUuid(java.util.UUID.randomUUID().toString().substring(0, 6).toUpperCase());
+            s.setFechaCrea(new java.util.Date());
+            s.setEtapa(1);
+            s.setEditable(true);
+            registro.setSolicitudCupo(s);
+        }
         if (registro.getResponsable() == null)
             registro.setResponsable(new PersonaEntity());
 
