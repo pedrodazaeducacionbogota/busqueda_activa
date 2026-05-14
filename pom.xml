@@ -214,6 +214,26 @@
                     </excludes>
                 </configuration>
             </plugin>
+
+            <!-- JAR solo con entities + repositories para db-ddl-generator. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>jar-entities</id>
+                        <phase>package</phase>
+                        <goals><goal>jar</goal></goals>
+                        <configuration>
+                            <classifier>entities</classifier>
+                            <includes>
+                                <include>**/entities/**</include>
+                                <include>**/enums/**</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
