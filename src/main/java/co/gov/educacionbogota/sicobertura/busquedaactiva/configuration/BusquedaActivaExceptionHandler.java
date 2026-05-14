@@ -11,8 +11,11 @@ import java.util.Map;
 @RestControllerAdvice(basePackages = "co.gov.educacionbogota.sicobertura.busquedaactiva")
 public class BusquedaActivaExceptionHandler {
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BusquedaActivaExceptionHandler.class);
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Map<String, Object>> handleRuntimeException(RuntimeException ex) {
+        log.error("BA RuntimeException", ex);
         Map<String, Object> response = new HashMap<>();
         response.put("codigo", "404");
         response.put("mensaje", ex.getMessage());
@@ -22,6 +25,7 @@ public class BusquedaActivaExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneralException(Exception ex) {
+        log.error("BA Exception", ex);
         Map<String, Object> response = new HashMap<>();
         response.put("codigo", "500");
         response.put("mensaje", "Error interno del servidor: " + ex.getMessage());
