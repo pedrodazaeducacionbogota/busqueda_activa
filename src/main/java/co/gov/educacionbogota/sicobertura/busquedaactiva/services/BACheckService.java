@@ -22,8 +22,8 @@ import co.gov.educacionbogota.sicobertura.repository.ConfiguracionRepository;
 @Service
 public class BACheckService {
 
-    private static final String CFG_VIGENCIA = "B_ACTIVA_VIGENCIA";
-    private static final String CFG_ETAPA = "B_ACTIVA_ETAPA";
+    private static final String CFG_VIGENCIA = "VIGENCIA";
+    private static final String CFG_ETAPA = "ETAPA";
 
     @Autowired private BusquedaActivaFormularioRepository formularioRepository;
     @Autowired private ConfiguracionRepository configuracionRepository;

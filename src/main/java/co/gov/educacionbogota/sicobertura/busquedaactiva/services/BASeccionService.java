@@ -233,10 +233,10 @@ public class BASeccionService {
                 null, null);
 
         // País nacimiento + municipio exp doc
-        RefListado pais = lookupRef(dto.getPaisNacimiento(), "PAISES");
+        RefListado pais = lookupRef(dto.getPaisNacimiento(), "PAIS");
         persona.setPaisNacimiento(pais);
         if ("COL".equals(dto.getPaisNacimiento()) && dto.getMunicipioExpDoc() != null) {
-            RefListado mun = lookupRef(dto.getMunicipioExpDoc(), "MUNICIPIOS");
+            RefListado mun = lookupRef(dto.getMunicipioExpDoc(), "MUNICIPIO");
             persona.setIdMunicipioExpDoc(java.math.BigInteger.valueOf(mun.getIdRefListado()));
         }
 
@@ -316,13 +316,14 @@ public class BASeccionService {
     }
 
     private RefListado resolverRangoEdad(int edad) {
+        // Códigos seed ref_listado.csv descripcion=RANGOS_EDADES
         String codigo;
-        if (edad <= 5) codigo = "0-5";
-        else if (edad <= 12) codigo = "6-12";
-        else if (edad <= 18) codigo = "13-18";
-        else if (edad <= 28) codigo = "19-28";
-        else if (edad <= 59) codigo = "29-59";
-        else codigo = "60+";
+        if (edad <= 5) codigo = "0_Y_5_ANOS";
+        else if (edad <= 12) codigo = "6_Y_12_ANOS";
+        else if (edad <= 18) codigo = "13_Y_18_ANOS";
+        else if (edad <= 28) codigo = "19_Y_28_ANOS";
+        else if (edad <= 59) codigo = "28_Y_59_ANOS";
+        else codigo = "60_ANOS_EN_ADELANTE";
         return lookupRef(codigo, "RANGOS_EDADES");
     }
 
