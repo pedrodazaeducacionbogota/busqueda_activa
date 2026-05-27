@@ -21,8 +21,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Normalización sección 4 del formulario BA. 1 fila por rango de edad declarado como
- * "no estudiando" en la visita. Reemplaza 24 columnas flat del legacy (4 cols × 6 rangos).
+ * Etapa 4 (HU-007) factores descolarización. Modelo agregado por rango: 1 fila por rango de
+ * edad declarado "no estudiando" en el núcleo familiar, con conteo + razón.
  *
  * UQ por (formulario, rango_edad_codigo): cada rango aparece 1 vez máximo por formulario.
  * Agregar nuevo rango edad SIN schema change → solo 1 fila más + entry en ref_listado.
@@ -50,20 +50,23 @@ public class BANoEstudiandoEntity implements Serializable {
     private BusquedaActivaFormularioEntity formulario;
 
     /**
-     * Código rango edad SIMAT (ref_listado descripcion=RANGOS_EDADES.codigo):
-     * "0-5", "6-12", "13-18", "19-28", "29-59", "60+".
+     * Código rango edad (ref_listado descripcion=RANGOS_EDADES_BA.codigo):
+     * "0_Y_5_ANOS", "6_Y_10_ANOS", "11_Y_15_ANOS", "MAYOR_A_15_ANOS".
      */
-    @Column(name = "rango_edad_codigo", nullable = false, length = 10)
+    @Column(name = "rango_edad_codigo", nullable = false, length = 20)
     private String rangoEdadCodigo;
 
-    /** Cuántas personas no estudiando en este rango (0 si no aplica). */
+    /** Cuántas personas no estudiando en este rango (>=1). */
     @Column(name = "cuantos", nullable = false)
     private int cuantos;
 
+    /** Razón principal (ref_listado descripcion=RAZONES_NOESCOLAR_BA). */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_razon", referencedColumnName = "id_ref_listado")
     private RefListado razon;
 
-    @Column(name = "razon_otra", length = 500)
-    private String razonOtra;
+    /** Sub-razón cuando razon=OTROS_CUALES (ref_listado descripcion=RAZONES_NOESCOLAR_OTRAS_BA). */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_razon_otra", referencedColumnName = "id_ref_listado")
+    private RefListado razonOtra;
 }

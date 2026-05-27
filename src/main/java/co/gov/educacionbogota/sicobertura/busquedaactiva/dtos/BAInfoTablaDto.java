@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/** Fila resumen listado formularios BA para tabla front. */
+/** Fila resumen listado formularios BA para tarjetas front (HU-003). */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -12,12 +12,14 @@ public class BAInfoTablaDto {
     private Long id;
     private String fechaCrea;
     private boolean finalizado;
-    private int ultimaSeccion;
-    private String actividad;
-    private String nombreEventoFeria;
+    /** Última etapa registrada (0-4). */
+    private int ultimaEtapa;
+    /** "Finalizado" / "Pendiente". */
+    private String estado;
+    /** Población diferencial del estudiante. */
     private String poblacion;
     private String localidad;
     private String barrio;
-    private String atiendeVisita;
+    /** Nombre del estudiante. */
     private String estudiante;
 }

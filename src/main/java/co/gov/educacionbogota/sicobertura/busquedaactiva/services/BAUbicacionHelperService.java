@@ -47,9 +47,10 @@ public class BAUbicacionHelperService {
         return ubicacionRepository.save(ubicacion);
     }
 
-    /** Actualiza campos específicos de residencia (dirección, estrato) sin tocar localidad/barrio. */
-    public UbicacionEntity setDireccion(UbicacionEntity ubicacion, String direccion,
+    /** Actualiza dirección estructurada (tipo vía + dirección armada + complemento + estrato) sin tocar localidad/barrio. */
+    public UbicacionEntity setDireccion(UbicacionEntity ubicacion, String codigoTipoVia, String direccion,
                                          String direccionComplemento, Integer estrato) {
+        if (codigoTipoVia != null) ubicacion.setTipoDireccion(codigoTipoVia);
         if (direccion != null) ubicacion.setDireccion(direccion);
         if (direccionComplemento != null) ubicacion.setDireccionComplemento(direccionComplemento);
         if (estrato != null) ubicacion.setEstrato(estrato);

@@ -12,19 +12,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.BASeccion1Dto;
-import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.BASeccion2Dto;
-import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.BASeccion3Dto;
-import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.BASeccion4Dto;
-import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.BASeccion5Dto;
-import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.BASeccion6Dto;
-import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.BASeccion7Dto;
+import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.BAEtapa1Dto;
+import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.BAEtapa2Dto;
+import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.BAEtapa3Dto;
+import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.BAEtapa4Dto;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.services.BACheckService;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.services.BAEdadGradoService;
+import co.gov.educacionbogota.sicobertura.busquedaactiva.services.BAEtapaService;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.services.BAFormularioService;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.services.BAGetService;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.services.BAPdfService;
-import co.gov.educacionbogota.sicobertura.busquedaactiva.services.BASeccionService;
 import co.gov.educacionbogota.sicobertura.dto.ApiResponseDto;
 import co.gov.educacionbogota.sicobertura.exception.ReglaNegocioException;
 
@@ -32,93 +29,71 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
- * Endpoints wizard Búsqueda Activa (7 secciones + helpers).
- * Auth dinámica via endpoint_permiso DB (no @PreAuthorize). Roles permitidos:
- * RECTOR/PSI/FUNCIONARIO_INST/FUNCIONARIO_SED/ADMIN. Mapeo en endpoint_permisos.csv.
+ * Endpoints wizard Búsqueda Activa (4 etapas + helpers) — HU 12-IF-049.
+ * Auth dinámica via endpoint_permiso DB (no @PreAuthorize). Mapeo en endpoint_permisos.csv.
  */
 @RestController
 @RequestMapping("/api/busqueda-activa")
-@Tag(name = "07. Búsqueda Activa", description = "Wizard 7-secciones formulario BA + helpers (PDF, check estudiante, grados aprobados/solicitados)")
+@Tag(name = "07. Búsqueda Activa", description = "Wizard 4-etapas formulario BA + helpers (PDF, validar documento, grados aprobados/solicitados)")
 public class BusquedaActivaController {
 
     @Autowired private BAFormularioService formularioService;
-    @Autowired private BASeccionService seccionService;
+    @Autowired private BAEtapaService etapaService;
     @Autowired private BAGetService getService;
     @Autowired private BACheckService checkService;
     @Autowired private BAEdadGradoService edadGradoService;
     @Autowired private BAPdfService pdfService;
 
     @GetMapping
-    @Operation(summary = "Lista formularios BA del profesional autenticado")
+    @Operation(summary = "Lista formularios BA del profesional autenticado (tarjetas HU-003)")
     public ResponseEntity<ApiResponseDto> listar() {
         return ResponseEntity.ok(new ApiResponseDto(true, "Consulta", formularioService.listarPorProfesional()));
     }
 
-    @GetMapping("/detalle/{id}/{seccion}")
-    @Operation(summary = "Detalle por sección (0-7). 0 retorna metadata; 1-7 retorna DTO de la sección")
-    public ResponseEntity<ApiResponseDto> detalle(@PathVariable Long id, @PathVariable Integer seccion) {
+    @GetMapping("/detalle/{id}/{etapa}")
+    @Operation(summary = "Detalle por etapa (0-4). 0 retorna metadata; 1-4 retorna DTO de la etapa")
+    public ResponseEntity<ApiResponseDto> detalle(@PathVariable Long id, @PathVariable Integer etapa) {
         Object data;
-        switch (seccion) {
-            case 0: data = getService.detalleSeccion0(id); break;
-            case 1: data = getService.detalleSeccion1(id); break;
-            case 2: data = getService.detalleSeccion2(id); break;
-            case 3: data = getService.detalleSeccion3(id); break;
-            case 4: data = getService.detalleSeccion4(id); break;
-            case 5: data = getService.detalleSeccion5(id); break;
-            case 6: data = getService.detalleSeccion6(id); break;
-            case 7: data = getService.detalleSeccion7(id); break;
+        switch (etapa) {
+            case 0: data = getService.detalleEtapa0(id); break;
+            case 1: data = getService.detalleEtapa1(id); break;
+            case 2: data = getService.detalleEtapa2(id); break;
+            case 3: data = getService.detalleEtapa3(id); break;
+            case 4: data = getService.detalleEtapa4(id); break;
             default:
-                throw new ReglaNegocioException("Sección no reconocida: " + seccion + " (esperadas 0-7)");
+                throw new ReglaNegocioException("Etapa no reconocida: " + etapa + " (esperadas 0-4)");
         }
         return ResponseEntity.ok(new ApiResponseDto(true, "Consulta", data));
     }
 
     @PostMapping
-    @Operation(summary = "Crea formulario BA vacío. Lee vigencia + etapa de Configuracion B_ACTIVA_*")
+    @Operation(summary = "Crea formulario BA vacío. Lee vigencia + etapa de Configuracion (VIGENCIA/ETAPA)")
     public ResponseEntity<ApiResponseDto> crear() {
         return ResponseEntity.ok(new ApiResponseDto(true, "Formulario BA creado", formularioService.crearFormulario()));
     }
 
-    @PutMapping("/seccion1/{id}")
-    @Operation(summary = "Actualiza sección 1 (actividad + ubicación visita)")
-    public ResponseEntity<ApiResponseDto> seccion1(@PathVariable Long id, @Valid @RequestBody BASeccion1Dto dto) {
-        return ResponseEntity.ok(new ApiResponseDto(true, "Sección 1 actualizada", seccionService.actualizarSeccion1(id, dto)));
+    @PutMapping("/etapa1/{id}")
+    @Operation(summary = "Etapa 1 (HU-004): información sociodemográfica del estudiante")
+    public ResponseEntity<ApiResponseDto> etapa1(@PathVariable Long id, @Valid @RequestBody BAEtapa1Dto dto) {
+        return ResponseEntity.ok(new ApiResponseDto(true, "Etapa 1 actualizada", etapaService.actualizarEtapa1(id, dto)));
     }
 
-    @PutMapping("/seccion2/{id}")
-    @Operation(summary = "Actualiza sección 2 (persona atiende visita)")
-    public ResponseEntity<ApiResponseDto> seccion2(@PathVariable Long id, @Valid @RequestBody BASeccion2Dto dto) {
-        return ResponseEntity.ok(new ApiResponseDto(true, "Sección 2 actualizada", seccionService.actualizarSeccion2(id, dto)));
+    @PutMapping("/etapa2/{id}")
+    @Operation(summary = "Etapa 2 (HU-005): solicitud cupo + hermanos + hasta 10 instituciones")
+    public ResponseEntity<ApiResponseDto> etapa2(@PathVariable Long id, @Valid @RequestBody BAEtapa2Dto dto) {
+        return ResponseEntity.ok(new ApiResponseDto(true, "Etapa 2 actualizada", etapaService.actualizarEtapa2(id, dto)));
     }
 
-    @PutMapping("/seccion3/{id}")
-    @Operation(summary = "Actualiza sección 3 (colegios/jardines cerca)")
-    public ResponseEntity<ApiResponseDto> seccion3(@PathVariable Long id, @Valid @RequestBody BASeccion3Dto dto) {
-        return ResponseEntity.ok(new ApiResponseDto(true, "Sección 3 actualizada", seccionService.actualizarSeccion3(id, dto)));
+    @PutMapping("/etapa3/{id}")
+    @Operation(summary = "Etapa 3 (HU-006): información de contacto del responsable o acudiente")
+    public ResponseEntity<ApiResponseDto> etapa3(@PathVariable Long id, @Valid @RequestBody BAEtapa3Dto dto) {
+        return ResponseEntity.ok(new ApiResponseDto(true, "Etapa 3 actualizada", etapaService.actualizarEtapa3(id, dto)));
     }
 
-    @PutMapping("/seccion4/{id}")
-    @Operation(summary = "Actualiza sección 4 (no estudiando por rango edad — normalizada)")
-    public ResponseEntity<ApiResponseDto> seccion4(@PathVariable Long id, @Valid @RequestBody BASeccion4Dto dto) {
-        return ResponseEntity.ok(new ApiResponseDto(true, "Sección 4 actualizada", seccionService.actualizarSeccion4(id, dto)));
-    }
-
-    @PutMapping("/seccion5/{id}")
-    @Operation(summary = "Actualiza sección 5 (acudiente). atiendeVisitaAcudiente=true reusa persona sección 2")
-    public ResponseEntity<ApiResponseDto> seccion5(@PathVariable Long id, @Valid @RequestBody BASeccion5Dto dto) {
-        return ResponseEntity.ok(new ApiResponseDto(true, "Sección 5 actualizada", seccionService.actualizarSeccion5(id, dto)));
-    }
-
-    @PutMapping("/seccion6/{id}")
-    @Operation(summary = "Actualiza sección 6 (estudiante con persona nested + edad calculada)")
-    public ResponseEntity<ApiResponseDto> seccion6(@PathVariable Long id, @Valid @RequestBody BASeccion6Dto dto) {
-        return ResponseEntity.ok(new ApiResponseDto(true, "Sección 6 actualizada", seccionService.actualizarSeccion6(id, dto)));
-    }
-
-    @PutMapping("/seccion7/{id}")
-    @Operation(summary = "Actualiza sección 7 (educativo + solicitud cupo). Marca finalizado=true")
-    public ResponseEntity<ApiResponseDto> seccion7(@PathVariable Long id, @Valid @RequestBody BASeccion7Dto dto) {
-        return ResponseEntity.ok(new ApiResponseDto(true, "Sección 7 actualizada", seccionService.actualizarSeccion7(id, dto)));
+    @PutMapping("/etapa4/{id}")
+    @Operation(summary = "Etapa 4 (HU-007): factores de descolarización. Marca finalizado=true")
+    public ResponseEntity<ApiResponseDto> etapa4(@PathVariable Long id, @Valid @RequestBody BAEtapa4Dto dto) {
+        return ResponseEntity.ok(new ApiResponseDto(true, "Etapa 4 actualizada", etapaService.actualizarEtapa4(id, dto)));
     }
 
     @GetMapping("/resumen/{id}")
@@ -127,16 +102,10 @@ public class BusquedaActivaController {
         return ResponseEntity.ok(new ApiResponseDto(true, "PDF generado", pdfService.generarResumen(id)));
     }
 
-    @PutMapping("/agregar-familiar/{id}")
-    @Operation(summary = "Clona formulario preservando secciones 1-5. Nuevo wizard para otro estudiante misma familia")
-    public ResponseEntity<ApiResponseDto> agregarFamiliar(@PathVariable Long id) {
-        return ResponseEntity.ok(new ApiResponseDto(true, "Familiar agregado", formularioService.agregarFamiliar(id)));
-    }
-
-    @GetMapping("/check-estudiante/{documento}/tipo/{tipo}")
-    @Operation(summary = "Dedup por documento + etapa + vigencia. tipo ∈ {ATIENDE, ACUDIENTE, ESTUDIANTE}")
-    public ResponseEntity<ApiResponseDto> checkEstudiante(@PathVariable String documento, @PathVariable String tipo) {
-        return ResponseEntity.ok(new ApiResponseDto(true, "Check OK", checkService.checkEstudiante(documento, tipo)));
+    @GetMapping("/validar-documento/{tipo}/{numero}")
+    @Operation(summary = "Dedup por documento + etapa + vigencia (HU-004 paso 5). tipo ∈ {ESTUDIANTE, ACUDIENTE}")
+    public ResponseEntity<ApiResponseDto> validarDocumento(@PathVariable String tipo, @PathVariable String numero) {
+        return ResponseEntity.ok(new ApiResponseDto(true, "Validación OK", checkService.validarDocumento(numero, tipo)));
     }
 
     @GetMapping("/grados-aprobados/{id}")

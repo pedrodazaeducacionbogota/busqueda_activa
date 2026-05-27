@@ -1,13 +1,13 @@
 package co.gov.educacionbogota.sicobertura.busquedaactiva.services;
 
-import java.util.Collections;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.CheckEstudianteDto;
+import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.ValidarDocumentoDto;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.entities.BusquedaActivaFormularioEntity;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.repositories.BusquedaActivaFormularioRepository;
 import co.gov.educacionbogota.sicobertura.entities.ConfiguracionEntity;
@@ -16,44 +16,50 @@ import co.gov.educacionbogota.sicobertura.exception.ReglaNegocioException;
 import co.gov.educacionbogota.sicobertura.repository.ConfiguracionRepository;
 
 /**
- * Dedup por documento + etapa + vigencia. tipo ∈ {ATIENDE, ACUDIENTE, ESTUDIANTE}.
- * Front llama antes de iniciar wizard para evitar formularios duplicados misma familia.
+ * Validación documento (HU-004 paso 5). Dedup por documento + etapa + vigencia.
+ * tipo ∈ {ESTUDIANTE, ACUDIENTE}. Si ya existe, retorna fecha + profesional que registró
+ * para el modal informativo del front.
  */
 @Service
 public class BACheckService {
 
     private static final String CFG_VIGENCIA = "VIGENCIA";
     private static final String CFG_ETAPA = "ETAPA";
+    private static final DateTimeFormatter FECHA_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     @Autowired private BusquedaActivaFormularioRepository formularioRepository;
     @Autowired private ConfiguracionRepository configuracionRepository;
 
     @Transactional(readOnly = true)
-    public CheckEstudianteDto checkEstudiante(String documento, String tipo) {
+    public ValidarDocumentoDto validarDocumento(String documento, String tipo) {
         int vigencia = leerConfigInt(CFG_VIGENCIA);
         int etapa = leerConfigInt(CFG_ETAPA);
 
         List<BusquedaActivaFormularioEntity> matches;
         switch (tipo) {
-            case "ATIENDE":
-                matches = formularioRepository.buscarPorAtiende(documento, etapa, vigencia);
+            case "ESTUDIANTE":
+                matches = formularioRepository.buscarPorEstudiante(documento, etapa, vigencia);
                 break;
             case "ACUDIENTE":
                 matches = formularioRepository.buscarPorAcudiente(documento, etapa, vigencia);
                 break;
-            case "ESTUDIANTE":
-                matches = formularioRepository.buscarPorEstudiante(documento, etapa, vigencia);
-                break;
             default:
-                throw new ReglaNegocioException("Tipo inválido: " + tipo + " (esperados: ATIENDE/ACUDIENTE/ESTUDIANTE)");
+                throw new ReglaNegocioException("Tipo inválido: " + tipo + " (esperados: ESTUDIANTE/ACUDIENTE)");
         }
 
-        CheckEstudianteDto dto = new CheckEstudianteDto();
-        if (matches == null || matches.isEmpty() || Collections.emptyList().equals(matches)) {
+        ValidarDocumentoDto dto = new ValidarDocumentoDto();
+        if (matches == null || matches.isEmpty()) {
             dto.setNuevo(true);
         } else {
+            BusquedaActivaFormularioEntity existente = matches.get(0);
             dto.setNuevo(false);
-            dto.setIdSolicitud(matches.get(0).getId());
+            dto.setIdFormulario(existente.getId());
+            if (existente.getFechaCrea() != null) {
+                dto.setFechaRegistro(existente.getFechaCrea().format(FECHA_FMT));
+            }
+            if (existente.getProfesional() != null) {
+                dto.setRegistradoPor(existente.getProfesional().getNombreUsuario());
+            }
         }
         return dto;
     }

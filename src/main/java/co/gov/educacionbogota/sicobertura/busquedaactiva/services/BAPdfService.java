@@ -14,8 +14,10 @@ import co.gov.educacionbogota.sicobertura.busquedaactiva.entities.BANoEstudiando
 import co.gov.educacionbogota.sicobertura.busquedaactiva.entities.BusquedaActivaFormularioEntity;
 import co.gov.educacionbogota.sicobertura.entities.PersonaEntity;
 import co.gov.educacionbogota.sicobertura.entities.RefListado;
+import co.gov.educacionbogota.sicobertura.entities.SolicitudColegioEntity;
+import co.gov.educacionbogota.sicobertura.entities.SolicitudEntity;
 import co.gov.educacionbogota.sicobertura.exception.ReglaNegocioException;
-import co.gov.educacionbogota.sicobertura.repository.RefListadoRepository;
+import co.gov.educacionbogota.sicobertura.repository.SolicitudColegioRepository;
 
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -29,8 +31,8 @@ import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 
 /**
- * PDF resumen formulario BA. iText 7. Renderiza 7 secciones + estado FINAL/PRELIMINAR
- * según `finalizado`. Encoded base64 en response (mismo contrato legacy).
+ * PDF resumen formulario BA. iText 7. Renderiza 4 etapas + estado FINAL/PRELIMINAR
+ * según `finalizado`. Encoded base64 en response.
  */
 @Service
 public class BAPdfService {
@@ -38,7 +40,7 @@ public class BAPdfService {
     private static final DateTimeFormatter FECHA_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     @Autowired private BAFormularioService formularioService;
-    @Autowired private RefListadoRepository refRepo;
+    @Autowired private SolicitudColegioRepository solicitudColegioRepository;
 
     @Transactional(readOnly = true)
     public ResumenPdfDto generarResumen(Long id) {
@@ -53,6 +55,11 @@ public class BAPdfService {
 
     private byte[] generarPdf(BusquedaActivaFormularioEntity f) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
+        construirPdf(f, out);
+        return out.toByteArray();
+    }
+
+    private void construirPdf(BusquedaActivaFormularioEntity f, ByteArrayOutputStream out) {
         try (PdfWriter writer = new PdfWriter(out);
              PdfDocument pdf = new PdfDocument(writer);
              Document doc = new Document(pdf)) {
@@ -73,100 +80,106 @@ public class BAPdfService {
             Table h = tabla();
             row(h, "ID Formulario:", str(f.getId()));
             row(h, "Vigencia:", str(f.getVigencia()));
-            row(h, "Etapa:", str(f.getEtapa()));
+            row(h, "Etapa config:", str(f.getEtapa()));
             row(h, "Fecha creación:", f.getFechaCrea() != null ? f.getFechaCrea().format(FECHA_FMT) : "");
             row(h, "Estado:", tipo);
-            row(h, "Última sección:", str(f.getUltimaSeccion()));
+            row(h, "Última etapa:", str(f.getUltimaEtapa()));
             if (f.getProfesional() != null) {
                 row(h, "Profesional:", f.getProfesional().getNombreUsuario());
             }
             doc.add(h);
 
-            // Sección 1
-            seccion(doc, "Sección 1: Actividad / Ubicación visita");
-            Table s1 = tabla();
-            row(s1, "Actividad:", refDesc(f.getActividad()));
-            row(s1, "Actividad otra:", f.getActividadOtra());
-            row(s1, "Evento / feria:", f.getNombreEventoFeria());
-            row(s1, "Población:", f.getPoblacionEvento());
-            if (f.getUbicacion() != null) {
-                row(s1, "Localidad:", refDesc(f.getUbicacion().getLocalidad()));
-                row(s1, "Barrio:", f.getUbicacion().getBarrio() != null
-                        ? refDesc(f.getUbicacion().getBarrio()) : f.getUbicacion().getBarrioOtro());
-            }
-            doc.add(s1);
-
-            // Sección 2
-            seccion(doc, "Sección 2: Atiende Visita");
-            doc.add(personaTabla(f.getAtiendeVisita()));
-
-            // Sección 3
-            seccion(doc, "Sección 3: Colegios / Jardines Cerca");
-            Table s3 = tabla();
-            row(s3, "Colegios cerca:", String.valueOf(f.isColegiosCerca()));
-            if (f.getIdeColegioCerca() != null) row(s3, "Sede colegio:", f.getIdeColegioCerca().getNombre());
-            row(s3, "Colegio cual:", f.getColegioCercaCual());
-            row(s3, "Jardines cerca:", String.valueOf(f.isJardinesCerca()));
-            if (f.getIdeJardinCerca() != null) row(s3, "Sede jardín:", f.getIdeJardinCerca().getNombre());
-            row(s3, "Jardín cual:", f.getJardinCercaCual());
-            doc.add(s3);
-
-            // Sección 4
-            seccion(doc, "Sección 4: No Estudiando por Rango Edad");
-            if (f.getNoEstudiandoRangos() != null && !f.getNoEstudiandoRangos().isEmpty()) {
-                Table s4 = new Table(UnitValue.createPercentArray(new float[]{1, 1, 2, 2}))
-                        .setWidth(UnitValue.createPercentValue(100));
-                s4.addHeaderCell(headerCell("Rango"));
-                s4.addHeaderCell(headerCell("Cuántos"));
-                s4.addHeaderCell(headerCell("Razón"));
-                s4.addHeaderCell(headerCell("Razón otra"));
-                for (BANoEstudiandoEntity r : f.getNoEstudiandoRangos()) {
-                    s4.addCell(cell(r.getRangoEdadCodigo()));
-                    s4.addCell(cell(String.valueOf(r.getCuantos())));
-                    s4.addCell(cell(refDesc(r.getRazon())));
-                    s4.addCell(cell(r.getRazonOtra()));
-                }
-                doc.add(s4);
-            } else {
-                doc.add(new Paragraph("Sin datos").setFontSize(9));
-            }
-
-            // Sección 5
-            seccion(doc, "Sección 5: Acudiente");
-            Table s5 = tabla();
-            row(s5, "Atiende es acudiente:", String.valueOf(f.isAtiendeVisitaAcudiente()));
-            doc.add(s5);
-            doc.add(personaTabla(f.getAcudiente()));
-
-            // Sección 6
-            seccion(doc, "Sección 6: Estudiante");
+            // Etapa 1: estudiante
+            seccion(doc, "Etapa 1: Estudiante");
             if (f.getEstudiante() != null) {
-                doc.add(personaTabla(f.getEstudiante().getPersona()));
-                Table s6e = tabla();
-                row(s6e, "Edad:", f.getEstudiante().getEdadTxt());
-                row(s6e, "Rango edad:", refDesc(f.getEstudiante().getRangoEdad()));
-                row(s6e, "Enfoque diferencial:", refDesc(f.getEstudiante().getEnfoqueDiferencial()));
-                doc.add(s6e);
+                PersonaEntity p = f.getEstudiante().getPersona();
+                doc.add(personaTabla(p));
+                Table e1 = tabla();
+                row(e1, "País nacimiento:", refDesc(p != null ? p.getPaisNacimiento() : null));
+                row(e1, "Edad:", f.getEstudiante().getEdadTxt());
+                row(e1, "Rango edad:", refDesc(f.getEstudiante().getRangoEdad()));
+                if (p != null) {
+                    row(e1, "Etnia:", p.getEtnia() != null ? refDesc(p.getEtnia()) : p.getEtniaOtro());
+                    row(e1, "Población:", p.getPoblacionDiferencial() != null
+                            ? refDesc(p.getPoblacionDiferencial()) : p.getPoblacionOtro());
+                    row(e1, "Discapacidad:", String.valueOf(Boolean.TRUE.equals(p.getDiscapacidad())));
+                    if (Boolean.TRUE.equals(p.getDiscapacidad())) row(e1, "Tipo discapacidad:", refDesc(p.getTipoDiscapacidad()));
+                    row(e1, "Gestante:", String.valueOf(p.isGestante()));
+                    ubicacionRows(e1, p.getUbicacion());
+                }
+                doc.add(e1);
             } else {
                 doc.add(new Paragraph("Sin estudiante").setFontSize(9));
             }
 
-            // Sección 7
-            seccion(doc, "Sección 7: Educativo / Solicitud Cupo");
-            Table s7 = tabla();
-            row(s7, "Último año estudio:", refDesc(f.getUltimoAnioEstudio()));
-            row(s7, "Repitió último año:", String.valueOf(f.isRepitioUltimoAnio()));
-            row(s7, "Veces repitió:", refDesc(f.getVecesRepitioAnio()));
-            row(s7, "Último año aprobado:", refDesc(f.getUltimoAnioAprobado()));
-            if (f.getIdeSolicitaCupo() != null) row(s7, "Sede solicita cupo:", f.getIdeSolicitaCupo().getNombre());
-            row(s7, "Grado solicita cupo:", refDesc(f.getGradoSolicitaCupo()));
-            doc.add(s7);
+            // Etapa 2: solicitud cupo + hermanos + colegios
+            seccion(doc, "Etapa 2: Solicitud de Cupo");
+            SolicitudEntity sol = f.getSolicitud();
+            if (sol != null) {
+                Table e2 = tabla();
+                row(e2, "Último año aprobado:", refDesc(sol.getUltimoAnioAprobado()));
+                row(e2, "Grado solicita cupo:", refDesc(sol.getGradoSolicitaCupo()));
+                row(e2, "Tiene hermano:", String.valueOf(sol.isTieneHermano()));
+                doc.add(e2);
+                if (sol.isTieneHermano() && sol.getHermano() != null) {
+                    seccion2sub(doc, "Hermano");
+                    doc.add(personaTabla(sol.getHermano()));
+                    Table eh = tabla();
+                    row(eh, "Misma institución:", String.valueOf(f.isMismaInstitucionHermano()));
+                    if (f.getInstitucionHermano() != null) row(eh, "Institución hermano:", f.getInstitucionHermano().getNombre());
+                    doc.add(eh);
+                }
+                // Colegios en orden de preferencia
+                java.util.List<SolicitudColegioEntity> colegios =
+                        solicitudColegioRepository.findBySolicitud_IdOrderByOrdenPreferencia(sol.getId());
+                if (!colegios.isEmpty()) {
+                    Table tc = new Table(UnitValue.createPercentArray(new float[]{1, 4}))
+                            .setWidth(UnitValue.createPercentValue(100));
+                    tc.addHeaderCell(headerCell("Pref."));
+                    tc.addHeaderCell(headerCell("Institución"));
+                    for (SolicitudColegioEntity sc : colegios) {
+                        tc.addCell(cell(str(sc.getOrdenPreferencia())));
+                        tc.addCell(cell(sc.getColegio() != null ? sc.getColegio().getNombre() : ""));
+                    }
+                    doc.add(tc);
+                }
+            } else {
+                doc.add(new Paragraph("Sin solicitud").setFontSize(9));
+            }
 
-            return out.toByteArray();
+            // Etapa 3: acudiente
+            seccion(doc, "Etapa 3: Responsable / Acudiente");
+            if (f.getAcudiente() != null) {
+                PersonaEntity a = f.getAcudiente();
+                doc.add(personaTabla(a));
+                Table e3 = tabla();
+                ubicacionRows(e3, a.getUbicacion());
+                doc.add(e3);
+            } else {
+                doc.add(new Paragraph("Sin acudiente").setFontSize(9));
+            }
+
+            // Etapa 4: factores descolarización
+            seccion(doc, "Etapa 4: Factores de Descolarización");
+            if (f.getNoEstudiandoRangos() != null && !f.getNoEstudiandoRangos().isEmpty()) {
+                Table e4 = new Table(UnitValue.createPercentArray(new float[]{2, 1, 3, 3}))
+                        .setWidth(UnitValue.createPercentValue(100));
+                e4.addHeaderCell(headerCell("Rango"));
+                e4.addHeaderCell(headerCell("Cuántos"));
+                e4.addHeaderCell(headerCell("Razón"));
+                e4.addHeaderCell(headerCell("Sub-razón"));
+                for (BANoEstudiandoEntity r : f.getNoEstudiandoRangos()) {
+                    e4.addCell(cell(r.getRangoEdadCodigo()));
+                    e4.addCell(cell(String.valueOf(r.getCuantos())));
+                    e4.addCell(cell(refDesc(r.getRazon())));
+                    e4.addCell(cell(refDesc(r.getRazonOtra())));
+                }
+                doc.add(e4);
+            } else {
+                doc.add(new Paragraph("No hay NNAJ no estudiando reportados").setFontSize(9));
+            }
         } catch (Exception ex) {
             throw new ReglaNegocioException("Error generando PDF: " + ex.getMessage());
-        } finally {
-            try { out.close(); } catch (Exception ignore) {}
         }
     }
 
@@ -181,13 +194,21 @@ public class BAPdfService {
         if (p.getTipoDocumento() != null) row(t, "Tipo doc:", refDesc(p.getTipoDocumento()));
         row(t, "Documento:", p.getNumeroDocumento());
         row(t, "Nombre completo:", joinNombre(p));
-        row(t, "Celulares:", p.getCelulares());
-        row(t, "Emails:", p.getEmails());
+        if (p.getCelulares() != null) row(t, "Celulares:", p.getCelulares());
+        if (p.getEmails() != null) row(t, "Emails:", p.getEmails());
         if (p.getFechaNacimiento() != null) {
             row(t, "Fecha nac:", new SimpleDateFormat("yyyy-MM-dd").format(p.getFechaNacimiento()));
         }
         if (p.getSexo() != null) row(t, "Sexo:", refDesc(p.getSexo()));
         return t;
+    }
+
+    private void ubicacionRows(Table t, co.gov.educacionbogota.sicobertura.entities.UbicacionEntity u) {
+        if (u == null) return;
+        row(t, "Localidad:", refDesc(u.getLocalidad()));
+        row(t, "Barrio:", u.getBarrio() != null ? refDesc(u.getBarrio()) : u.getBarrioOtro());
+        row(t, "Dirección:", u.getDireccion());
+        row(t, "Complemento:", u.getDireccionComplemento());
     }
 
     private String joinNombre(PersonaEntity p) {
@@ -202,6 +223,11 @@ public class BAPdfService {
     private void seccion(Document doc, String titulo) {
         doc.add(new Paragraph(titulo).setFontSize(13).setBold()
                 .setFontColor(ColorConstants.DARK_GRAY).setMarginTop(10));
+    }
+
+    private void seccion2sub(Document doc, String titulo) {
+        doc.add(new Paragraph(titulo).setFontSize(11).setBold()
+                .setFontColor(ColorConstants.GRAY).setMarginTop(4));
     }
 
     private Table tabla() {
@@ -223,13 +249,7 @@ public class BAPdfService {
     }
 
     private String refDesc(RefListado r) {
-        return r != null ? r.getDescripcion() : "";
-    }
-
-    @SuppressWarnings("unused")
-    private String refDescById(Long id) {
-        if (id == null) return "";
-        return refRepo.findById(id).map(RefListado::getDescripcion).orElse("");
+        return r != null ? r.getNombre() : "";
     }
 
     private String str(Object o) {

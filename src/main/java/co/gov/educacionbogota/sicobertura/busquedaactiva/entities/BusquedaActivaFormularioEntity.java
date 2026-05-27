@@ -20,11 +20,9 @@ import javax.persistence.Table;
 
 import co.gov.educacionbogota.sicobertura.audit.Auditable;
 import co.gov.educacionbogota.sicobertura.entities.EstudianteEntity;
+import co.gov.educacionbogota.sicobertura.entities.IdeEntity;
 import co.gov.educacionbogota.sicobertura.entities.PersonaEntity;
-import co.gov.educacionbogota.sicobertura.entities.RefListado;
-import co.gov.educacionbogota.sicobertura.entities.SedeEntity;
 import co.gov.educacionbogota.sicobertura.entities.SolicitudEntity;
-import co.gov.educacionbogota.sicobertura.entities.UbicacionEntity;
 import co.gov.educacionbogota.sicobertura.entities.Usuario;
 
 import lombok.AllArgsConstructor;
@@ -33,12 +31,20 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Formulario Búsqueda Activa. Root del wizard 7-secciones.
- * Refactor del legacy `BUSQUEDA_ACTIVA_DAT` 2024: sección 4 (no estudiando por rango) normalizada
- * en {@link BANoEstudiandoEntity}. Resto de secciones en columnas flat por simplicidad.
+ * Formulario Búsqueda Activa. Root del wizard 4-etapas (HU 12-IF-049, validado funcional 2026).
  *
- * Lifecycle: POST crea root vacío → PUT seccion{1..7} incrementa `ultima_seccion`.
- * Sección 7 marca `finalizado=true`.
+ * Realineación 2026-05-27 del modelo 7-secciones legacy: el HU define 4 etapas y reutiliza
+ * las entidades transversales del módulo inscripciones (SolicitudEntity + SolicitudColegio).
+ *
+ * <ul>
+ *   <li>Etapa 1 (HU-004): estudiante sociodemográfico → {@link EstudianteEntity}</li>
+ *   <li>Etapa 2 (HU-005): solicitud cupo + hermanos + hasta 10 IE → {@link SolicitudEntity}</li>
+ *   <li>Etapa 3 (HU-006): responsable/acudiente → {@link PersonaEntity}</li>
+ *   <li>Etapa 4 (HU-007): factores descolarización → {@link BANoEstudiandoEntity} (agregado/rango)</li>
+ * </ul>
+ *
+ * Lifecycle: POST crea root vacío → PUT etapa{1..4} incrementa `ultima_etapa`.
+ * Etapa 4 marca `finalizado=true`.
  */
 @Entity
 @Table(name = "SC_DAT_BA_FORMULARIO")
@@ -68,104 +74,42 @@ public class BusquedaActivaFormularioEntity implements Serializable {
     @Column(name = "finalizado", nullable = false)
     private boolean finalizado = false;
 
-    /** Tracking wizard. 0=creado vacío, 1..7=última sección actualizada. */
-    @Column(name = "ultima_seccion", nullable = false)
-    private int ultimaSeccion = 0;
+    /** Tracking wizard. 0=creado vacío, 1..4=última etapa actualizada. */
+    @Column(name = "ultima_etapa", nullable = false)
+    private int ultimaEtapa = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_profesional", nullable = false)
     private Usuario profesional;
 
-    // -------- Sección 1: actividad + ubicación visita --------
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_actividad", referencedColumnName = "id_ref_listado")
-    private RefListado actividad;
-
-    @Column(name = "actividad_otra", length = 255)
-    private String actividadOtra;
-
-    @Column(name = "nombre_evento_feria", length = 255)
-    private String nombreEventoFeria;
-
-    /** CSV de poblaciones (multiselect front). */
-    @Column(name = "poblacion_evento", length = 500)
-    private String poblacionEvento;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_ubicacion")
-    private UbicacionEntity ubicacion;
-
-    // -------- Sección 2: atiende visita (persona en sitio) --------
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_atiende_visita")
-    private PersonaEntity atiendeVisita;
-
-    // -------- Sección 3: colegios/jardines cerca --------
-    @Column(name = "colegios_cerca")
-    private boolean colegiosCerca;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_ide_colegio_cerca")
-    private SedeEntity ideColegioCerca;
-
-    @Column(name = "colegio_cerca_cual", length = 255)
-    private String colegioCercaCual;
-
-    @Column(name = "jardines_cerca")
-    private boolean jardinesCerca;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_ide_jardin_cerca")
-    private SedeEntity ideJardinCerca;
-
-    @Column(name = "jardin_cerca_cual", length = 255)
-    private String jardinCercaCual;
-
-    // -------- Sección 4: no estudiando por rango edad → tabla normalizada --------
-    @OneToMany(mappedBy = "formulario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<BANoEstudiandoEntity> noEstudiandoRangos = new ArrayList<>();
-
-    // -------- Sección 5: acudiente --------
-    @Column(name = "atiende_visita_acudiente")
-    private boolean atiendeVisitaAcudiente;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_acudiente")
-    private PersonaEntity acudiente;
-
-    // -------- Sección 6: estudiante --------
+    // -------- Etapa 1: estudiante sociodemográfico (HU-004) --------
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_estudiante")
     private EstudianteEntity estudiante;
 
-    // -------- Sección 7: educativo + solicitud cupo --------
+    // -------- Etapa 2: solicitud cupo + hermanos + colegios (HU-005) --------
+    /** Solicitud cupo standalone BA (reutiliza SOLICITUDES_DAT + SOLICITUD_COLEGIOS_DAT, no dispara inscripción). */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_ult_anio_estudio", referencedColumnName = "id_ref_listado")
-    private RefListado ultimoAnioEstudio;
+    @JoinColumn(name = "id_solicitud")
+    private SolicitudEntity solicitud;
 
-    @Column(name = "repitio_ultimo_anio")
-    private boolean repitioUltimoAnio;
+    /** ¿Desea misma institución que el hermano? (HU-005 paso 12). */
+    @Column(name = "misma_institucion_hermano")
+    private boolean mismaInstitucionHermano;
 
+    /** Institución donde está el hermano (HU-005 paso 13). */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_veces_repitio", referencedColumnName = "id_ref_listado")
-    private RefListado vecesRepitioAnio;
+    @JoinColumn(name = "id_institucion_hermano")
+    private IdeEntity institucionHermano;
 
+    // -------- Etapa 3: responsable/acudiente (HU-006) --------
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_ult_anio_aprobado", referencedColumnName = "id_ref_listado")
-    private RefListado ultimoAnioAprobado;
+    @JoinColumn(name = "id_acudiente")
+    private PersonaEntity acudiente;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_ide_solicita_cupo")
-    private SedeEntity ideSolicitaCupo;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_grado_solicita_cupo", referencedColumnName = "id_ref_listado")
-    private RefListado gradoSolicitaCupo;
-
-    /** Solicitud derivada al finalizar (sec 7) — opcional. */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_formulario_solicitud")
-    private SolicitudEntity formularioSolicitud;
+    // -------- Etapa 4: factores descolarización (HU-007) → tabla normalizada agregada/rango --------
+    @OneToMany(mappedBy = "formulario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<BANoEstudiandoEntity> noEstudiandoRangos = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
