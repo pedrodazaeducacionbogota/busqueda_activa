@@ -24,7 +24,7 @@ public class BAUbicacionHelperService {
     public UbicacionEntity upsert(UbicacionEntity toUpdate, String codigoLocalidad,
                                    String codigoBarrio, String barrioOtroFallback) {
         RefListado localidad = refListadoRepository
-                .findByCodigoAndDescripcionAndActivo(codigoLocalidad, "LOCALIDAD-PRUEBA", 1)
+                .findByCodigoAndDescripcionAndActivo(codigoLocalidad, "LOCALIDADES", 1)
                 .orElseThrow(() -> new RecursoNoEncontradoException(
                         "Localidad no encontrada: " + codigoLocalidad));
 
@@ -34,7 +34,7 @@ public class BAUbicacionHelperService {
 
         if (codigoBarrio != null && !codigoBarrio.isEmpty() && !"0".equals(codigoBarrio)) {
             RefListado barrio = refListadoRepository
-                    .findByCodigoAndDescripcionAndActivo(codigoBarrio, "BARRIO-PRUEBA", 1)
+                    .findByCodigoAndDescripcionAndActivo(codigoBarrio, "BARRIOS", 1)
                     .orElseThrow(() -> new RecursoNoEncontradoException(
                             "Barrio no encontrado: " + codigoBarrio));
             ubicacion.setBarrio(barrio);
