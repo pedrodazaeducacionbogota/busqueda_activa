@@ -5,39 +5,27 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import co.gov.educacionbogota.sicobertura.dto.RefListadoKVDto;
 import co.gov.educacionbogota.sicobertura.entities.PersonaEntity;
 import co.gov.educacionbogota.sicobertura.entities.RefListado;
-import co.gov.educacionbogota.sicobertura.exception.RecursoNoEncontradoException;
 import co.gov.educacionbogota.sicobertura.repository.PersonaRepository;
-import co.gov.educacionbogota.sicobertura.repository.RefListadoRepository;
 
 /**
  * Upsert PersonaEntity por (tipoDocumento, numeroDocumento). Reutilizado en
  * secciones 2, 5, 6 del wizard BA (atiende visita, acudiente, estudiante).
- *
- * Si la persona ya existe → reutiliza entity (preserva FK desde otros formularios).
- * Si no existe → crea nueva con tipoDoc resuelto vía RefListado.
  */
 @Service
 public class BAPersonaHelperService {
 
     @Autowired private PersonaRepository personaRepository;
-    @Autowired private RefListadoRepository refListadoRepository;
+    @Autowired private BARefResolverService resolver;
 
-    /**
-     * @param toUpdate persona existente (null o entity vacía si se crea nueva)
-     * @param codigoTipoDocumento código RefListado descripcion=TIPOS_DOCUMENTO
-     */
-    public PersonaEntity upsert(PersonaEntity toUpdate, String codigoTipoDocumento, String numeroDocumento,
+    public PersonaEntity upsert(PersonaEntity toUpdate, RefListadoKVDto tipoDocumento, String numeroDocumento,
                                  String primerNombre, String segundoNombre,
                                  String primerApellido, String segundoApellido,
                                  String celulares, String emails) {
-        RefListado tipoDoc = refListadoRepository
-                .findByCodigoAndDescripcionAndActivo(codigoTipoDocumento, "TIPOS_DOCUMENTO", 1)
-                .orElseThrow(() -> new RecursoNoEncontradoException(
-                        "Tipo documento no encontrado: " + codigoTipoDocumento));
+        RefListado tipoDoc = resolver.resolve(tipoDocumento, "TIPOS_DOCUMENTO");
 
-        // Si persona con mismo (tipoDoc, numDoc) ya existe en BD, reusarla
         Optional<PersonaEntity> existente = personaRepository
                 .findByTipoDocumento_IdRefListadoAndNumeroDocumento(tipoDoc.getIdRefListado(), numeroDocumento);
 

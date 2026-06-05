@@ -15,15 +15,16 @@ import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.BAEtapa4Dto;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.ResponseBASeccionesDto;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.entities.BANoEstudiandoEntity;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.entities.BusquedaActivaFormularioEntity;
+import co.gov.educacionbogota.sicobertura.dto.RefListadoKVDto;
 import co.gov.educacionbogota.sicobertura.entities.PersonaEntity;
+import co.gov.educacionbogota.sicobertura.entities.RefListado;
 import co.gov.educacionbogota.sicobertura.entities.SolicitudEntity;
 import co.gov.educacionbogota.sicobertura.entities.UbicacionEntity;
 import co.gov.educacionbogota.sicobertura.repository.RefListadoRepository;
 import co.gov.educacionbogota.sicobertura.repository.SolicitudColegioRepository;
 
 /**
- * Detalle de cada etapa como DTO. Reverse mapping entity → dto para repintar el wizard
- * al retomar un formulario. Switch 0-4 desde el controller.
+ * Detalle de cada etapa como DTO. Reverse mapping entity → dto para repintar el wizard.
  */
 @Service
 public class BAGetService {
@@ -46,27 +47,26 @@ public class BAGetService {
         if (f.getEstudiante() == null || f.getEstudiante().getPersona() == null) return dto;
 
         PersonaEntity p = f.getEstudiante().getPersona();
-        if (p.getTipoDocumento() != null) dto.setCodigoTipoDocumento(p.getTipoDocumento().getCodigo());
+        dto.setTipoDocumento(toKV(p.getTipoDocumento()));
         dto.setNumeroDocumento(p.getNumeroDocumento());
         dto.setPrimerNombre(p.getPrimerNombre());
         dto.setSegundoNombre(p.getSegundoNombre());
         dto.setPrimerApellido(p.getPrimerApellido());
         dto.setSegundoApellido(p.getSegundoApellido());
-        if (p.getPaisNacimiento() != null) dto.setCodigoPaisNacimiento(p.getPaisNacimiento().getCodigo());
+        dto.setPaisNacimiento(toKV(p.getPaisNacimiento()));
         dto.setFechaNacimiento(p.getFechaNacimientoStr());
-        if (p.getSexo() != null) dto.setCodigoSexo(p.getSexo().getCodigo());
-        if (p.getEtnia() != null) dto.setCodigoEtnia(p.getEtnia().getCodigo());
+        dto.setSexo(toKV(p.getSexo()));
+        dto.setEtnia(toKV(p.getEtnia()));
         dto.setEtniaOtro(p.getEtniaOtro());
         dto.setDiscapacidad(Boolean.TRUE.equals(p.getDiscapacidad()));
-        if (p.getTipoDiscapacidad() != null) dto.setCodigoTipoDiscapacidad(p.getTipoDiscapacidad().getCodigo());
+        dto.setTipoDiscapacidad(toKV(p.getTipoDiscapacidad()));
         dto.setCertDiscapacidad(Boolean.TRUE.equals(p.getCertDiscapacidad()));
         dto.setSoporteDiscapacidad(p.getSoporteDiscapacidad());
-        if (p.getPoblacionDiferencial() != null) dto.setCodigoPoblacionDiferencial(p.getPoblacionDiferencial().getCodigo());
+        dto.setPoblacionDiferencial(toKV(p.getPoblacionDiferencial()));
         dto.setPoblacionOtro(p.getPoblacionOtro());
         dto.setGestante(p.isGestante());
         dto.setCorreo(p.getEmails());
         dto.setCelular(p.getCelulares());
-        // Inferido: mayor de edad a nombre propio si registró contacto propio
         dto.setMayorEdadNombrePropio(p.getEmails() != null || p.getCelulares() != null);
         mapUbicacion(p.getUbicacion(), dto);
         return dto;
@@ -74,10 +74,12 @@ public class BAGetService {
 
     private void mapUbicacion(UbicacionEntity u, BAEtapa1Dto dto) {
         if (u == null) return;
-        if (u.getLocalidad() != null) dto.setCodigoLocalidad(u.getLocalidad().getCodigo());
-        dto.setCodigoBarrio(u.getBarrio() != null ? u.getBarrio().getCodigo() : "0");
+        dto.setLocalidad(toKV(u.getLocalidad()));
+        dto.setBarrio(u.getBarrio() != null ? toKV(u.getBarrio())
+                : RefListadoKVDto.builder().codigo("0").build());
         dto.setBarrioOtro(u.getBarrioOtro());
-        dto.setCodigoTipoVia(u.getTipoDireccion());
+        dto.setTipoVia(u.getTipoDireccion() != null
+                ? RefListadoKVDto.builder().codigo(u.getTipoDireccion()).build() : null);
         dto.setDireccion(u.getDireccion());
         dto.setDireccionComplemento(u.getDireccionComplemento());
     }
@@ -88,12 +90,12 @@ public class BAGetService {
         BAEtapa2Dto dto = new BAEtapa2Dto();
         SolicitudEntity s = f.getSolicitud();
         if (s != null) {
-            if (s.getUltimoAnioAprobado() != null) dto.setCodigoUltimoAnioAprobado(s.getUltimoAnioAprobado().getCodigo());
-            if (s.getGradoSolicitaCupo() != null) dto.setCodigoGradoSolicitaCupo(s.getGradoSolicitaCupo().getCodigo());
+            dto.setUltimoAnioAprobado(toKV(s.getUltimoAnioAprobado()));
+            dto.setGradoSolicitaCupo(toKV(s.getGradoSolicitaCupo()));
             dto.setTieneHermano(s.isTieneHermano());
             PersonaEntity h = s.getHermano();
             if (h != null) {
-                if (h.getTipoDocumento() != null) dto.setCodigoTipoDocumentoHermano(h.getTipoDocumento().getCodigo());
+                dto.setTipoDocumentoHermano(toKV(h.getTipoDocumento()));
                 dto.setNumeroDocumentoHermano(h.getNumeroDocumento());
                 dto.setPrimerNombreHermano(h.getPrimerNombre());
                 dto.setSegundoNombreHermano(h.getSegundoNombre());
@@ -119,7 +121,7 @@ public class BAGetService {
         PersonaEntity p = f.getAcudiente();
         if (p == null) return dto;
 
-        if (p.getTipoDocumento() != null) dto.setCodigoTipoDocumento(p.getTipoDocumento().getCodigo());
+        dto.setTipoDocumento(toKV(p.getTipoDocumento()));
         dto.setNumeroDocumento(p.getNumeroDocumento());
         dto.setPrimerNombre(p.getPrimerNombre());
         dto.setSegundoNombre(p.getSegundoNombre());
@@ -129,20 +131,22 @@ public class BAGetService {
         dto.setCelular(p.getCelulares());
         dto.setParentescoOtro(p.getParentescoOtro());
         if (p.getIdParentesco() != null) {
-            refRepo.findById(p.getIdParentesco().longValue()).ifPresent(r -> dto.setCodigoParentesco(r.getCodigo()));
+            refRepo.findById(p.getIdParentesco().longValue()).ifPresent(r -> dto.setParentesco(toKV(r)));
         }
         if (p.getIdNvlEscolaridad() != null) {
-            refRepo.findById(p.getIdNvlEscolaridad().longValue()).ifPresent(r -> dto.setCodigoNivelEscolaridad(r.getCodigo()));
+            refRepo.findById(p.getIdNvlEscolaridad().longValue()).ifPresent(r -> dto.setNivelEscolaridad(toKV(r)));
         }
         if (p.getIdOcupacion() != null) {
-            refRepo.findById(p.getIdOcupacion().longValue()).ifPresent(r -> dto.setCodigoOcupacion(r.getCodigo()));
+            refRepo.findById(p.getIdOcupacion().longValue()).ifPresent(r -> dto.setOcupacion(toKV(r)));
         }
         UbicacionEntity u = p.getUbicacion();
         if (u != null) {
-            if (u.getLocalidad() != null) dto.setCodigoLocalidad(u.getLocalidad().getCodigo());
-            dto.setCodigoBarrio(u.getBarrio() != null ? u.getBarrio().getCodigo() : "0");
+            dto.setLocalidad(toKV(u.getLocalidad()));
+            dto.setBarrio(u.getBarrio() != null ? toKV(u.getBarrio())
+                    : RefListadoKVDto.builder().codigo("0").build());
             dto.setBarrioOtro(u.getBarrioOtro());
-            dto.setCodigoTipoVia(u.getTipoDireccion());
+            dto.setTipoVia(u.getTipoDireccion() != null
+                    ? RefListadoKVDto.builder().codigo(u.getTipoDireccion()).build() : null);
             dto.setDireccion(u.getDireccion());
             dto.setDireccionComplemento(u.getDireccionComplemento());
         }
@@ -158,12 +162,22 @@ public class BAGetService {
             BAEtapa4Dto.NoEstudiandoItem item = new BAEtapa4Dto.NoEstudiandoItem();
             item.setRangoEdadCodigo(r.getRangoEdadCodigo());
             item.setCuantos(r.getCuantos());
-            if (r.getRazon() != null) item.setCodigoRazon(r.getRazon().getCodigo());
-            if (r.getRazonOtra() != null) item.setCodigoRazonOtra(r.getRazonOtra().getCodigo());
+            item.setRazon(toKV(r.getRazon()));
+            item.setRazonOtra(toKV(r.getRazonOtra()));
             items.add(item);
         }
         dto.setExistenNoEstudiando(!items.isEmpty());
         dto.setRangos(items);
         return dto;
+    }
+
+    private RefListadoKVDto toKV(RefListado r) {
+        if (r == null) return null;
+        return RefListadoKVDto.builder()
+                .id(r.getIdRefListado())
+                .codigo(r.getCodigo())
+                .valorTxt(r.getValorTxt())
+                .valorInt(r.getValorInt())
+                .build();
     }
 }

@@ -23,6 +23,7 @@ import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.BAEtapa4Dto;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.ResponseBASeccionesDto;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.entities.BANoEstudiandoEntity;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.entities.BusquedaActivaFormularioEntity;
+import co.gov.educacionbogota.sicobertura.dto.RefListadoKVDto;
 import co.gov.educacionbogota.sicobertura.entities.EstudianteEntity;
 import co.gov.educacionbogota.sicobertura.entities.IdeEntity;
 import co.gov.educacionbogota.sicobertura.entities.PersonaEntity;
@@ -39,17 +40,6 @@ import co.gov.educacionbogota.sicobertura.repository.RefListadoRepository;
 import co.gov.educacionbogota.sicobertura.repository.SolicitudColegioRepository;
 import co.gov.educacionbogota.sicobertura.repository.SolicitudRepository;
 
-/**
- * Actualiza las 4 etapas del formulario BA (HU 12-IF-049). Cada método fija `ultimaEtapa`.
- * Etapa 4 marca `finalizado=true`. Lookups RefListado por (codigo, descripcion, activo=1).
- *
- * <ul>
- *   <li>Etapa 1 (HU-004): estudiante sociodemográfico → EstudianteEntity + PersonaEntity</li>
- *   <li>Etapa 2 (HU-005): cupo + hermanos + colegios → SolicitudEntity + SolicitudColegioEntity</li>
- *   <li>Etapa 3 (HU-006): acudiente → PersonaEntity</li>
- *   <li>Etapa 4 (HU-007): factores descolarización → BANoEstudiandoEntity (agregado/rango)</li>
- * </ul>
- */
 @Service
 public class BAEtapaService {
 
@@ -59,6 +49,7 @@ public class BAEtapaService {
     @Autowired private BAFormularioService formularioService;
     @Autowired private BAPersonaHelperService personaHelper;
     @Autowired private BAUbicacionHelperService ubicacionHelper;
+    @Autowired private BARefResolverService resolver;
     @Autowired private RefListadoRepository refRepo;
     @Autowired private PersonaRepository personaRepository;
     @Autowired private EstudianteRepository estudianteRepository;
@@ -66,7 +57,7 @@ public class BAEtapaService {
     @Autowired private SolicitudColegioRepository solicitudColegioRepository;
     @Autowired private IdeRepository ideRepository;
 
-    // ==================== ETAPA 1: estudiante sociodemográfico ====================
+    // ==================== ETAPA 1 ====================
     @Transactional
     public ResponseBASeccionesDto actualizarEtapa1(Long id, BAEtapa1Dto dto) {
         BusquedaActivaFormularioEntity f = formularioService.getFormulario(id);
@@ -75,28 +66,29 @@ public class BAEtapaService {
         PersonaEntity persona = (estudiante != null) ? estudiante.getPersona() : null;
 
         String celular = dto.isMayorEdadNombrePropio() ? dto.getCelular() : null;
-        String correo = dto.isMayorEdadNombrePropio() ? dto.getCorreo() : null;
+        String correo  = dto.isMayorEdadNombrePropio() ? dto.getCorreo()  : null;
         persona = personaHelper.upsert(persona,
-                dto.getCodigoTipoDocumento(), dto.getNumeroDocumento(),
+                dto.getTipoDocumento(), dto.getNumeroDocumento(),
                 dto.getPrimerNombre(), dto.getSegundoNombre(),
                 dto.getPrimerApellido(), dto.getSegundoApellido(),
                 celular, correo);
 
-        persona.setPaisNacimiento(lookupRef(dto.getCodigoPaisNacimiento(), "PAIS"));
+        persona.setPaisNacimiento(lookupRef(dto.getPaisNacimiento(), "PAIS"));
         try {
             persona.setFechaNacimiento(new SimpleDateFormat("yyyy-MM-dd").parse(dto.getFechaNacimiento()));
         } catch (java.text.ParseException ex) {
             throw new ReglaNegocioException("Fecha nacimiento inválida: " + dto.getFechaNacimiento());
         }
         persona.setFechaNacimientoStr(dto.getFechaNacimiento());
-        persona.setSexo(lookupRef(dto.getCodigoSexo(), "SEXOS"));
+        persona.setSexo(lookupRef(dto.getSexo(), "SEXOS"));
 
-        persona.setEtnia(lookupRef(dto.getCodigoEtnia(), "ETNIAS"));
-        persona.setEtniaOtro(esOtro(dto.getCodigoEtnia()) ? nullIfEmpty(dto.getEtniaOtro()) : null);
+        RefListado etnia = lookupRef(dto.getEtnia(), "ETNIAS");
+        persona.setEtnia(etnia);
+        persona.setEtniaOtro("OTRO".equals(etnia.getCodigo()) ? nullIfEmpty(dto.getEtniaOtro()) : null);
 
         persona.setDiscapacidad(dto.isDiscapacidad());
         if (dto.isDiscapacidad()) {
-            persona.setTipoDiscapacidad(lookupRef(dto.getCodigoTipoDiscapacidad(), "TIPOS_DISCAPACIDAD"));
+            persona.setTipoDiscapacidad(lookupRef(dto.getTipoDiscapacidad(), "TIPOS_DISCAPACIDAD"));
             persona.setCertDiscapacidad(dto.isCertDiscapacidad());
             persona.setSoporteDiscapacidad(nullIfEmpty(dto.getSoporteDiscapacidad()));
         } else {
@@ -105,23 +97,21 @@ public class BAEtapaService {
             persona.setSoporteDiscapacidad(null);
         }
 
-        if (dto.getCodigoPoblacionDiferencial() != null) {
-            persona.setPoblacionDiferencial(lookupRef(dto.getCodigoPoblacionDiferencial(), "POBLACION_EVENT_BA"));
-            persona.setPoblacionOtro(esOtro(dto.getCodigoPoblacionDiferencial()) ? nullIfEmpty(dto.getPoblacionOtro()) : null);
+        if (dto.getPoblacionDiferencial() != null) {
+            RefListado poblacion = lookupRef(dto.getPoblacionDiferencial(), "POBLACION_EVENT_BA");
+            persona.setPoblacionDiferencial(poblacion);
+            persona.setPoblacionOtro("OTRO".equals(poblacion.getCodigo()) ? nullIfEmpty(dto.getPoblacionOtro()) : null);
         }
         persona.setGestante(dto.isGestante());
 
-        // Ubicación residencia con dirección estructurada
         UbicacionEntity residencia = ubicacionHelper.upsert(persona.getUbicacion(),
-                dto.getCodigoLocalidad(), dto.getCodigoBarrio(), dto.getBarrioOtro());
-        residencia = ubicacionHelper.setDireccion(residencia, dto.getCodigoTipoVia(),
+                dto.getLocalidad(), dto.getBarrio(), dto.getBarrioOtro());
+        residencia = ubicacionHelper.setDireccion(residencia, dto.getTipoVia(),
                 dto.getDireccion(), dto.getDireccionComplemento(), null);
         persona.setUbicacion(residencia);
         persona = personaRepository.save(persona);
 
-        if (estudiante == null) {
-            estudiante = new EstudianteEntity();
-        }
+        if (estudiante == null) estudiante = new EstudianteEntity();
         estudiante.setPersona(persona);
 
         LocalDate fechaNac = LocalDate.parse(dto.getFechaNacimiento(), DT_FORMATTER);
@@ -138,7 +128,7 @@ public class BAEtapaService {
         return new ResponseBASeccionesDto(id, f.getProfesional().getId());
     }
 
-    // ==================== ETAPA 2: solicitud cupo + hermanos ====================
+    // ==================== ETAPA 2 ====================
     @Transactional
     public ResponseBASeccionesDto actualizarEtapa2(Long id, BAEtapa2Dto dto) {
         BusquedaActivaFormularioEntity f = formularioService.getFormulario(id);
@@ -163,13 +153,13 @@ public class BAEtapaService {
         sol.setEtapa(f.getEtapa());
         sol.setAceptaPoliticas(true);
         sol.setEditable(true);
-        sol.setUltimoAnioAprobado(lookupRef(dto.getCodigoUltimoAnioAprobado(), "GRADOS_ESCOLARES"));
-        sol.setGradoSolicitaCupo(lookupRef(dto.getCodigoGradoSolicitaCupo(), "GRADOS_ESCOLARES"));
+        sol.setUltimoAnioAprobado(lookupRef(dto.getUltimoAnioAprobado(), "GRADOS_ESCOLARES"));
+        sol.setGradoSolicitaCupo(lookupRef(dto.getGradoSolicitaCupo(), "GRADOS_ESCOLARES"));
 
         sol.setTieneHermano(dto.isTieneHermano());
         if (dto.isTieneHermano()) {
             PersonaEntity hermano = personaHelper.upsert(sol.getHermano(),
-                    dto.getCodigoTipoDocumentoHermano(), dto.getNumeroDocumentoHermano(),
+                    dto.getTipoDocumentoHermano(), dto.getNumeroDocumentoHermano(),
                     dto.getPrimerNombreHermano(), dto.getSegundoNombreHermano(),
                     dto.getPrimerApellidoHermano(), dto.getSegundoApellidoHermano(),
                     null, null);
@@ -180,7 +170,6 @@ public class BAEtapaService {
         sol = solicitudRepository.save(sol);
         f.setSolicitud(sol);
 
-        // Hermano: misma institución (estado en root BA)
         f.setMismaInstitucionHermano(dto.isTieneHermano() && dto.isMismaInstitucionHermano());
         if (dto.isTieneHermano() && dto.getIdInstitucionHermano() != null) {
             f.setInstitucionHermano(buscarIde(dto.getIdInstitucionHermano()));
@@ -188,7 +177,6 @@ public class BAEtapaService {
             f.setInstitucionHermano(null);
         }
 
-        // Colegios en orden de preferencia: borrar y recrear
         solicitudColegioRepository.deleteBySolicitud_Id(sol.getId());
         int orden = 1;
         for (Long idIde : dto.getIdsColegios()) {
@@ -206,34 +194,37 @@ public class BAEtapaService {
         return new ResponseBASeccionesDto(id, f.getProfesional().getId());
     }
 
-    // ==================== ETAPA 3: responsable/acudiente ====================
+    // ==================== ETAPA 3 ====================
     @Transactional
     public ResponseBASeccionesDto actualizarEtapa3(Long id, BAEtapa3Dto dto) {
         BusquedaActivaFormularioEntity f = formularioService.getFormulario(id);
 
         PersonaEntity acudiente = personaHelper.upsert(f.getAcudiente(),
-                dto.getCodigoTipoDocumento(), dto.getNumeroDocumento(),
+                dto.getTipoDocumento(), dto.getNumeroDocumento(),
                 dto.getPrimerNombre(), dto.getSegundoNombre(),
                 dto.getPrimerApellido(), dto.getSegundoApellido(),
                 dto.getCelular(), dto.getCorreo());
 
-        if (dto.getCodigoParentesco() != null) {
-            RefListado parentesco = lookupRef(dto.getCodigoParentesco(), "PARENTESCOS");
+        RefListado parentesco = null;
+        if (dto.getParentesco() != null) {
+            parentesco = lookupRef(dto.getParentesco(), "PARENTESCOS");
             acudiente.setIdParentesco(BigInteger.valueOf(parentesco.getIdRefListado()));
         }
-        acudiente.setParentescoOtro(esOtro(dto.getCodigoParentesco()) ? nullIfEmpty(dto.getParentescoOtro()) : null);
-        if (dto.getCodigoNivelEscolaridad() != null) {
-            RefListado niv = lookupRef(dto.getCodigoNivelEscolaridad(), "NIVELES_ESCOLARIDAD");
+        acudiente.setParentescoOtro(parentesco != null && "OTRO".equals(parentesco.getCodigo())
+                ? nullIfEmpty(dto.getParentescoOtro()) : null);
+
+        if (dto.getNivelEscolaridad() != null) {
+            RefListado niv = lookupRef(dto.getNivelEscolaridad(), "NIVELES_ESCOLARIDAD");
             acudiente.setIdNvlEscolaridad(BigInteger.valueOf(niv.getIdRefListado()));
         }
-        if (dto.getCodigoOcupacion() != null) {
-            RefListado ocu = lookupRef(dto.getCodigoOcupacion(), "OCUPACIONES");
+        if (dto.getOcupacion() != null) {
+            RefListado ocu = lookupRef(dto.getOcupacion(), "OCUPACIONES");
             acudiente.setIdOcupacion(BigInteger.valueOf(ocu.getIdRefListado()));
         }
 
         UbicacionEntity residencia = ubicacionHelper.upsert(acudiente.getUbicacion(),
-                dto.getCodigoLocalidad(), dto.getCodigoBarrio(), dto.getBarrioOtro());
-        residencia = ubicacionHelper.setDireccion(residencia, dto.getCodigoTipoVia(),
+                dto.getLocalidad(), dto.getBarrio(), dto.getBarrioOtro());
+        residencia = ubicacionHelper.setDireccion(residencia, dto.getTipoVia(),
                 dto.getDireccion(), dto.getDireccionComplemento(), null);
         acudiente.setUbicacion(residencia);
         acudiente = personaRepository.save(acudiente);
@@ -244,7 +235,7 @@ public class BAEtapaService {
         return new ResponseBASeccionesDto(id, f.getProfesional().getId());
     }
 
-    // ==================== ETAPA 4: factores descolarización (finaliza) ====================
+    // ==================== ETAPA 4 ====================
     @Transactional
     public ResponseBASeccionesDto actualizarEtapa4(Long id, BAEtapa4Dto dto) {
         BusquedaActivaFormularioEntity f = formularioService.getFormulario(id);
@@ -265,11 +256,11 @@ public class BAEtapaService {
                 f.agregarNoEstudiando(row);
             }
             row.setCuantos(item.getCuantos() != null ? item.getCuantos() : 0);
-            if (item.getCodigoRazon() != null) {
-                RefListado razon = lookupRef(item.getCodigoRazon(), "RAZONES_NOESCOLAR_BA");
+            if (item.getRazon() != null) {
+                RefListado razon = lookupRef(item.getRazon(), "RAZONES_NOESCOLAR_BA");
                 row.setRazon(razon);
-                if (esOtrosCuales(item.getCodigoRazon()) && item.getCodigoRazonOtra() != null) {
-                    row.setRazonOtra(lookupRef(item.getCodigoRazonOtra(), "RAZONES_NOESCOLAR_OTRAS_BA"));
+                if ("OTROS_CUALES".equals(razon.getCodigo()) && item.getRazonOtra() != null) {
+                    row.setRazonOtra(lookupRef(item.getRazonOtra(), "RAZONES_NOESCOLAR_OTRAS_BA"));
                 } else {
                     row.setRazonOtra(null);
                 }
@@ -280,7 +271,6 @@ public class BAEtapaService {
             existentes.remove(item.getRangoEdadCodigo());
         }
 
-        // Borrar rangos huérfanos (no enviados)
         Iterator<BANoEstudiandoEntity> it = f.getNoEstudiandoRangos().iterator();
         while (it.hasNext()) {
             if (existentes.containsKey(it.next().getRangoEdadCodigo())) {
@@ -296,10 +286,8 @@ public class BAEtapaService {
 
     // ==================== HELPERS ====================
 
-    private RefListado lookupRef(String codigo, String descripcion) {
-        return refRepo.findByCodigoAndDescripcionAndActivo(codigo, descripcion, 1)
-                .orElseThrow(() -> new RecursoNoEncontradoException(
-                        "Ref no encontrada: codigo=" + codigo + " descripcion=" + descripcion));
+    private RefListado lookupRef(RefListadoKVDto kv, String descripcion) {
+        return resolver.resolve(kv, descripcion);
     }
 
     private IdeEntity buscarIde(Long idIde) {
@@ -307,7 +295,6 @@ public class BAEtapaService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Institución no encontrada: " + idIde));
     }
 
-    /** Rango edad demográfico del estudiante (RANGOS_EDADES general 6 valores). */
     private RefListado resolverRangoEdad(int edad) {
         String codigo;
         if (edad <= 5) codigo = "0_Y_5_ANOS";
@@ -316,15 +303,8 @@ public class BAEtapaService {
         else if (edad <= 28) codigo = "19_Y_28_ANOS";
         else if (edad <= 59) codigo = "28_Y_59_ANOS";
         else codigo = "60_ANOS_EN_ADELANTE";
-        return lookupRef(codigo, "RANGOS_EDADES");
-    }
-
-    private boolean esOtro(String codigo) {
-        return "OTRO".equals(codigo);
-    }
-
-    private boolean esOtrosCuales(String codigo) {
-        return "OTROS_CUALES".equals(codigo);
+        return refRepo.findByCodigoAndDescripcionAndActivo(codigo, "RANGOS_EDADES", 1)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Rango edad no encontrado: " + codigo));
     }
 
     private String nullIfEmpty(String s) {

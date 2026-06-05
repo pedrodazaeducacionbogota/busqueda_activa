@@ -1,15 +1,17 @@
 package co.gov.educacionbogota.sicobertura.busquedaactiva.dtos;
 
+import co.gov.educacionbogota.sicobertura.dto.RefListadoKVDto;
 import lombok.Data;
 
 /**
  * Etapa 3 (HU-006): información de contacto del responsable o acudiente.
+ * Los campos ref_listado llegan como RefListadoKVDto {id, codigo, valorTxt, valorInt}.
  */
 @Data
 public class BAEtapa3Dto {
 
-    /** Código tipo documento (descripcion=TIPOS_DOCUMENTO). */
-    private String codigoTipoDocumento;
+    /** Tipo de documento (descripcion=TIPOS_DOCUMENTO). */
+    private RefListadoKVDto tipoDocumento;
     private String numeroDocumento;
 
     private String primerNombre;
@@ -20,23 +22,23 @@ public class BAEtapa3Dto {
     private String correo;
     private String celular;
 
-    /** Código parentesco (descripcion=PARENTESCOS). Si OTRO → parentescoOtro. */
-    private String codigoParentesco;
+    /** Parentesco (descripcion=PARENTESCOS). Si OTRO → parentescoOtro. */
+    private RefListadoKVDto parentesco;
     private String parentescoOtro;
 
-    /** Código nivel escolaridad (descripcion=NIVELES_ESCOLARIDAD). */
-    private String codigoNivelEscolaridad;
+    /** Nivel de escolaridad (descripcion=NIVELES_ESCOLARIDAD). */
+    private RefListadoKVDto nivelEscolaridad;
 
-    /** Código ocupación (descripcion=OCUPACIONES). */
-    private String codigoOcupacion;
+    /** Ocupación (descripcion=OCUPACIONES). */
+    private RefListadoKVDto ocupacion;
 
     /** Ubicación de residencia. */
-    private String codigoLocalidad;
-    private String codigoBarrio;
+    private RefListadoKVDto localidad;
+    private RefListadoKVDto barrio;
     private String barrioOtro;
 
     /** Dirección estructurada. */
-    private String codigoTipoVia;
+    private RefListadoKVDto tipoVia;
     private String direccion;
     private String direccionComplemento;
 }
