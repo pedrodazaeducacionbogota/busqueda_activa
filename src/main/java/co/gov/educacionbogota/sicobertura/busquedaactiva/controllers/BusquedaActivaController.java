@@ -4,7 +4,11 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -16,14 +20,19 @@ import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.BAEtapa1Dto;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.BAEtapa2Dto;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.BAEtapa3Dto;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.BAEtapa4Dto;
+import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.IdeItemDto;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.services.BACheckService;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.services.BAEdadGradoService;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.services.BAEtapaService;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.services.BAFormularioService;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.services.BAGetService;
+import co.gov.educacionbogota.sicobertura.busquedaactiva.services.BARefResolverService;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.services.BAPdfService;
 import co.gov.educacionbogota.sicobertura.dto.ApiResponseDto;
+import co.gov.educacionbogota.sicobertura.dto.RefListadoKVDto;
+import co.gov.educacionbogota.sicobertura.entities.RefListado;
 import co.gov.educacionbogota.sicobertura.exception.ReglaNegocioException;
+import co.gov.educacionbogota.sicobertura.repository.SedeRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -43,6 +52,8 @@ public class BusquedaActivaController {
     @Autowired private BACheckService checkService;
     @Autowired private BAEdadGradoService edadGradoService;
     @Autowired private BAPdfService pdfService;
+    @Autowired private BARefResolverService resolver;
+    @Autowired private SedeRepository sedeRepository;
 
     @GetMapping
     @Operation(summary = "Lista formularios BA del profesional autenticado (tarjetas HU-003)")
@@ -120,5 +131,28 @@ public class BusquedaActivaController {
                                                               @PathVariable String codigoGradoAprobado) {
         return ResponseEntity.ok(new ApiResponseDto(true, "Consulta",
                 edadGradoService.gradosSolicitados(id, codigoGradoAprobado)));
+    }
+
+    @GetMapping("/colegios/por-localidad")
+    @Operation(summary = "Sedes activas filtradas por localidad. Acepta ?id=5, ?valorTxt=Usaquén o ?valorInt=1")
+    public ResponseEntity<ApiResponseDto> colegiosPorLocalidad(@ModelAttribute RefListadoKVDto localidad) {
+        RefListado localidadRef = resolver.resolve(localidad, "LOCALIDADES");
+        List<IdeItemDto> items = sedeRepository
+                .findByIde_Localidad_IdRefListadoAndActivoTrueOrderByIde_NombreAscNombreAsc(localidadRef.getIdRefListado())
+                .stream()
+                .map(s -> {
+                    RefListado loc = s.getIde().getLocalidad();
+                    return IdeItemDto.builder()
+                            .id(s.getId())
+                            .nombreSede(s.getNombre())
+                            .nombreColegio(s.getIde().getNombre())
+                            .codigoDane(s.getCodigoDane())
+                            .direccion(loc != null ? loc.getNombre() : null)
+                            .longitud(loc != null ? loc.getAux1() : null)
+                            .latitud(loc != null ? loc.getAux2() : null)
+                            .build();
+                })
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(new ApiResponseDto(true, "Consulta", items));
     }
 }
