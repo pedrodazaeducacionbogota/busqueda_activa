@@ -61,14 +61,14 @@ public class RefListadoController {
 
     // ── Hijos por tipo ────────────────────────────────────────────────────────
 
-    @GetMapping("/{codigoListado}/hijos/tipo/{tipo}")
-    @Operation(summary = "Hijos de un listado filtrados por tipo. Incluye opción OTRO al final.")
+    @GetMapping("/{idPadre}/hijos/tipo/{tipo}")
+    @Operation(summary = "Hijos del listado idPadre filtrados por tipo. Incluye OTRO/OTRA al final.")
     public ResponseEntity<ApiResponseDto> hijosPorTipo(
-            @PathVariable String codigoListado,
+            @PathVariable Long idPadre,
             @PathVariable String tipo) {
 
         List<RefListadoItemResponseDto> items = refListadoRepository
-                .findHijosByCodigoPadreAndTipo(codigoListado, tipo)
+                .findHijosByIdPadreAndTipo(idPadre, tipo)
                 .stream()
                 .map(r -> RefListadoItemResponseDto.builder()
                         .id(r.getIdRefListado())

@@ -1,17 +1,15 @@
 package co.gov.educacionbogota.sicobertura.busquedaactiva.dtos;
 
-import co.gov.educacionbogota.sicobertura.dto.RefListadoKVDto;
 import lombok.Data;
 
 /**
- * Etapa 3 (HU-006): información de contacto del responsable o acudiente.
- * Los campos ref_listado llegan como RefListadoKVDto {id, codigo, valorTxt, valorInt}.
+ * Etapa 3 (HU-006): información del responsable/acudiente.
+ * Campos ref_listado llegan como id_ref_listado (Long) directo.
  */
 @Data
 public class BAEtapa3Dto {
 
-    /** Tipo de documento (descripcion=TIPOS_DOCUMENTO). */
-    private RefListadoKVDto tipoDocumento;
+    private Long codigoTipoDocumento;
     private String numeroDocumento;
 
     private String primerNombre;
@@ -22,23 +20,22 @@ public class BAEtapa3Dto {
     private String correo;
     private String celular;
 
-    /** Parentesco (descripcion=PARENTESCOS). Si OTRO → parentescoOtro. */
-    private RefListadoKVDto parentesco;
+    private Long codigoParentesco;
     private String parentescoOtro;
 
-    /** Nivel de escolaridad (descripcion=NIVELES_ESCOLARIDAD). */
-    private RefListadoKVDto nivelEscolaridad;
+    private Long codigoNivelEscolaridad;
+    private Long codigoOcupacion;
 
-    /** Ocupación (descripcion=OCUPACIONES). */
-    private RefListadoKVDto ocupacion;
-
-    /** Ubicación de residencia. */
-    private RefListadoKVDto localidad;
-    private RefListadoKVDto barrio;
+    private Long codigoLocalidad;
+    private Long codigoBarrio;
     private String barrioOtro;
 
-    /** Dirección estructurada. */
-    private RefListadoKVDto tipoVia;
+    private Long codigoTipoVia;
+    private String numeroVia;
+    private String letraVia;
+    private String sufijoVia;
+    private String numeroSecVia;
+    private String numeroFinVia;
     private String direccion;
     private String direccionComplemento;
 }

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -29,8 +28,6 @@ import co.gov.educacionbogota.sicobertura.busquedaactiva.services.BAGetService;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.services.BARefResolverService;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.services.BAPdfService;
 import co.gov.educacionbogota.sicobertura.dto.ApiResponseDto;
-import co.gov.educacionbogota.sicobertura.dto.RefListadoKVDto;
-import co.gov.educacionbogota.sicobertura.entities.RefListado;
 import co.gov.educacionbogota.sicobertura.exception.ReglaNegocioException;
 import co.gov.educacionbogota.sicobertura.repository.SedeRepository;
 
@@ -133,12 +130,12 @@ public class BusquedaActivaController {
                 edadGradoService.gradosSolicitados(id, codigoGradoAprobado)));
     }
 
-    @GetMapping("/colegios/por-localidad")
-    @Operation(summary = "Sedes activas filtradas por localidad (sede.localidad fallback ide.localidad). Acepta ?id=5, ?valorTxt=Usaquén o ?valorInt=1")
-    public ResponseEntity<ApiResponseDto> colegiosPorLocalidad(@ModelAttribute RefListadoKVDto localidad) {
-        RefListado localidadRef = resolver.resolve(localidad, "LOCALIDAD");
+    @GetMapping("/colegios/por-localidad/{idLocalidad}")
+    @Operation(summary = "Sedes activas filtradas por id_ref_listado de localidad (sede.localidad fallback ide.localidad)")
+    public ResponseEntity<ApiResponseDto> colegiosPorLocalidad(@PathVariable Long idLocalidad) {
+        resolver.resolveRequired(idLocalidad, "LOCALIDAD");
         List<IdeItemDto> items = sedeRepository
-                .findActivasPorLocalidad(localidadRef.getIdRefListado())
+                .findActivasPorLocalidad(idLocalidad)
                 .stream()
                 .map(s -> IdeItemDto.builder()
                         .id(s.getId())

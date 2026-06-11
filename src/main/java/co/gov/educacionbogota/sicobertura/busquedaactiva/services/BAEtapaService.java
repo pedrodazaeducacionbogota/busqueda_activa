@@ -23,7 +23,6 @@ import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.BAEtapa4Dto;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.ResponseBASeccionesDto;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.entities.BANoEstudiandoEntity;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.entities.BusquedaActivaFormularioEntity;
-import co.gov.educacionbogota.sicobertura.dto.RefListadoKVDto;
 import co.gov.educacionbogota.sicobertura.entities.EstudianteEntity;
 import co.gov.educacionbogota.sicobertura.entities.IdeEntity;
 import co.gov.educacionbogota.sicobertura.entities.PersonaEntity;
@@ -68,28 +67,31 @@ public class BAEtapaService {
         String celular = dto.isMayorEdadNombrePropio() ? dto.getCelular() : null;
         String correo  = dto.isMayorEdadNombrePropio() ? dto.getCorreo()  : null;
         persona = personaHelper.upsert(persona,
-                dto.getTipoDocumento(), dto.getNumeroDocumento(),
+                dto.getCodigoTipoDocumento(), dto.getNumeroDocumento(),
                 dto.getPrimerNombre(), dto.getSegundoNombre(),
                 dto.getPrimerApellido(), dto.getSegundoApellido(),
                 celular, correo);
 
-        persona.setPaisNacimiento(lookupRef(dto.getPaisNacimiento(), "PAIS"));
+        persona.setPaisNacimiento(resolver.resolveRequired(dto.getCodigoPaisNacimiento(), "PAIS"));
+        String fechaIso = normalizarFechaIso(dto.getFechaNacimiento());
         try {
-            persona.setFechaNacimiento(new SimpleDateFormat("yyyy-MM-dd").parse(dto.getFechaNacimiento()));
+            persona.setFechaNacimiento(new SimpleDateFormat("yyyy-MM-dd").parse(fechaIso));
         } catch (java.text.ParseException ex) {
             throw new ReglaNegocioException("Fecha nacimiento inválida: " + dto.getFechaNacimiento());
         }
-        persona.setFechaNacimientoStr(dto.getFechaNacimiento());
-        persona.setSexo(lookupRef(dto.getSexo(), "SEXOS"));
+        persona.setFechaNacimientoStr(fechaIso);
+        persona.setSexo(resolver.resolveRequired(dto.getCodigoSexo(), "SEXOS"));
 
-        RefListado etnia = lookupRef(dto.getEtnia(), "ETNIAS");
+        RefListado etnia = resolver.resolveRequired(dto.getCodigoEtnia(), "ETNIAS");
         persona.setEtnia(etnia);
-        persona.setEtniaOtro("OTRO".equals(etnia.getCodigo()) ? nullIfEmpty(dto.getEtniaOtro()) : null);
+        persona.setEtniaOtro("OTRO".equals(etnia.getCodigo()) || "OTRA".equals(etnia.getCodigo())
+                ? nullIfEmpty(dto.getEtniaOtro()) : null);
 
         persona.setDiscapacidad(dto.isDiscapacidad());
         if (dto.isDiscapacidad()) {
-            persona.setTipoDiscapacidad(lookupRef(dto.getTipoDiscapacidad(), "TIPOS_DISCAPACIDAD"));
-            persona.setCertDiscapacidad(dto.isCertDiscapacidad());
+            persona.setTipoDiscapacidad(
+                    resolver.resolveRequired(dto.getCodigoTipoDiscapacidad(), "TIPOS_DISCAPACIDAD"));
+            persona.setCertDiscapacidad(Boolean.TRUE.equals(dto.getCertDiscapacidad()));
             persona.setSoporteDiscapacidad(nullIfEmpty(dto.getSoporteDiscapacidad()));
         } else {
             persona.setTipoDiscapacidad(null);
@@ -97,16 +99,17 @@ public class BAEtapaService {
             persona.setSoporteDiscapacidad(null);
         }
 
-        if (dto.getPoblacionDiferencial() != null) {
-            RefListado poblacion = lookupRef(dto.getPoblacionDiferencial(), "POBLACION_EVENT_BA");
+        RefListado poblacion = resolver.resolveOptional(dto.getCodigoPoblacionDiferencial(), "POBLACION_EVENT_BA");
+        if (poblacion != null) {
             persona.setPoblacionDiferencial(poblacion);
-            persona.setPoblacionOtro("OTRO".equals(poblacion.getCodigo()) ? nullIfEmpty(dto.getPoblacionOtro()) : null);
+            persona.setPoblacionOtro("OTRO".equals(poblacion.getCodigo()) || "OTRA".equals(poblacion.getCodigo())
+                    ? nullIfEmpty(dto.getPoblacionOtro()) : null);
         }
-        persona.setGestante(dto.isGestante());
+        persona.setGestante(Boolean.TRUE.equals(dto.getGestante()));
 
         UbicacionEntity residencia = ubicacionHelper.upsert(persona.getUbicacion(),
-                dto.getLocalidad(), dto.getBarrio(), dto.getBarrioOtro());
-        residencia = ubicacionHelper.setDireccion(residencia, dto.getTipoVia(),
+                dto.getCodigoLocalidad(), dto.getCodigoBarrio(), dto.getBarrioOtro());
+        residencia = ubicacionHelper.setDireccion(residencia, dto.getCodigoTipoVia(),
                 dto.getDireccion(), dto.getDireccionComplemento(), null);
         persona.setUbicacion(residencia);
         persona = personaRepository.save(persona);
@@ -114,7 +117,7 @@ public class BAEtapaService {
         if (estudiante == null) estudiante = new EstudianteEntity();
         estudiante.setPersona(persona);
 
-        LocalDate fechaNac = LocalDate.parse(dto.getFechaNacimiento(), DT_FORMATTER);
+        LocalDate fechaNac = LocalDate.parse(fechaIso, DT_FORMATTER);
         Period periodo = Period.between(fechaNac, LocalDate.now());
         estudiante.setEdadInt(periodo.getYears());
         estudiante.setEdadTxt(periodo.getYears() + " años, " + periodo.getMonths()
@@ -153,13 +156,13 @@ public class BAEtapaService {
         sol.setEtapa(f.getEtapa());
         sol.setAceptaPoliticas(true);
         sol.setEditable(true);
-        sol.setUltimoAnioAprobado(lookupRef(dto.getUltimoAnioAprobado(), "GRADOS_ESCOLARES"));
-        sol.setGradoSolicitaCupo(lookupRef(dto.getGradoSolicitaCupo(), "GRADOS_ESCOLARES"));
+        sol.setUltimoAnioAprobado(resolver.resolveRequired(dto.getCodigoUltimoAnioAprobado(), "GRADOS_ESCOLARES"));
+        sol.setGradoSolicitaCupo(resolver.resolveRequired(dto.getCodigoGradoSolicitaCupo(), "GRADOS_ESCOLARES"));
 
         sol.setTieneHermano(dto.isTieneHermano());
         if (dto.isTieneHermano()) {
             PersonaEntity hermano = personaHelper.upsert(sol.getHermano(),
-                    dto.getTipoDocumentoHermano(), dto.getNumeroDocumentoHermano(),
+                    dto.getCodigoTipoDocumentoHermano(), dto.getNumeroDocumentoHermano(),
                     dto.getPrimerNombreHermano(), dto.getSegundoNombreHermano(),
                     dto.getPrimerApellidoHermano(), dto.getSegundoApellidoHermano(),
                     null, null);
@@ -200,31 +203,30 @@ public class BAEtapaService {
         BusquedaActivaFormularioEntity f = formularioService.getFormulario(id);
 
         PersonaEntity acudiente = personaHelper.upsert(f.getAcudiente(),
-                dto.getTipoDocumento(), dto.getNumeroDocumento(),
+                dto.getCodigoTipoDocumento(), dto.getNumeroDocumento(),
                 dto.getPrimerNombre(), dto.getSegundoNombre(),
                 dto.getPrimerApellido(), dto.getSegundoApellido(),
                 dto.getCelular(), dto.getCorreo());
 
-        RefListado parentesco = null;
-        if (dto.getParentesco() != null) {
-            parentesco = lookupRef(dto.getParentesco(), "PARENTESCOS");
+        RefListado parentesco = resolver.resolveOptional(dto.getCodigoParentesco(), "PARENTESCOS");
+        if (parentesco != null) {
             acudiente.setIdParentesco(BigInteger.valueOf(parentesco.getIdRefListado()));
         }
         acudiente.setParentescoOtro(parentesco != null && "OTRO".equals(parentesco.getCodigo())
                 ? nullIfEmpty(dto.getParentescoOtro()) : null);
 
-        if (dto.getNivelEscolaridad() != null) {
-            RefListado niv = lookupRef(dto.getNivelEscolaridad(), "NIVELES_ESCOLARIDAD");
+        RefListado niv = resolver.resolveOptional(dto.getCodigoNivelEscolaridad(), "NIVELES_ESCOLARIDAD");
+        if (niv != null) {
             acudiente.setIdNvlEscolaridad(BigInteger.valueOf(niv.getIdRefListado()));
         }
-        if (dto.getOcupacion() != null) {
-            RefListado ocu = lookupRef(dto.getOcupacion(), "OCUPACIONES");
+        RefListado ocu = resolver.resolveOptional(dto.getCodigoOcupacion(), "OCUPACIONES");
+        if (ocu != null) {
             acudiente.setIdOcupacion(BigInteger.valueOf(ocu.getIdRefListado()));
         }
 
         UbicacionEntity residencia = ubicacionHelper.upsert(acudiente.getUbicacion(),
-                dto.getLocalidad(), dto.getBarrio(), dto.getBarrioOtro());
-        residencia = ubicacionHelper.setDireccion(residencia, dto.getTipoVia(),
+                dto.getCodigoLocalidad(), dto.getCodigoBarrio(), dto.getBarrioOtro());
+        residencia = ubicacionHelper.setDireccion(residencia, dto.getCodigoTipoVia(),
                 dto.getDireccion(), dto.getDireccionComplemento(), null);
         acudiente.setUbicacion(residencia);
         acudiente = personaRepository.save(acudiente);
@@ -243,24 +245,31 @@ public class BAEtapaService {
         List<BAEtapa4Dto.NoEstudiandoItem> items = dto.isExistenNoEstudiando()
                 ? dto.getRangos() : java.util.Collections.emptyList();
 
-        Map<String, BANoEstudiandoEntity> existentes = new HashMap<>();
+        Map<Long, BANoEstudiandoEntity> existentes = new HashMap<>();
         for (BANoEstudiandoEntity r : f.getNoEstudiandoRangos()) {
-            existentes.put(r.getRangoEdadCodigo(), r);
+            if (r.getRangoEdadCodigo() != null) {
+                try {
+                    existentes.put(Long.parseLong(r.getRangoEdadCodigo()), r);
+                } catch (NumberFormatException ignored) {
+                    // datos legacy con codigo string — se ignoran
+                }
+            }
         }
 
         for (BAEtapa4Dto.NoEstudiandoItem item : items) {
-            BANoEstudiandoEntity row = existentes.get(item.getRangoEdadCodigo());
+            RefListado rango = resolver.resolveRequired(item.getCodigoRangoEdad(), "RANGOS_EDADES_BA");
+            BANoEstudiandoEntity row = existentes.get(rango.getIdRefListado());
             if (row == null) {
                 row = new BANoEstudiandoEntity();
-                row.setRangoEdadCodigo(item.getRangoEdadCodigo());
+                row.setRangoEdadCodigo(String.valueOf(rango.getIdRefListado()));
                 f.agregarNoEstudiando(row);
             }
             row.setCuantos(item.getCuantos() != null ? item.getCuantos() : 0);
-            if (item.getRazon() != null) {
-                RefListado razon = lookupRef(item.getRazon(), "RAZONES_NOESCOLAR_BA");
+            RefListado razon = resolver.resolveOptional(item.getCodigoRazon(), "RAZONES_NOESCOLAR_BA");
+            if (razon != null) {
                 row.setRazon(razon);
-                if ("OTROS_CUALES".equals(razon.getCodigo()) && item.getRazonOtra() != null) {
-                    row.setRazonOtra(lookupRef(item.getRazonOtra(), "RAZONES_NOESCOLAR_OTRAS_BA"));
+                if ("OTROS_CUALES".equals(razon.getCodigo()) && item.getCodigoRazonOtra() != null) {
+                    row.setRazonOtra(resolver.resolveRequired(item.getCodigoRazonOtra(), "RAZONES_NOESCOLAR_OTRAS_BA"));
                 } else {
                     row.setRazonOtra(null);
                 }
@@ -268,13 +277,21 @@ public class BAEtapaService {
                 row.setRazon(null);
                 row.setRazonOtra(null);
             }
-            existentes.remove(item.getRangoEdadCodigo());
+            existentes.remove(rango.getIdRefListado());
         }
 
         Iterator<BANoEstudiandoEntity> it = f.getNoEstudiandoRangos().iterator();
         while (it.hasNext()) {
-            if (existentes.containsKey(it.next().getRangoEdadCodigo())) {
-                it.remove();
+            BANoEstudiandoEntity r = it.next();
+            if (r.getRangoEdadCodigo() != null) {
+                try {
+                    Long codigoLong = Long.parseLong(r.getRangoEdadCodigo());
+                    if (existentes.containsKey(codigoLong)) {
+                        it.remove();
+                    }
+                } catch (NumberFormatException ignored) {
+                    // ignorar legacy
+                }
             }
         }
 
@@ -285,10 +302,6 @@ public class BAEtapaService {
     }
 
     // ==================== HELPERS ====================
-
-    private RefListado lookupRef(RefListadoKVDto kv, String descripcion) {
-        return resolver.resolve(kv, descripcion);
-    }
 
     private IdeEntity buscarIde(Long idIde) {
         return ideRepository.findById(idIde)
@@ -305,6 +318,13 @@ public class BAEtapaService {
         else codigo = "60_ANOS_EN_ADELANTE";
         return refRepo.findByCodigoAndDescripcionAndActivo(codigo, "RANGOS_EDADES", 1)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Rango edad no encontrado: " + codigo));
+    }
+
+    /** Acepta yyyy-MM-dd o ISO completo con timezone (ej. 2026-06-10T05:00:00.000Z) y normaliza a yyyy-MM-dd. */
+    private String normalizarFechaIso(String fecha) {
+        if (fecha == null || fecha.isEmpty()) return fecha;
+        int t = fecha.indexOf('T');
+        return t > 0 ? fecha.substring(0, t) : fecha;
     }
 
     private String nullIfEmpty(String s) {

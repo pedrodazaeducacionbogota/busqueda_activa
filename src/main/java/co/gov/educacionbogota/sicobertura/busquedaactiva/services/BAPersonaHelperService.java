@@ -5,14 +5,13 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import co.gov.educacionbogota.sicobertura.dto.RefListadoKVDto;
 import co.gov.educacionbogota.sicobertura.entities.PersonaEntity;
 import co.gov.educacionbogota.sicobertura.entities.RefListado;
 import co.gov.educacionbogota.sicobertura.repository.PersonaRepository;
 
 /**
  * Upsert PersonaEntity por (tipoDocumento, numeroDocumento). Reutilizado en
- * secciones 2, 5, 6 del wizard BA (atiende visita, acudiente, estudiante).
+ * estudiante, acudiente, hermano.
  */
 @Service
 public class BAPersonaHelperService {
@@ -20,11 +19,11 @@ public class BAPersonaHelperService {
     @Autowired private PersonaRepository personaRepository;
     @Autowired private BARefResolverService resolver;
 
-    public PersonaEntity upsert(PersonaEntity toUpdate, RefListadoKVDto tipoDocumento, String numeroDocumento,
+    public PersonaEntity upsert(PersonaEntity toUpdate, Long codigoTipoDocumento, String numeroDocumento,
                                  String primerNombre, String segundoNombre,
                                  String primerApellido, String segundoApellido,
                                  String celulares, String emails) {
-        RefListado tipoDoc = resolver.resolve(tipoDocumento, "TIPOS_DOCUMENTO");
+        RefListado tipoDoc = resolver.resolveRequired(codigoTipoDocumento, "TIPOS_DOCUMENTO");
 
         Optional<PersonaEntity> existente = personaRepository
                 .findByTipoDocumento_IdRefListadoAndNumeroDocumento(tipoDoc.getIdRefListado(), numeroDocumento);
