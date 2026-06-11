@@ -134,24 +134,21 @@ public class BusquedaActivaController {
     }
 
     @GetMapping("/colegios/por-localidad")
-    @Operation(summary = "Sedes activas filtradas por localidad. Acepta ?id=5, ?valorTxt=Usaquén o ?valorInt=1")
+    @Operation(summary = "Sedes activas filtradas por localidad (sede.localidad fallback ide.localidad). Acepta ?id=5, ?valorTxt=Usaquén o ?valorInt=1")
     public ResponseEntity<ApiResponseDto> colegiosPorLocalidad(@ModelAttribute RefListadoKVDto localidad) {
-        RefListado localidadRef = resolver.resolve(localidad, "LOCALIDADES");
+        RefListado localidadRef = resolver.resolve(localidad, "LOCALIDAD");
         List<IdeItemDto> items = sedeRepository
-                .findByIde_Localidad_IdRefListadoAndActivoTrueOrderByIde_NombreAscNombreAsc(localidadRef.getIdRefListado())
+                .findActivasPorLocalidad(localidadRef.getIdRefListado())
                 .stream()
-                .map(s -> {
-                    RefListado loc = s.getIde().getLocalidad();
-                    return IdeItemDto.builder()
-                            .id(s.getId())
-                            .nombreSede(s.getNombre())
-                            .nombreColegio(s.getIde().getNombre())
-                            .codigoDane(s.getCodigoDane())
-                            .direccion(loc != null ? loc.getNombre() : null)
-                            .longitud(loc != null ? loc.getAux1() : null)
-                            .latitud(loc != null ? loc.getAux2() : null)
-                            .build();
-                })
+                .map(s -> IdeItemDto.builder()
+                        .id(s.getId())
+                        .nombreSede(s.getNombre())
+                        .nombreColegio(s.getIde().getNombre())
+                        .codigoDane(s.getCodigoDane())
+                        .direccion(s.getDireccion())
+                        .longitud(s.getLongitudX() != null ? s.getLongitudX().toString() : null)
+                        .latitud(s.getLatitudY() != null ? s.getLatitudY().toString() : null)
+                        .build())
                 .collect(Collectors.toList());
         return ResponseEntity.ok(new ApiResponseDto(true, "Consulta", items));
     }
