@@ -1,23 +1,17 @@
 package co.gov.educacionbogota.sicobertura.busquedaactiva.dtos;
 
-import co.gov.educacionbogota.sicobertura.dto.RefListadoKVDto;
 import lombok.Data;
 
 /**
  * Etapa 1 (HU-004): información sociodemográfica del estudiante.
- * Los campos ref_listado llegan como RefListadoKVDto {id, codigo, valorTxt, valorInt}.
+ * Campos ref_listado llegan como id_ref_listado (Long) directo.
  */
 @Data
 public class BAEtapa1Dto {
 
-    /** ¿Estudiante mayor de edad y se representa a nombre propio? Habilita correo/celular. */
     private boolean mayorEdadNombrePropio;
-
-    /** País de nacimiento (descripcion=PAIS). */
-    private RefListadoKVDto paisNacimiento;
-
-    /** Tipo de documento (descripcion=TIPOS_DOCUMENTO). */
-    private RefListadoKVDto tipoDocumento;
+    private Long codigoPaisNacimiento;
+    private Long codigoTipoDocumento;
     private String numeroDocumento;
 
     private String primerNombre;
@@ -25,43 +19,40 @@ public class BAEtapa1Dto {
     private String primerApellido;
     private String segundoApellido;
 
-    /** Formato yyyy-MM-dd. */
+    /** ISO-8601 yyyy-MM-dd o fecha completa con timezone. */
     private String fechaNacimiento;
 
-    /** Sexo (descripcion=SEXOS). */
-    private RefListadoKVDto sexo;
+    private Long codigoSexo;
 
-    /** Etnia (descripcion=ETNIAS). Si OTRO → etniaOtro. */
-    private RefListadoKVDto etnia;
+    private Long codigoEtnia;
     private String etniaOtro;
 
-    /** ¿Tiene discapacidad/talento/trastorno? */
     private boolean discapacidad;
-    /** Tipo discapacidad (descripcion=TIPOS_DISCAPACIDAD). Solo si discapacidad=true. */
-    private RefListadoKVDto tipoDiscapacidad;
-    /** ¿Cuenta con certificado o diagnóstico? */
-    private boolean certDiscapacidad;
-    /** Ruta/referencia del soporte PDF de discapacidad. */
+    private Long codigoTipoDiscapacidad;
+    private Boolean certDiscapacidad;
     private String soporteDiscapacidad;
 
-    /** Población diferencial (descripcion=POBLACION_EVENT_BA). Si OTRO → poblacionOtro. */
-    private RefListadoKVDto poblacionDiferencial;
+    private Long codigoPoblacionDiferencial;
     private String poblacionOtro;
 
-    /** Solo habilitados si mayorEdadNombrePropio=true. */
+    /** Solo válidos si mayorEdadNombrePropio=true. */
     private String correo;
     private String celular;
 
-    /** Ubicación de residencia. */
-    private RefListadoKVDto localidad;
-    private RefListadoKVDto barrio;
+    private Boolean gestante;
+
+    /** Ubicación residencia. */
+    private Long codigoLocalidad;
+    private Long codigoBarrio;
     private String barrioOtro;
 
-    /** ¿Es gestante? */
-    private boolean gestante;
-
-    /** Tipo de vía (descripcion=TIPOS_VIA) + dirección armada + complemento. */
-    private RefListadoKVDto tipoVia;
+    /** Dirección estructurada. */
+    private Long codigoTipoVia;
+    private String numeroVia;
+    private String letraVia;
+    private String sufijoVia;
+    private String numeroSecVia;
+    private String numeroFinVia;
     private String direccion;
     private String direccionComplemento;
 }
