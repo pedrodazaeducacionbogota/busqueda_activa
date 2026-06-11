@@ -27,7 +27,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class RefListadoController {
 
     private static final String CODIGO_OTRO = "OTRO";
+    private static final String CODIGO_OTRA = "OTRA";
     private static final String NOMBRE_OTRO = "Otro";
+    private static final String NOMBRE_OTRA = "Otra";
+
+    /** Tipos cuyo placeholder usa "OTRA" (femenino). El resto usa "OTRO" (masculino por defecto). */
+    private static final java.util.Set<String> TIPOS_FEMENINOS = new java.util.HashSet<>(
+            java.util.Arrays.asList("ETNIAS", "OCUPACIONES", "DISCAPACIDADES"));
 
     @Autowired
     private RefListadoRepository refListadoRepository;
@@ -79,9 +85,10 @@ public class RefListadoController {
                         .build())
                 .collect(Collectors.toCollection(ArrayList::new));
 
+        boolean femenino = TIPOS_FEMENINOS.contains(tipo.toUpperCase());
         items.add(RefListadoItemResponseDto.builder()
-                .codigo(CODIGO_OTRO)
-                .nombre(NOMBRE_OTRO)
+                .codigo(femenino ? CODIGO_OTRA : CODIGO_OTRO)
+                .nombre(femenino ? NOMBRE_OTRA : NOMBRE_OTRO)
                 .descripcion(tipo)
                 .orden(Integer.MAX_VALUE)
                 .build());

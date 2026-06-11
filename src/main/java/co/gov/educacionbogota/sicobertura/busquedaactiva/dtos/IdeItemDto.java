@@ -25,12 +25,12 @@ public class IdeItemDto {
     @Schema(description = "Código DANE de la sede.", example = "11001001234")
     private String codigoDane;
 
-    @Schema(description = "Localidad asignada al colegio.", example = "Usaquén")
+    @Schema(description = "Dirección física de la sede (IDECA).", example = "KR 18 A # 187 - 67/65")
     private String direccion;
 
-    @Schema(description = "Longitud geográfica de la localidad (aux1).", example = "-74.0699969")
+    @Schema(description = "Longitud geográfica de la sede (IDECA).", example = "-74.03917132")
     private String longitud;
 
-    @Schema(description = "Latitud geográfica de la localidad (aux2).", example = "4.7448306")
+    @Schema(description = "Latitud geográfica de la sede (IDECA).", example = "4.765726349")
     private String latitud;
 }
