@@ -132,6 +132,11 @@ public class BusquedaActivaController {
 
     @GetMapping("/colegios/por-localidad/{idLocalidad}")
     @Operation(summary = "Sedes activas filtradas por id_ref_listado de localidad (sede.localidad fallback ide.localidad)")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "200",
+        content = @io.swagger.v3.oas.annotations.media.Content(
+            array = @io.swagger.v3.oas.annotations.media.ArraySchema(
+                schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = IdeItemDto.class))))
     public ResponseEntity<ApiResponseDto> colegiosPorLocalidad(@PathVariable Long idLocalidad) {
         resolver.resolveRequired(idLocalidad, "LOCALIDAD");
         List<IdeItemDto> items = sedeRepository
