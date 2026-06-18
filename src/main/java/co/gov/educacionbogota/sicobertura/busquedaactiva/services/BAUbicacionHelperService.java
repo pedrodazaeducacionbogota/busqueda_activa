@@ -46,7 +46,7 @@ public class BAUbicacionHelperService {
                                          String direccion, String direccionComplemento, Integer estrato) {
         if (codigoTipoVia != null) {
             RefListado tipoViaRef = resolver.resolveRequired(codigoTipoVia, "TIPOS_VIA");
-            ubicacion.setTipoDireccion(tipoViaRef.getCodigo());
+            ubicacion.setTipoVia(tipoViaRef.getCodigo());
         }
         if (direccion != null) ubicacion.setDireccion(direccion);
         if (direccionComplemento != null) ubicacion.setDireccionComplemento(direccionComplemento);
