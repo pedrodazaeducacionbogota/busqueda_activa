@@ -6,7 +6,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.GradosAprobadosDto;
 import co.gov.educacionbogota.sicobertura.busquedaactiva.entities.BusquedaActivaFormularioEntity;
 import co.gov.educacionbogota.sicobertura.entities.EdadGradoEntity;
-import co.gov.educacionbogota.sicobertura.entities.RefListado;
+import co.gov.educacionbogota.sicobertura.entities.GradoEntity;
 import co.gov.educacionbogota.sicobertura.exception.RecursoNoEncontradoException;
 import co.gov.educacionbogota.sicobertura.exception.ReglaNegocioException;
 import co.gov.educacionbogota.sicobertura.repository.EdadGradoRepository;
-import co.gov.educacionbogota.sicobertura.repository.RefListadoRepository;
+import co.gov.educacionbogota.sicobertura.repository.GradoRepository;
 
 /**
  * Helper edad → grado para wizard sección 7 (cupo solicitud).
@@ -36,7 +35,7 @@ public class BAEdadGradoService {
 
     @Autowired private BAFormularioService formularioService;
     @Autowired private EdadGradoRepository edadGradoRepository;
-    @Autowired private RefListadoRepository refRepo;
+    @Autowired private GradoRepository gradoRepository;
 
     @Transactional(readOnly = true)
     public GradosAprobadosDto gradosAprobados(Long idFormulario) {
@@ -48,9 +47,9 @@ public class BAEdadGradoService {
         List<GradosAprobadosDto.RefListadoLiteDto> grados = new ArrayList<>();
         for (EdadGradoEntity regla : reglas) {
             if (idsGradoPrevio.add(regla.getIdRefGradoPrevio())) {
-                refRepo.findById(regla.getIdRefGradoPrevio())
+                gradoRepository.findById(regla.getIdRefGradoPrevio())
                         .ifPresent(g -> grados.add(new GradosAprobadosDto.RefListadoLiteDto(
-                                g.getIdRefListado(), g.getCodigo(), g.getDescripcion())));
+                                g.getId(), String.valueOf(g.getCodigo()), "GRADOS_ESCOLARES")));
             }
         }
         return new GradosAprobadosDto(edadConsulta, grados);
@@ -59,21 +58,21 @@ public class BAEdadGradoService {
     @Transactional(readOnly = true)
     public List<GradosAprobadosDto.RefListadoLiteDto> gradosSolicitados(Long idFormulario, String codigoGradoPrevio) {
         int edadConsulta = calcularEdadConsulta(idFormulario);
-        RefListado gradoPrevio = refRepo
-                .findByCodigoAndDescripcionAndActivo(codigoGradoPrevio, "GRADOS_ESCOLARES", 1)
+        GradoEntity gradoPrevio = gradoRepository
+                .findByCodigoAndActivo(Integer.valueOf(codigoGradoPrevio), true)
                 .orElseThrow(() -> new RecursoNoEncontradoException(
                         "Grado previo no encontrado: " + codigoGradoPrevio));
 
         List<EdadGradoEntity> reglas = edadGradoRepository
-                .findByEdadAndIdRefGradoPrevioAndActivo(edadConsulta, gradoPrevio.getIdRefListado(), 1);
+                .findByEdadAndIdRefGradoPrevioAndActivo(edadConsulta, gradoPrevio.getId(), 1);
 
         List<GradosAprobadosDto.RefListadoLiteDto> grados = new ArrayList<>();
         Set<Long> vistos = new HashSet<>();
         for (EdadGradoEntity regla : reglas) {
             if (vistos.add(regla.getIdRefGradoSolicitado())) {
-                refRepo.findById(regla.getIdRefGradoSolicitado())
+                gradoRepository.findById(regla.getIdRefGradoSolicitado())
                         .ifPresent(g -> grados.add(new GradosAprobadosDto.RefListadoLiteDto(
-                                g.getIdRefListado(), g.getCodigo(), g.getDescripcion())));
+                                g.getId(), String.valueOf(g.getCodigo()), "GRADOS_ESCOLARES")));
             }
         }
         return grados;
@@ -93,8 +92,4 @@ public class BAEdadGradoService {
         return edad;
     }
 
-    @SuppressWarnings("unused")
-    private Optional<RefListado> opt(Long id) {
-        return refRepo.findById(id);
-    }
 }

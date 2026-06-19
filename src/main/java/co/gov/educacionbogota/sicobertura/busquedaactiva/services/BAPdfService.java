@@ -117,8 +117,8 @@ public class BAPdfService {
             SolicitudEntity sol = f.getSolicitud();
             if (sol != null) {
                 Table e2 = tabla();
-                row(e2, "Último año aprobado:", refDesc(sol.getUltimoAnioAprobado()));
-                row(e2, "Grado solicita cupo:", refDesc(sol.getGradoSolicitaCupo()));
+                row(e2, "Último año aprobado:", sol.getUltimoAnioAprobado() != null ? sol.getUltimoAnioAprobado().getNombre() : "");
+                row(e2, "Grado solicita cupo:", sol.getGradoSolicitaCupo() != null ? sol.getGradoSolicitaCupo().getNombre() : "");
                 row(e2, "Tiene hermano:", String.valueOf(sol.isTieneHermano()));
                 doc.add(e2);
                 if (sol.isTieneHermano() && sol.getHermano() != null) {

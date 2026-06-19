@@ -84,8 +84,8 @@ public class BAGetService {
         BAEtapa2Dto dto = new BAEtapa2Dto();
         SolicitudEntity s = f.getSolicitud();
         if (s != null) {
-            dto.setCodigoUltimoAnioAprobado(idOf(s.getUltimoAnioAprobado()));
-            dto.setCodigoGradoSolicitaCupo(idOf(s.getGradoSolicitaCupo()));
+            dto.setCodigoUltimoAnioAprobado(s.getUltimoAnioAprobado() != null ? s.getUltimoAnioAprobado().getId() : null);
+            dto.setCodigoGradoSolicitaCupo(s.getGradoSolicitaCupo() != null ? s.getGradoSolicitaCupo().getId() : null);
             dto.setTieneHermano(s.isTieneHermano());
             PersonaEntity h = s.getHermano();
             if (h != null) {

@@ -33,6 +33,7 @@ import co.gov.educacionbogota.sicobertura.entities.UbicacionEntity;
 import co.gov.educacionbogota.sicobertura.exception.RecursoNoEncontradoException;
 import co.gov.educacionbogota.sicobertura.exception.ReglaNegocioException;
 import co.gov.educacionbogota.sicobertura.repository.EstudianteRepository;
+import co.gov.educacionbogota.sicobertura.repository.GradoRepository;
 import co.gov.educacionbogota.sicobertura.repository.IdeRepository;
 import co.gov.educacionbogota.sicobertura.repository.PersonaRepository;
 import co.gov.educacionbogota.sicobertura.repository.RefListadoRepository;
@@ -50,6 +51,7 @@ public class BAEtapaService {
     @Autowired private BAUbicacionHelperService ubicacionHelper;
     @Autowired private BARefResolverService resolver;
     @Autowired private RefListadoRepository refRepo;
+    @Autowired private GradoRepository gradoRepository;
     @Autowired private PersonaRepository personaRepository;
     @Autowired private EstudianteRepository estudianteRepository;
     @Autowired private SolicitudRepository solicitudRepository;
@@ -156,8 +158,12 @@ public class BAEtapaService {
         sol.setEtapa(f.getEtapa());
         sol.setAceptaPoliticas(true);
         sol.setEditable(true);
-        sol.setUltimoAnioAprobado(resolver.resolveRequired(dto.getCodigoUltimoAnioAprobado(), "GRADOS_ESCOLARES"));
-        sol.setGradoSolicitaCupo(resolver.resolveRequired(dto.getCodigoGradoSolicitaCupo(), "GRADOS_ESCOLARES"));
+        sol.setUltimoAnioAprobado(gradoRepository.findById(dto.getCodigoUltimoAnioAprobado())
+                .orElseThrow(() -> new RecursoNoEncontradoException(
+                        "Grado último año aprobado no encontrado: " + dto.getCodigoUltimoAnioAprobado())));
+        sol.setGradoSolicitaCupo(gradoRepository.findById(dto.getCodigoGradoSolicitaCupo())
+                .orElseThrow(() -> new RecursoNoEncontradoException(
+                        "Grado solicita cupo no encontrado: " + dto.getCodigoGradoSolicitaCupo())));
 
         sol.setTieneHermano(dto.isTieneHermano());
         if (dto.isTieneHermano()) {
