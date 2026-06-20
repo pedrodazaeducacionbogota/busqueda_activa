@@ -30,8 +30,10 @@ import co.gov.educacionbogota.sicobertura.entities.RefListado;
 import co.gov.educacionbogota.sicobertura.entities.SolicitudColegioEntity;
 import co.gov.educacionbogota.sicobertura.entities.SolicitudEntity;
 import co.gov.educacionbogota.sicobertura.entities.UbicacionEntity;
+import co.gov.educacionbogota.sicobertura.enumerados.EConfiguracion;
 import co.gov.educacionbogota.sicobertura.exception.RecursoNoEncontradoException;
 import co.gov.educacionbogota.sicobertura.exception.ReglaNegocioException;
+import co.gov.educacionbogota.sicobertura.repository.ConfiguracionRepository;
 import co.gov.educacionbogota.sicobertura.repository.EstudianteRepository;
 import co.gov.educacionbogota.sicobertura.repository.GradoRepository;
 import co.gov.educacionbogota.sicobertura.repository.IdeRepository;
@@ -44,7 +46,7 @@ import co.gov.educacionbogota.sicobertura.repository.SolicitudRepository;
 public class BAEtapaService {
 
     private static final DateTimeFormatter DT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private static final int MAX_COLEGIOS = 10;
+    private static final int MAX_COLEGIOS_DEFAULT = 10;
 
     @Autowired private BAFormularioService formularioService;
     @Autowired private BAPersonaHelperService personaHelper;
@@ -57,6 +59,20 @@ public class BAEtapaService {
     @Autowired private SolicitudRepository solicitudRepository;
     @Autowired private SolicitudColegioRepository solicitudColegioRepository;
     @Autowired private IdeRepository ideRepository;
+    @Autowired private ConfiguracionRepository configuracionRepository;
+
+    private int getMaxColegios() {
+        return configuracionRepository
+                .findByNombreConfiguracion(EConfiguracion.BA_MAX_COLEGIOS.name())
+                .map(cfg -> {
+                    try {
+                        return Integer.parseInt(cfg.getValor().trim());
+                    } catch (NumberFormatException ex) {
+                        return MAX_COLEGIOS_DEFAULT;
+                    }
+                })
+                .orElse(MAX_COLEGIOS_DEFAULT);
+    }
 
     // ==================== ETAPA 1 ====================
     @Transactional
@@ -143,8 +159,9 @@ public class BAEtapaService {
         if (dto.getIdsColegios() == null || dto.getIdsColegios().isEmpty()) {
             throw new ReglaNegocioException("Debe seleccionar al menos una institución");
         }
-        if (dto.getIdsColegios().size() > MAX_COLEGIOS) {
-            throw new ReglaNegocioException("Máximo " + MAX_COLEGIOS + " instituciones en orden de preferencia");
+        int maxColegios = getMaxColegios();
+        if (dto.getIdsColegios().size() > maxColegios) {
+            throw new ReglaNegocioException("Máximo " + maxColegios + " instituciones en orden de preferencia");
         }
 
         SolicitudEntity sol = f.getSolicitud();
