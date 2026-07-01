@@ -19,6 +19,7 @@ import co.gov.educacionbogota.sicobertura.entities.PersonaEntity;
 import co.gov.educacionbogota.sicobertura.entities.RefListado;
 import co.gov.educacionbogota.sicobertura.entities.SolicitudEntity;
 import co.gov.educacionbogota.sicobertura.entities.UbicacionEntity;
+import co.gov.educacionbogota.sicobertura.repository.RefListadoRepository;
 import co.gov.educacionbogota.sicobertura.repository.SolicitudColegioRepository;
 
 /**
@@ -29,6 +30,7 @@ public class BAGetService {
 
     @Autowired private BAFormularioService formularioService;
     @Autowired private SolicitudColegioRepository solicitudColegioRepository;
+    @Autowired private RefListadoRepository refListadoRepository;
 
     @Transactional(readOnly = true)
     public ResponseBASeccionesDto detalleEtapa0(Long id) {
@@ -74,8 +76,20 @@ public class BAGetService {
         dto.setCodigoLocalidad(idOf(u.getLocalidad()));
         dto.setCodigoBarrio(idOf(u.getBarrio()));
         dto.setBarrioOtro(u.getBarrioOtro());
+        dto.setCodigoTipoVia(resolverTipoViaId(u.getTipoVia()));
+        dto.setNumeroVia(u.getNumeroVia());
+        dto.setLetraVia(u.getLetraVia());
+        dto.setSufijoVia(u.getSufijoVia());
+        dto.setNumeroSecVia(u.getNumeroSecVia());
+        dto.setNumeroFinVia(u.getNumeroFinVia());
         dto.setDireccion(u.getDireccion());
         dto.setDireccionComplemento(u.getDireccionComplemento());
+    }
+
+    private Long resolverTipoViaId(String codigo) {
+        if (codigo == null || codigo.isEmpty()) return null;
+        return refListadoRepository.findByCodigoAndDescripcionAndActivo(codigo, "TIPOS_VIA", 1)
+                .map(RefListado::getIdRefListado).orElse(null);
     }
 
     @Transactional(readOnly = true)
@@ -132,6 +146,12 @@ public class BAGetService {
             dto.setCodigoLocalidad(idOf(u.getLocalidad()));
             dto.setCodigoBarrio(idOf(u.getBarrio()));
             dto.setBarrioOtro(u.getBarrioOtro());
+            dto.setCodigoTipoVia(resolverTipoViaId(u.getTipoVia()));
+            dto.setNumeroVia(u.getNumeroVia());
+            dto.setLetraVia(u.getLetraVia());
+            dto.setSufijoVia(u.getSufijoVia());
+            dto.setNumeroSecVia(u.getNumeroSecVia());
+            dto.setNumeroFinVia(u.getNumeroFinVia());
             dto.setDireccion(u.getDireccion());
             dto.setDireccionComplemento(u.getDireccionComplemento());
         }

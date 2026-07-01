@@ -1,5 +1,8 @@
 package co.gov.educacionbogota.sicobertura.busquedaactiva.dtos;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +17,7 @@ public class BAInfoTablaDto {
     private boolean finalizado;
     /** Última etapa registrada (0-4). */
     private int ultimaEtapa;
-    /** "Finalizado" / "Pendiente". */
+    /** "Finalizado" / "Pendiente" / "En proceso". */
     private String estado;
     /** Población diferencial del estudiante. */
     private String poblacion;
@@ -22,4 +25,10 @@ public class BAInfoTablaDto {
     private String barrio;
     /** Nombre del estudiante. */
     private String estudiante;
+    /** Tipo documento estudiante (id ref_listado TIPOS_DOCUMENTO). */
+    private Long tipoDocumentoEstudiante;
+    /** Numero documento estudiante. */
+    private String numeroDocumentoEstudiante;
+    /** Lista etapas diligenciadas (1..4). Vacia si ninguna. */
+    private List<Integer> etapasDiligenciadas = new ArrayList<>();
 }

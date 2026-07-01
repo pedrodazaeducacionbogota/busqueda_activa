@@ -44,10 +44,23 @@ public class BAUbicacionHelperService {
 
     public UbicacionEntity setDireccion(UbicacionEntity ubicacion, Long codigoTipoVia,
                                          String direccion, String direccionComplemento, Integer estrato) {
+        return setDireccion(ubicacion, codigoTipoVia, null, null, null, null, null,
+                direccion, direccionComplemento, estrato);
+    }
+
+    public UbicacionEntity setDireccion(UbicacionEntity ubicacion, Long codigoTipoVia,
+                                         String numeroVia, String letraVia, String sufijoVia,
+                                         String numeroSecVia, String numeroFinVia,
+                                         String direccion, String direccionComplemento, Integer estrato) {
         if (codigoTipoVia != null) {
             RefListado tipoViaRef = resolver.resolveRequired(codigoTipoVia, "TIPOS_VIA");
             ubicacion.setTipoVia(tipoViaRef.getCodigo());
         }
+        ubicacion.setNumeroVia(numeroVia);
+        ubicacion.setLetraVia(letraVia);
+        ubicacion.setSufijoVia(sufijoVia);
+        ubicacion.setNumeroSecVia(numeroSecVia);
+        ubicacion.setNumeroFinVia(numeroFinVia);
         if (direccion != null) ubicacion.setDireccion(direccion);
         if (direccionComplemento != null) ubicacion.setDireccionComplemento(direccionComplemento);
         if (estrato != null) ubicacion.setEstrato(estrato);
