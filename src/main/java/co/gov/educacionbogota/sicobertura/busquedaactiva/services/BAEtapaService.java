@@ -108,7 +108,7 @@ public class BAEtapaService {
         persona.setDiscapacidad(dto.isDiscapacidad());
         if (dto.isDiscapacidad()) {
             persona.setTipoDiscapacidad(
-                    resolver.resolveRequired(dto.getCodigoTipoDiscapacidad(), "TIPOS_DISCAPACIDAD"));
+                    resolver.resolveRequired(dto.getCodigoTipoDiscapacidad(), "DISCAPACIDADES"));
             persona.setCertDiscapacidad(Boolean.TRUE.equals(dto.getCertDiscapacidad()));
             persona.setSoporteDiscapacidad(nullIfEmpty(dto.getSoporteDiscapacidad()));
         } else {
@@ -128,6 +128,8 @@ public class BAEtapaService {
         UbicacionEntity residencia = ubicacionHelper.upsert(persona.getUbicacion(),
                 dto.getCodigoLocalidad(), dto.getCodigoBarrio(), dto.getBarrioOtro());
         residencia = ubicacionHelper.setDireccion(residencia, dto.getCodigoTipoVia(),
+                dto.getNumeroVia(), dto.getLetraVia(), dto.getSufijoVia(),
+                dto.getNumeroSecVia(), dto.getNumeroFinVia(),
                 dto.getDireccion(), dto.getDireccionComplemento(), null);
         persona.setUbicacion(residencia);
         persona = personaRepository.save(persona);
@@ -144,7 +146,9 @@ public class BAEtapaService {
         estudiante = estudianteRepository.save(estudiante);
 
         f.setEstudiante(estudiante);
-        f.setUltimaEtapa(1);
+        f.setEtapa1Diligenciada(true);
+        marcarUltimaEtapa(f, 1);
+        actualizarFinalizado(f);
         formularioService.guardar(f);
         return new ResponseBASeccionesDto(id, f.getProfesional().getId());
     }
@@ -215,7 +219,9 @@ public class BAEtapaService {
             solicitudColegioRepository.save(sc);
         }
 
-        f.setUltimaEtapa(2);
+        f.setEtapa2Diligenciada(true);
+        marcarUltimaEtapa(f, 2);
+        actualizarFinalizado(f);
         formularioService.guardar(f);
         return new ResponseBASeccionesDto(id, f.getProfesional().getId());
     }
@@ -250,12 +256,16 @@ public class BAEtapaService {
         UbicacionEntity residencia = ubicacionHelper.upsert(acudiente.getUbicacion(),
                 dto.getCodigoLocalidad(), dto.getCodigoBarrio(), dto.getBarrioOtro());
         residencia = ubicacionHelper.setDireccion(residencia, dto.getCodigoTipoVia(),
+                dto.getNumeroVia(), dto.getLetraVia(), dto.getSufijoVia(),
+                dto.getNumeroSecVia(), dto.getNumeroFinVia(),
                 dto.getDireccion(), dto.getDireccionComplemento(), null);
         acudiente.setUbicacion(residencia);
         acudiente = personaRepository.save(acudiente);
 
         f.setAcudiente(acudiente);
-        f.setUltimaEtapa(3);
+        f.setEtapa3Diligenciada(true);
+        marcarUltimaEtapa(f, 3);
+        actualizarFinalizado(f);
         formularioService.guardar(f);
         return new ResponseBASeccionesDto(id, f.getProfesional().getId());
     }
@@ -318,13 +328,24 @@ public class BAEtapaService {
             }
         }
 
-        f.setFinalizado(true);
-        f.setUltimaEtapa(4);
+        f.setEtapa4Diligenciada(true);
+        marcarUltimaEtapa(f, 4);
+        actualizarFinalizado(f);
         formularioService.guardar(f);
         return new ResponseBASeccionesDto(id, f.getProfesional().getId());
     }
 
     // ==================== HELPERS ====================
+
+    private void marcarUltimaEtapa(BusquedaActivaFormularioEntity f, int etapa) {
+        if (etapa > f.getUltimaEtapa()) f.setUltimaEtapa(etapa);
+    }
+
+    private void actualizarFinalizado(BusquedaActivaFormularioEntity f) {
+        boolean todas = f.isEtapa1Diligenciada() && f.isEtapa2Diligenciada()
+                && f.isEtapa3Diligenciada() && f.isEtapa4Diligenciada();
+        f.setFinalizado(todas);
+    }
 
     private IdeEntity buscarIde(Long idIde) {
         return ideRepository.findById(idIde)

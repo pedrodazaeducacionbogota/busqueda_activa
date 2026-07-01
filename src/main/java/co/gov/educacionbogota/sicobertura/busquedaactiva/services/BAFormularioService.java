@@ -71,11 +71,23 @@ public class BAFormularioService {
         dto.setFechaCrea(f.getFechaCrea() != null ? f.getFechaCrea().format(FECHA_FMT) : null);
         dto.setFinalizado(f.isFinalizado());
         dto.setUltimaEtapa(f.getUltimaEtapa());
-        dto.setEstado(f.isFinalizado() ? "Finalizado" : "Pendiente");
+
+        java.util.List<Integer> etapas = new java.util.ArrayList<>();
+        if (f.isEtapa1Diligenciada()) etapas.add(1);
+        if (f.isEtapa2Diligenciada()) etapas.add(2);
+        if (f.isEtapa3Diligenciada()) etapas.add(3);
+        if (f.isEtapa4Diligenciada()) etapas.add(4);
+        dto.setEtapasDiligenciadas(etapas);
+
+        if (f.isFinalizado()) dto.setEstado("Finalizado");
+        else if (etapas.isEmpty()) dto.setEstado("Pendiente");
+        else dto.setEstado("En proceso");
 
         if (f.getEstudiante() != null && f.getEstudiante().getPersona() != null) {
             PersonaEntity p = f.getEstudiante().getPersona();
             dto.setEstudiante(joinNombre(p.getPrimerNombre(), p.getPrimerApellido()));
+            if (p.getTipoDocumento() != null) dto.setTipoDocumentoEstudiante(p.getTipoDocumento().getIdRefListado());
+            dto.setNumeroDocumentoEstudiante(p.getNumeroDocumento());
             if (p.getPoblacionDiferencial() != null) dto.setPoblacion(p.getPoblacionDiferencial().getNombre());
             if (p.getUbicacion() != null) {
                 if (p.getUbicacion().getLocalidad() != null) dto.setLocalidad(p.getUbicacion().getLocalidad().getNombre());

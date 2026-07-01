@@ -78,6 +78,18 @@ public class BusquedaActivaFormularioEntity implements Serializable {
     @Column(name = "ultima_etapa", nullable = false)
     private int ultimaEtapa = 0;
 
+    @Column(name = "etapa1_diligenciada", nullable = false)
+    private boolean etapa1Diligenciada = false;
+
+    @Column(name = "etapa2_diligenciada", nullable = false)
+    private boolean etapa2Diligenciada = false;
+
+    @Column(name = "etapa3_diligenciada", nullable = false)
+    private boolean etapa3Diligenciada = false;
+
+    @Column(name = "etapa4_diligenciada", nullable = false)
+    private boolean etapa4Diligenciada = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_profesional", nullable = false)
     private Usuario profesional;
