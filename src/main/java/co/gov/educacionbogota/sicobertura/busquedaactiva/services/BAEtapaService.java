@@ -37,6 +37,7 @@ import co.gov.educacionbogota.sicobertura.repository.ConfiguracionRepository;
 import co.gov.educacionbogota.sicobertura.repository.EstudianteRepository;
 import co.gov.educacionbogota.sicobertura.repository.GradoRepository;
 import co.gov.educacionbogota.sicobertura.repository.IdeRepository;
+import co.gov.educacionbogota.sicobertura.repository.SedeRepository;
 import co.gov.educacionbogota.sicobertura.repository.PersonaRepository;
 import co.gov.educacionbogota.sicobertura.repository.RefListadoRepository;
 import co.gov.educacionbogota.sicobertura.repository.SolicitudColegioRepository;
@@ -59,6 +60,7 @@ public class BAEtapaService {
     @Autowired private SolicitudRepository solicitudRepository;
     @Autowired private SolicitudColegioRepository solicitudColegioRepository;
     @Autowired private IdeRepository ideRepository;
+    @Autowired private SedeRepository sedeRepository;
     @Autowired private ConfiguracionRepository configuracionRepository;
 
     private int getMaxColegios() {
@@ -347,9 +349,19 @@ public class BAEtapaService {
         f.setFinalizado(todas);
     }
 
-    private IdeEntity buscarIde(Long idIde) {
-        return ideRepository.findById(idIde)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Institución no encontrada: " + idIde));
+    /**
+     * Resuelve id a IdeEntity. Acepta:
+     * - id de IDE directamente (colegio nivel)
+     * - id de sede (sede.getIde() → IDE contenedor)
+     * Front usa /colegios/por-localidad que retorna ids de sedes.
+     * SolicitudColegio.colegio persiste el IDE contenedor.
+     */
+    private IdeEntity buscarIde(Long id) {
+        return ideRepository.findById(id)
+                .orElseGet(() -> sedeRepository.findById(id)
+                        .map(sede -> sede.getIde())
+                        .orElseThrow(() -> new RecursoNoEncontradoException(
+                                "Institución no encontrada: " + id + " (no existe como IDE ni sede)")));
     }
 
     private RefListado resolverRangoEdad(int edad) {

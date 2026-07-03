@@ -69,7 +69,6 @@ public class BAFormularioService {
         BAInfoTablaDto dto = new BAInfoTablaDto();
         dto.setId(f.getId());
         dto.setFechaCrea(f.getFechaCrea() != null ? f.getFechaCrea().format(FECHA_FMT) : null);
-        dto.setFinalizado(f.isFinalizado());
         dto.setUltimaEtapa(f.getUltimaEtapa());
 
         java.util.List<Integer> etapas = new java.util.ArrayList<>();
@@ -79,7 +78,10 @@ public class BAFormularioService {
         if (f.isEtapa4Diligenciada()) etapas.add(4);
         dto.setEtapasDiligenciadas(etapas);
 
-        if (f.isFinalizado()) dto.setEstado("Finalizado");
+        // Derivar finalizado desde flags — evita inconsistencias legacy pre-2026-06-28
+        boolean finalizadoDerivado = etapas.size() == 4;
+        dto.setFinalizado(finalizadoDerivado);
+        if (finalizadoDerivado) dto.setEstado("Finalizado");
         else if (etapas.isEmpty()) dto.setEstado("Pendiente");
         else dto.setEstado("En proceso");
 
