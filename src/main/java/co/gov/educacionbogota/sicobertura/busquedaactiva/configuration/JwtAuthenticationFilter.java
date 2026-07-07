@@ -1,5 +1,6 @@
 package co.gov.educacionbogota.sicobertura.busquedaactiva.configuration;
 
+import co.gov.educacionbogota.sicobertura.dto.UsuarioAutenticado;
 import co.gov.educacionbogota.sicobertura.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import java.io.IOException;
@@ -13,7 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-@Component
+@Component("jwtAuthenticationFilterBusquedaActiva")
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
@@ -38,11 +39,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 Claims claims = jwtUtil.extractAllClaims(token);
 
-                // Principal = String username para que Authentication.getName() retorne el sub.
-                // UsuarioService.findByLogeado() en commons busca por nombreUsuario via getName().
+                UsuarioAutenticado usuario = new UsuarioAutenticado(
+                        claims.getSubject(),
+                        claims.get("correo", String.class),
+                        claims.get("nombres", String.class)
+                );
+
                 UsernamePasswordAuthenticationToken authentication
                         = new UsernamePasswordAuthenticationToken(
-                                claims.getSubject(),
+                                usuario,
                                 null,
                                 Collections.emptyList()
                         );

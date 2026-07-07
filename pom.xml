@@ -11,7 +11,7 @@
 
     <groupId>co.gov.educacionbogota.sicobertura</groupId>
     <artifactId>cobertura_busqueda_activa</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.3</version>
     <packaging>war</packaging>
     <name>cobertura_busqueda_activa</name>
     <description>Modulo Busqueda Activa - identificacion de NNAJ desescolarizados - cobertura</description>
