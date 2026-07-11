@@ -105,6 +105,10 @@ public class BusquedaActivaFormularioEntity implements Serializable {
     @JoinColumn(name = "id_solicitud")
     private SolicitudEntity solicitud;
 
+    /** Localidad usada como pre-condicionador del listado /colegios/por-localidad (HU-005). Se persiste para re-hidratar wizard. */
+    @Column(name = "id_localidad_institucion")
+    private Long idLocalidadInstitucion;
+
     /** ¿Desea misma institución que el hermano? (HU-005 paso 12). */
     @Column(name = "misma_institucion_hermano")
     private boolean mismaInstitucionHermano;

@@ -11,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import co.gov.educacionbogota.sicobertura.entities.RefListado;
 
@@ -21,17 +20,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Etapa 4 (HU-007) factores descolarización. Modelo agregado por rango: 1 fila por rango de
- * edad declarado "no estudiando" en el núcleo familiar, con conteo + razón.
+ * Etapa 4 (HU-007) factores descolarización. Modelo por niño: 1 fila por niño no estudiando.
  *
- * UQ por (formulario, rango_edad_codigo): cada rango aparece 1 vez máximo por formulario.
- * Agregar nuevo rango edad SIN schema change → solo 1 fila más + entry en ref_listado.
+ * Cambio 2026-07-10: cada niño lleva su propia razón para no perder info de BA. Removida UK
+ * por (formulario, rango_edad_codigo) — el mismo rango puede aparecer N veces si hay N niños
+ * con distintas razones dentro del núcleo familiar.
  */
 @Entity
-@Table(name = "SC_DAT_BA_NO_ESTUDIANDO", uniqueConstraints = {
-    @UniqueConstraint(name = "uk_ba_no_est_form_rango",
-        columnNames = {"id_formulario", "rango_edad_codigo"})
-})
+@Table(name = "SC_DAT_BA_NO_ESTUDIANDO")
 @Getter
 @Setter
 @NoArgsConstructor

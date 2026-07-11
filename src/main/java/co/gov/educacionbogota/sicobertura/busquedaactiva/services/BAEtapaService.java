@@ -6,10 +6,6 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -221,6 +217,7 @@ public class BAEtapaService {
             solicitudColegioRepository.save(sc);
         }
 
+        f.setIdLocalidadInstitucion(dto.getCodigoLocalidadInstitucion());
         f.setEtapa2Diligenciada(true);
         marcarUltimaEtapa(f, 2);
         actualizarFinalizado(f);
@@ -243,8 +240,7 @@ public class BAEtapaService {
         if (parentesco != null) {
             acudiente.setIdParentesco(BigInteger.valueOf(parentesco.getIdRefListado()));
         }
-        acudiente.setParentescoOtro(parentesco != null && "OTRO".equals(parentesco.getCodigo())
-                ? nullIfEmpty(dto.getParentescoOtro()) : null);
+        acudiente.setParentescoOtro(nullIfEmpty(dto.getParentescoOtro()));
 
         RefListado niv = resolver.resolveOptional(dto.getCodigoNivelEscolaridad(), "NIVELES_ESCOLARIDAD");
         if (niv != null) {
@@ -273,60 +269,30 @@ public class BAEtapaService {
     }
 
     // ==================== ETAPA 4 ====================
+    /**
+     * Modelo por niño (2026-07-10): 1 fila por descolarizado, cada uno con su propia razón.
+     * Reemplaza el modelo agregado por rango. Estrategia: DELETE all + INSERT N.
+     */
     @Transactional
     public ResponseBASeccionesDto actualizarEtapa4(Long id, BAEtapa4Dto dto) {
         BusquedaActivaFormularioEntity f = formularioService.getFormulario(id);
 
-        List<BAEtapa4Dto.NoEstudiandoItem> items = dto.isExistenNoEstudiando()
-                ? dto.getRangos() : java.util.Collections.emptyList();
+        f.getNoEstudiandoRangos().clear();
 
-        Map<Long, BANoEstudiandoEntity> existentes = new HashMap<>();
-        for (BANoEstudiandoEntity r : f.getNoEstudiandoRangos()) {
-            if (r.getRangoEdadCodigo() != null) {
-                try {
-                    existentes.put(Long.parseLong(r.getRangoEdadCodigo()), r);
-                } catch (NumberFormatException ignored) {
-                    // datos legacy con codigo string — se ignoran
-                }
-            }
-        }
-
-        for (BAEtapa4Dto.NoEstudiandoItem item : items) {
-            RefListado rango = resolver.resolveRequired(item.getCodigoRangoEdad(), "RANGOS_EDADES_BA");
-            BANoEstudiandoEntity row = existentes.get(rango.getIdRefListado());
-            if (row == null) {
-                row = new BANoEstudiandoEntity();
+        if (dto.isExistenNoEstudiando()) {
+            for (BAEtapa4Dto.NoEstudiandoItem item : dto.getRangos()) {
+                RefListado rango = resolver.resolveRequired(item.getCodigoRangoEdad(), "RANGOS_EDADES_BA");
+                BANoEstudiandoEntity row = new BANoEstudiandoEntity();
                 row.setRangoEdadCodigo(String.valueOf(rango.getIdRefListado()));
-                f.agregarNoEstudiando(row);
-            }
-            row.setCuantos(item.getCuantos() != null ? item.getCuantos() : 0);
-            RefListado razon = resolver.resolveOptional(item.getCodigoRazon(), "RAZONES_NOESCOLAR_BA");
-            if (razon != null) {
-                row.setRazon(razon);
-                if ("OTROS_CUALES".equals(razon.getCodigo()) && item.getCodigoRazonOtra() != null) {
-                    row.setRazonOtra(resolver.resolveRequired(item.getCodigoRazonOtra(), "RAZONES_NOESCOLAR_OTRAS_BA"));
-                } else {
-                    row.setRazonOtra(null);
-                }
-            } else {
-                row.setRazon(null);
-                row.setRazonOtra(null);
-            }
-            existentes.remove(rango.getIdRefListado());
-        }
-
-        Iterator<BANoEstudiandoEntity> it = f.getNoEstudiandoRangos().iterator();
-        while (it.hasNext()) {
-            BANoEstudiandoEntity r = it.next();
-            if (r.getRangoEdadCodigo() != null) {
-                try {
-                    Long codigoLong = Long.parseLong(r.getRangoEdadCodigo());
-                    if (existentes.containsKey(codigoLong)) {
-                        it.remove();
+                row.setCuantos(1);
+                RefListado razon = resolver.resolveOptional(item.getCodigoRazon(), "RAZONES_NOESCOLAR_BA");
+                if (razon != null) {
+                    row.setRazon(razon);
+                    if ("OTROS_CUALES".equals(razon.getCodigo()) && item.getCodigoRazonOtra() != null) {
+                        row.setRazonOtra(resolver.resolveRequired(item.getCodigoRazonOtra(), "RAZONES_NOESCOLAR_OTRAS_BA"));
                     }
-                } catch (NumberFormatException ignored) {
-                    // ignorar legacy
                 }
+                f.agregarNoEstudiando(row);
             }
         }
 
