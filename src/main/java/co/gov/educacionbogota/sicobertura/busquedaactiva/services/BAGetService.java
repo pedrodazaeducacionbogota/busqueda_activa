@@ -119,6 +119,7 @@ public class BAGetService {
         }
         dto.setMismaInstitucionHermano(f.isMismaInstitucionHermano());
         if (f.getInstitucionHermano() != null) dto.setIdInstitucionHermano(f.getInstitucionHermano().getId());
+        dto.setCodigoLocalidadInstitucion(f.getIdLocalidadInstitucion());
         return dto;
     }
 

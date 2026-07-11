@@ -12,7 +12,7 @@ public class BAEtapa2Dto {
 
     private Long codigoUltimoAnioAprobado;
 
-    /** Filtro front, no se persiste. */
+    /** Localidad pre-condicionador de /colegios/por-localidad. Persistido para re-hidratar wizard. */
     private Long codigoLocalidadInstitucion;
 
     /** IDs de IDE en orden de preferencia. Máx 10. */
