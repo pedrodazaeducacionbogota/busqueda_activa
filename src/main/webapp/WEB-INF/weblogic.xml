@@ -12,5 +12,9 @@
       <package-name>org.springdoc.*</package-name>
     </prefer-application-packages>
   </container-descriptor>
+  <session-descriptor>
+    <cookie-http-only>true</cookie-http-only>
+    <cookie-secure>true</cookie-secure>
+  </session-descriptor>
   <context-root>/cobertura/busqueda-activa</context-root>
 </weblogic-web-app>

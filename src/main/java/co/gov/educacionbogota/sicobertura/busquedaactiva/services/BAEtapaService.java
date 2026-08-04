@@ -80,8 +80,8 @@ public class BAEtapaService {
         EstudianteEntity estudiante = f.getEstudiante();
         PersonaEntity persona = (estudiante != null) ? estudiante.getPersona() : null;
 
-        String celular = dto.isMayorEdadNombrePropio() ? dto.getCelular() : null;
-        String correo  = dto.isMayorEdadNombrePropio() ? dto.getCorreo()  : null;
+        String celular = nullIfEmpty(dto.getCelular());
+        String correo  = nullIfEmpty(dto.getCorreo());
         persona = personaHelper.upsert(persona,
                 dto.getCodigoTipoDocumento(), dto.getNumeroDocumento(),
                 dto.getPrimerNombre(), dto.getSegundoNombre(),
