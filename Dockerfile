@@ -5,7 +5,7 @@ FROM eclipse-temurin:8-jre
 
 WORKDIR /app
 
-COPY target/cobertura_busqueda_activa-1.0.7.war app.war
+COPY target/cobertura_busqueda_activa-1.0.11.war app.war
 
 EXPOSE 8086
 
