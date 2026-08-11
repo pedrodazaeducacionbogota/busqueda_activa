@@ -20,6 +20,7 @@ import co.gov.educacionbogota.sicobertura.exception.RecursoNoEncontradoException
 import co.gov.educacionbogota.sicobertura.exception.ReglaNegocioException;
 import co.gov.educacionbogota.sicobertura.repository.EdadGradoRepository;
 import co.gov.educacionbogota.sicobertura.repository.GradoRepository;
+import co.gov.educacionbogota.sicobertura.servicesimpl.ConfiguracionServiceImpl;
 
 /**
  * Helper edad → grado para wizard sección 7 (cupo solicitud).
@@ -36,6 +37,7 @@ public class BAEdadGradoService {
     @Autowired private BAFormularioService formularioService;
     @Autowired private EdadGradoRepository edadGradoRepository;
     @Autowired private GradoRepository gradoRepository;
+    @Autowired private ConfiguracionServiceImpl configuracionService;
 
     @Transactional(readOnly = true)
     public GradosAprobadosDto gradosAprobados(Long idFormulario) {
@@ -78,7 +80,7 @@ public class BAEdadGradoService {
         return grados;
     }
 
-    /** edad estudiante + 1, clamp [3..18], ≥18 → 99. Refleja política SED para asignar cupo año siguiente. */
+    /** Edad al FECHA_CORTE_EDAD (regla SED inicio año escolar destino). Clamp [3..18], >=18 → 99. */
     private int calcularEdadConsulta(Long idFormulario) {
         BusquedaActivaFormularioEntity f = formularioService.getFormulario(idFormulario);
         if (f.getEstudiante() == null || f.getEstudiante().getPersona() == null
@@ -86,7 +88,7 @@ public class BAEdadGradoService {
             throw new ReglaNegocioException("Formulario sin estudiante o sin fecha nacimiento (sección 6 incompleta)");
         }
         LocalDate fechaNac = LocalDate.parse(f.getEstudiante().getPersona().getFechaNacimientoStr(), FECHA_FMT);
-        int edad = Period.between(fechaNac, LocalDate.now()).getYears() + 1;
+        int edad = Period.between(fechaNac, configuracionService.getFechaCorteEdad()).getYears();
         if (edad < 3) edad = 3;
         if (edad >= 18) edad = 99;
         return edad;
