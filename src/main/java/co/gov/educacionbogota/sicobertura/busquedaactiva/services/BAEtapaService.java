@@ -46,6 +46,7 @@ public class BAEtapaService {
     private static final int MAX_COLEGIOS_DEFAULT = 10;
 
     @Autowired private BAFormularioService formularioService;
+    @Autowired private BACheckService checkService;
     @Autowired private BAPersonaHelperService personaHelper;
     @Autowired private BAUbicacionHelperService ubicacionHelper;
     @Autowired private BARefResolverService resolver;
@@ -79,6 +80,18 @@ public class BAEtapaService {
 
         EstudianteEntity estudiante = f.getEstudiante();
         PersonaEntity persona = (estudiante != null) ? estudiante.getPersona() : null;
+
+        // Bloqueo BA previo (misma vigencia+etapa) + Anexo6A whitelist SIMAT.
+        // Solo cuando el formulario no tiene persona aun (primera captura) o cuando
+        // el documento fue cambiado — evita bloquear ediciones sobre el propio registro.
+        boolean primeraCaptura = (persona == null);
+        boolean documentoCambio = !primeraCaptura
+                && (!java.util.Objects.equals(persona.getNumeroDocumento(), dto.getNumeroDocumento())
+                 || persona.getTipoDocumento() == null
+                 || !java.util.Objects.equals(persona.getTipoDocumento().getIdRefListado(), dto.getCodigoTipoDocumento()));
+        if (primeraCaptura || documentoCambio) {
+            checkService.asegurarPuedeCaracterizar(dto.getCodigoTipoDocumento(), dto.getNumeroDocumento());
+        }
 
         String celular = nullIfEmpty(dto.getCelular());
         String correo  = nullIfEmpty(dto.getCorreo());

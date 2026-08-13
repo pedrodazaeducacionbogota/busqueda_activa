@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.gov.educacionbogota.sicobertura.busquedaactiva.dtos.BAEtapa1Dto;
@@ -111,9 +112,12 @@ public class BusquedaActivaController {
     }
 
     @GetMapping("/validar-documento/{tipo}/{numero}")
-    @Operation(summary = "Dedup por documento + etapa + vigencia (HU-004 paso 5). tipo ∈ {ESTUDIANTE, ACUDIENTE}")
-    public ResponseEntity<ApiResponseDto> validarDocumento(@PathVariable String tipo, @PathVariable String numero) {
-        return ResponseEntity.ok(new ApiResponseDto(true, "Validación OK", checkService.validarDocumento(numero, tipo)));
+    @Operation(summary = "Dedup por documento + etapa + vigencia (HU-004 paso 5) + bloqueo Anexo6A. tipo ∈ {ESTUDIANTE, ACUDIENTE}. tipoDoc query param opcional para match exacto Anexo6A")
+    public ResponseEntity<ApiResponseDto> validarDocumento(@PathVariable String tipo,
+                                                            @PathVariable String numero,
+                                                            @RequestParam(value = "tipoDoc", required = false) Long tipoDoc) {
+        return ResponseEntity.ok(new ApiResponseDto(true, "Validación OK",
+                checkService.validarDocumento(numero, tipo, tipoDoc)));
     }
 
     @GetMapping("/grados-aprobados/{id}")
