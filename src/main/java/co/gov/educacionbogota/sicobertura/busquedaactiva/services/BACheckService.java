@@ -94,7 +94,9 @@ public class BACheckService {
             Optional<Anexo6aEntity> anexo = (tipoDoc != null)
                     ? anexo6aRepository.findFirstByTipoDocumento_IdRefListadoAndNumeroDocumento(tipoDoc, documento)
                     : anexo6aRepository.findFirstByNumeroDocumento(documento);
+            // Solo bloquear sector OFICIAL. Privados permiten caracterizar.
             anexo.filter(a -> a.getEstadoSimat() != null
+                            && "OFICIAL".equalsIgnoreCase(a.getSector())
                             && ESTADOS_SIMAT_BLOQUEAN.contains(a.getEstadoSimat().toUpperCase()))
                     .ifPresent(a -> {
                         dto.setMatriculadoSimat(true);
@@ -127,6 +129,7 @@ public class BACheckService {
             anexo6aRepository
                     .findFirstByTipoDocumento_IdRefListadoAndNumeroDocumento(tipoDoc, numeroDoc)
                     .filter(a -> a.getEstadoSimat() != null
+                            && "OFICIAL".equalsIgnoreCase(a.getSector())
                             && ESTADOS_SIMAT_BLOQUEAN.contains(a.getEstadoSimat().toUpperCase()))
                     .ifPresent(a -> {
                         throw new ReglaNegocioException(
