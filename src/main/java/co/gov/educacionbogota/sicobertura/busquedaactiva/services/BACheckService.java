@@ -67,10 +67,14 @@ public class BACheckService {
         List<BusquedaActivaFormularioEntity> matches;
         switch (tipo) {
             case TIPO_ESTUDIANTE:
-                matches = formularioRepository.buscarPorEstudiante(documento, etapa, vigencia);
+                matches = (tipoDoc != null)
+                        ? formularioRepository.buscarPorEstudianteConTipo(documento, tipoDoc, etapa, vigencia)
+                        : formularioRepository.buscarPorEstudiante(documento, etapa, vigencia);
                 break;
             case TIPO_ACUDIENTE:
-                matches = formularioRepository.buscarPorAcudiente(documento, etapa, vigencia);
+                matches = (tipoDoc != null)
+                        ? formularioRepository.buscarPorAcudienteConTipo(documento, tipoDoc, etapa, vigencia)
+                        : formularioRepository.buscarPorAcudiente(documento, etapa, vigencia);
                 break;
             default:
                 throw new ReglaNegocioException("Tipo inválido: " + tipo + " (esperados: ESTUDIANTE/ACUDIENTE)");
@@ -117,8 +121,9 @@ public class BACheckService {
         int vigencia = leerConfigInt(CFG_VIGENCIA);
         int etapa = leerConfigInt(CFG_ETAPA);
 
-        List<BusquedaActivaFormularioEntity> previos =
-                formularioRepository.buscarPorEstudiante(numeroDoc, etapa, vigencia);
+        List<BusquedaActivaFormularioEntity> previos = (tipoDoc != null)
+                ? formularioRepository.buscarPorEstudianteConTipo(numeroDoc, tipoDoc, etapa, vigencia)
+                : formularioRepository.buscarPorEstudiante(numeroDoc, etapa, vigencia);
         if (previos != null && !previos.isEmpty()) {
             throw new ReglaNegocioException(
                     "El estudiante ya tiene un formulario BA registrado en esta vigencia/etapa (id="
